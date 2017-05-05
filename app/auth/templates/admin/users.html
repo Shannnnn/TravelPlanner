@@ -1,182 +1,164 @@
-<html lang="en"><head>
-	<meta charset="utf-8">
-	<link rel="icon" type="image/png" href="#">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>{{ title }}</title>
 
-	<title>Travel Planner</title>
+    <!-- Common plugins -->
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/simple-line-icons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/pace.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/landing-style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/help.css') }}">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
 
-	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
-    <meta name="viewport" content="width=device-width">
-
-
-    <!-- Bootstrap core CSS     -->
-    <link rel="stylesheet" href="/static//css/bootstrap.min.css">
-
-    <!-- Animation library for notifications   -->
-    <link rel="stylesheet" href="/static//css/animate.min.css">
-
-    <!--  Light Bootstrap Table core CSS    -->
-    <link rel="stylesheet" href="/static//css/light-bootstrap-dashboard.css">
-
-    <!--  CSS for Demo Purpose, don't include it in your project     -->
-    <link rel="stylesheet" href="/static//css//demo.css">
-
-    <!--     Fonts and icons     -->
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Roboto:400,700,300">
-    <link rel="stylesheet" href="/static//css/pe-icon-7-stroke.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>
 
 </head>
-<body>
-
-<div class="wrapper">
-    <div class="sidebar" data-color="purple">
-
-    <!--
-
-        Tip 1: you can change the color of the sidebar using: data-color="blue | azure | green | orange | red | purple"
-        Tip 2: you can also add an image using data-image tag
-
-    -->
-
-    	<div class="sidebar-wrapper">
-            <div class="logo">
-                <a href="/admin" class="simple-text">
-                    Travel Planner
-                </a>
-            </div>
-
-            <ul class="nav">
-                <li>
-                    <a href="/admin">
-                        <i class="pe-7s-home"></i>
-                        <p>Admin Dashboard</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="/admin/users">
-                        <i class="pe-7s-user"></i>
-                        <p>Users</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="/admin/trips">
-                        <i class="pe-7s-note2"></i>
-                        <p>Trips</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="/admin/connections">
-                        <i class="pe-7s-graph"></i>
-                        <p>Connections</p>
-                    </a>
-                </li>
-            </ul>
-    	</div>
-    </div>
-
-    <div class="main-panel">
-        <nav class="navbar navbar-default navbar-fixed">
-            <div class="container-fluid">
+<body class="float-landing" data-spy="scroll" data-offset="70" data-taget=".navbar-default">
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navigation-example-2">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                         <span class="sr-only">Toggle navigation</span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">Admin</a>
+                    <a class="navbar-brand" href="/admin/main">TravelPlanner</a>
                 </div>
-                <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav navbar-left">
-                        <li>
-								<p class="hidden-lg hidden-md">Dashboard</p>
-                        </li>
-                    </ul>
-
-                    <ul class="nav navbar-nav navbar-right">
-                        <li>
-                           <a href="">
-                               <p>Account</p>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/logout">
-                                <p>Log out</p>
-                            </a>
-                        </li>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav  smooth-scroll navbar-right">
+                        <li><a href="/admin">Admin Dashboard</a></li>
+                        <li class="active"><a href="/admin/users">Users</a></li>
+                        <li><a href="/admin/trips">Trip Plans</a></li>
+                        <li><a href="/admin/settings">Settings</a></li>
+                        <li class="nav-button"><a href="/main">Menu</a></li>
+                        <li class="nav-button"><a href="/logout">Log out</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
-        <div class="container-fluid">
-            <div class="card" style="width: 188vh;">
-                <a href="/admin/users/add" class="btn" role="button">Add User</a>
-                <a href="/admin/users/sort/admin" class="btn" role="button">Admin</a>
-                <a href="/admin/users/sort/moderator" class="btn" role="button">Moderator</a>
-                <a href="/admin/users/sort/user" class="btn" role="button">User</a>
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th colspan="2">Action</th>
-                            <th>ID</th>
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Address</th>
-                            <th>City</th>
-                            <th>Country</th>
-                            <th>Birthdate</th>
-                            <th>Contact Number</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    {% for r in result %}
-                    <tbody>
-                        <tr>
-                            <td><a href="/admin/users/edit/{{r.username}}">Edit</a></td>
-                            <td><a href="/admin/users/remove/{{r.username}}">Delete</a></td>
-                            <td>{{r.id}}</td>
-                            <td>{{r.username}}</td>
-                            <td>{{r.email}}</td>
-                            {% if r.role_id==1 %}
-                            <td>Admin</td>
-                            {% elif r.role_id==2 %}
-                            <td>Moderator</td>
-                            {% else %}
-                            <td>Member</td>
-                            {% endif %}
-                            <td>{{r.first_name}}</td>
-                            <td>{{r.last_name}}</td>
-                            <td>{{r.address}}</td>
-                            <td>{{r.city}}</td>
-                            <td>{{r.country}}</td>
-                            <td>{{r.birth_date}}</td>
-                            <td>{{r.contact_num}}</td>
-                            <td>{{r.description}}</td>
-                        </tr>
-                    </tbody>
-                    {% endfor %}
-                </table>
+        <section id="features" class="features-section">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-8 col-sm-offset-2 text-center">
+                        <div class="card">
+                            <div class="dropdown text-left">
+                                <button class="dropdown btn dropdown-toggle" type="button" data-toggle="dropdown">Sort
+                                <span class="caret"></span></button>
+                                <div class="dropdown-menu">
+                                    <ul>
+                                        <li><a href="/admin/users">View All</a></li>
+                                        <li><a href="/admin/users/sort/admin">Admin</a></li>
+                                        <li><a href="/admin/users/sort/moderator">Moderator</a></li>
+                                        <li><a href="/admin/users/sort/member">Member</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <a href="/admin/users/create" class="btn btn-info pull-left">Add User</a>
+                            <a href="" class="btn btn-danger pull-right" style="">Delete</a>
+                            <table id="mytable" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th style="text-align: center"><input type="checkbox" id="checkall"/></th>
+                                        <th>ID</th>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Role</th>
+                                    </tr>
+                                </thead>
+                                {% for r in result %}
+                                <tbody>
+                                    <tr>
+                                        <td><a href="/admin/users/edit/{{r.username}}" class="btn btn-success btn-xs pull-right" style="text-align: center"><span class="glyphicon glyphicon-pencil"></span></a></td>
+                                        {% if r.role_id==1%}
+                                        <td style="text-align: center"><input type="checkbox" class="checkthis" id="" value="{{r.username}}" disabled readonly/></td>
+                                        {% else %}
+                                        <td style="text-align: center"><input type="checkbox" class="checkthis" id="{{r.username}}" value="{{r.username}}"/></td>
+                                        {% endif %}
+                                        <td>{{r.id}}</td>
+                                        <td>{{r.username}}</td>
+                                        <td>{{r.email}}</td>
+                                        <td>{{r.first_name}}</td>
+                                        <td>{{r.last_name}}</td>
+                                        {% if r.role_id==1 %}
+                                        <td>Admin</td>
+                                        {% elif r.role_id==2 %}
+                                        <td>Moderator</td>
+                                        {% else %}
+                                        <td>Member</td>
+                                        {% endif %}
+                                    </tr>
+                                </tbody>
+                                {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </section>
+        <div class="container text-center">
+            <nav class="navbar navbar-default navbar-fixed-bottom">
+                <ul class="pagination" style="alignment: center">
+                    <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+                    <li class="active"><a href="#">1</a></li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li><a href="#">4</a></li>
+                    <li><a href="#">5</a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+                </ul>
+            </nav>
         </div>
-    </div>
-</div>
 
+    <!--Common plugins-->
+        <script type="text/javascript" src="{{ url_for('.static', filename='js/jquery.min.js') }}"></script>
 
+        <script type="text/javascript" src="{{ url_for('.static', filename='js/bootstrap.min.js') }}"></script>
 
+        <script type="text/javascript" src="{{ url_for('.static', filename='js/help.js') }}"></script>
 
-    <!--   Core JS Files   -->
-    <link rel="stylesheet" type="text/javascript" href="/static//js/jquery-1.10.2.js">
-    <link rel="stylesheet" type="text/javascript" href="/static//js/bootstrap.min.js">
+        <script type="text/javascript" src="{{ url_for('.static', filename='js/sweetalert.min.js') }}"></script>
 
-	<!--  Checkbox, Radio & Switch Plugins -->
-    <link rel="stylesheet" href="/static//js/bootstrap-checkbox-radio-switch.js">
+        <script type="text/javascript" src="{{ url_for('.static', filename='js/pace.min.js') }}"></script>
 
-    <!--  Google Maps Plugin    -->
-    <link rel="stylesheet" type="text/javascript" href="https://maps.googleapis.com/maps/api/js?sensor=false">
+        <script type="text/javascript" src="{{ url_for('.static', filename='js/landing.custom.js') }}"></script>
 
+        <script type="text/javascript" src="{{ url_for('.static', filename='js/maintainscroll.jquery.min.js') }}"></script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script>  $(document).ready(function(){
+                    $("#mytable #checkall").click(function () {
+                        if ($("#mytable #checkall").is(':checked')) {
+                            $("#mytable input[type=checkbox]").each(function () {
+                                $(this).prop("checked", true);
+                            });
+
+                        } else {
+                            $("#mytable input[type=checkbox]").each(function () {
+                                $(this).prop("checked", false);
+                            });
+                        }
+                    });
+
+                     $("[data-toggle=tooltip]").tooltip();
+                 });
+        </script>
 </body>
 </html>
