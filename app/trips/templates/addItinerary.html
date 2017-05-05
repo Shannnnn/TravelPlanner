@@ -11,9 +11,34 @@
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="viewport" content="width=device-width" />
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.4/jquery.datetimepicker.css">
     <link rel="stylesheet" href="/resources/demos/style.css">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.4/build/jquery.datetimepicker.full.js"></script>
+    <script>
+    $( function() {
+        $( "#datepicker" ).datepicker();
+    });
+    $( function() {
+        $( "#datepicker2" ).datepicker();
+    });
+    $( function(){
+        $('#timepicker').datetimepicker({
+        datepicker: false,
+        format: "H:i"
+        });
+    });
+    $( function(){
+        $('#timepicker2').datetimepicker({
+        datepicker: false,
+        format: "H:i"
+        });
+    });
+    </script>
 
     <!-- Bootstrap core CSS     -->
     <link rel="stylesheet" href="{{ url_for('.static', filename='css/bootstrap.min.css') }}">
@@ -68,7 +93,7 @@
                 <li>
                     <a href="/trips">
                         <i class="pe-7s-note2"></i>
-                        <p>{{ itineraries.tineraryName}}</p>
+                        <p>Trips</p>
                     </a>
                 </li>
             </ul>
@@ -142,14 +167,23 @@
                                                     {{wtf.form_field(form.itinerary_date_to, id="datepicker2")}}
                                                 </div>
                                         </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <div class="form-group">
+                                                {{wtf.form_field(form.itinerary_desc)}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col-md-4">
                                                 <div class="form-group">
-                                                    {{wtf.form_field(form.itinerary_time_from)}}
+                                                    {{wtf.form_field(form.itinerary_time_from, id="timepicker")}}
                                                 </div>
                                         </div>
                                         <div class="col-md-4">
                                                 <div class="form-group">
-                                                    {{wtf.form_field(form.itinerary_time_to)}}
+                                                    {{wtf.form_field(form.itinerary_time_to, id="timepicker2")}}
                                                 </div>
                                         </div>
                                     </div>

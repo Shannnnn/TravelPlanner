@@ -4,14 +4,11 @@ from flask_login import current_user
 from forms import TripForm, ItineraryForm, EditTripForm
 from model import Trips, Itineraries
 from app import db
-<<<<<<< HEAD
-=======
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import BaseView, expose
 from werkzeug import secure_filename
 from PIL import Image
->>>>>>> 7647a4886305eff2d5fa68c7d7479140cc51a8b7
 
 trip = Flask(__name__)
 trip_blueprint = Blueprint('trip_blueprint', __name__, template_folder='templates', url_prefix='/trips',
@@ -53,28 +50,31 @@ def addtrip():
 
 @trip_blueprint.route('/', methods=['GET'])
 def trips():
-<<<<<<< HEAD
     trip = Trips.query.filter_by(userID=current_user.id)
     return render_template('/trip.html', trips=trip)
 
 @trip_blueprint.route('/<tripName>/edit', methods=['GET', 'POST'])
 def editTrips(tripName):
-    error = None
     tripname = Trips.query.filter_by(tripName=tripName).first()
     form = EditTripForm()
+    trips = Trips.query.all()
     if request.method == 'POST':
         if form.validate_on_submit():
-            form = Itineraries(tripName=EditTripForm.trip_name.data,
-                             tripDateFrom=EditTripForm.trip_date_from.data,
-                             tripDateTo=EditTripForm.trip_date_to.data)
-            db.session.add(form)
+            tripname.tripName = form.trip_name.data
+            tripname.tripDateFrom = form.trip_date_from.data
+            tripname.tripDateTo = form.trip_date_to.data
+            db.session.add(tripname)
             db.session.commit()
-            return redirect(url_for('trip_blueprint.editTrips'))
-    return render_template('edittrip.html', tripname=tripname, error=error, form=form)
-
+        return render_template('trip.html', trips=trips)
+    else:
+        form.trip_name.data = tripname.tripName
+        form.trip_date_from.data = tripname.tripDateFrom
+        form.trip_date_to.data = tripname.tripDateTo
+    return render_template('edittrip.html', form=form, tripname=tripname)
 
 @trip_blueprint.route('/<tripName>/additineraries', methods=['GET', 'POST'])
-def addItinerary(tripName):
+def additineraries(tripName):
+    tripid = Trips.query.filter_by(tripName=tripName).first()
     error = None
     itineraryForm = ItineraryForm()
     if request.method == 'POST':
@@ -82,20 +82,19 @@ def addItinerary(tripName):
             itineraryform = Itineraries(itineraryName=itineraryForm.itinerary_name.data,
                              itineraryDateFrom=itineraryForm.itinerary_date_from.data,
                              itineraryDateTo=itineraryForm.itinerary_date_to.data,
+                             itineraryDesc=itineraryForm.itinerary_desc.data,
                              itineraryTimeFrom=itineraryForm.itinerary_time_from.data,
                              itineraryTimeTo=itineraryForm.itinerary_time_to.data,
-                             tripID=tripName.tripID)
+                             tripID=tripid.tripID)
             db.session.add(itineraryform)
             db.session.commit()
-            return redirect(url_for('trip_blueprint.addItinerary'))
-    return render_template('addItinerary.html', form=itineraryForm, error=error)
+            return redirect(url_for("trip_blueprint.additineraries", tripName=tripName))
+
+    return render_template('addItinerary.html', error=error, itineraries=itineraries, form=itineraryForm)
 
 @trip_blueprint.route('/<tripName>/itineraries', methods=['GET'])
-def itineraries():
-    error = None
-    return render_template('addItinerary.html', error=error)
-=======
-    cursor = db.session.execute("""SELECT "tripName", "tripDateFrom", "tripDateTo" from "trips" WHERE "userID" = '{userID_}'""".format(userID_=current_user.id))
-    return render_template('/trip.html', trips = cursor.fetchall())
-
->>>>>>> 7647a4886305eff2d5fa68c7d7479140cc51a8b7
+def itineraries(tripName):
+    tripid = Trips.query.filter_by(tripName=tripName).first()
+    itinerary = Itineraries.query.filter_by(tripID=tripid.tripID)
+    trip = Trips.query.filter_by(userID=current_user.id)
+    return render_template('itineraries.html', trips=trip, itineraries=itinerary)

@@ -82,14 +82,9 @@ def paginate(index):
         fromL.append(trip.tripDateFrom)
         toL.append(trip.tripDateTo)
         tripViews.append(trip.viewsNum)
-<<<<<<< HEAD
-        determiner = trips.has_next
-    return jsonify(result1=tripnameL, result2=fromL, result3=toL, result4=tripViews, size=len(tripnameL), determiner=determiner)
-=======
         image.append(trip.img_thumbnail)
   
     return jsonify(result1=tripnameL, result2=fromL, result3=toL, result4=tripViews, result5=image, size=len(tripnameL), determiner=determiner)
->>>>>>> 7647a4886305eff2d5fa68c7d7479140cc51a8b7
 
 @landing_blueprint.route('/sendResponse')
 def sendMail():

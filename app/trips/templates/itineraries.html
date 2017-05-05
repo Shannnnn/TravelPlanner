@@ -117,34 +117,39 @@
         </nav>
 
 
+        {% for trip in trips %}
         <div class="content">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-8">
                         <div class="card">
                             <div class="header">
-                                <h4 class="title">Your Trips</h4>
-                                <h5><a href="/trips/createtrip" class="button">Add a Trip</a></h5>
+                                <h4 class="title">Your Itineraries</h4>
+                                <h5><a href="/trips/{{ trip.tripName }}/additineraries" class="button">Add an Itinerary</a></h5>
                             </div>
                                 <div class="row">
-                                    {% for trip in trips %}
+                                    {% for itinerary in itineraries %}
                                     <div class="col-sm-3 text-center">
                                     <div class="container" style="display:inline; width:100%;">
                                     <div class="panel panel-default bootcards-media" style="width:100%;">
                                     <div class="panel-heading" align="left" style="width: 100%;">
-                                        {{ trip.tripName }}
+                                        {{ itinerary.itineraryName }}
                                         <a href="/trips/{{ trip.tripName }}/edit" class="btn btn-primary" style="display: block; margin: 0 auto;">Edit</a>
                                     </div>
                                     <div class="panel-body" style="width: 100%; height: 100%;" align="center">
                                     <img style="height: 100%; width: 100%; object-fit:contain;" src="https://i.ytimg.com/vi/QGiJFumHUPo/maxresdefault.jpg"/></div>
                                     <div class="panel-footer" align="left" style="display: inline-block; width: 100%;">
                                         <div class="row">
-                                            &nbsp; From: {{ trip.tripDateFrom }}
+                                            &nbsp; From: {{ itinerary.itineraryDateFrom }}
                                         </div>
                                         <div class="row">
-                                            &nbsp; To: {{ trip.tripDateTo }}
-                                            <br>&nbsp; {{ trip.viewsNum }} views
-                                            <a href="/trips/{{ trip.tripName }}/additineraries" class="btn btn-primary" style="display: block; margin: 0 auto;">Add Itineraries</a>
+                                            &nbsp; To: {{ itinerary.itineraryDateTo }}
+                                        </div>
+                                        <div class="row">
+                                              From: {{ itinerary.itineraryTimeFrom }}
+                                        </div>
+                                        <div class="row">
+                                              To: {{ itinerary.itineraryTimeTo }}
                                         </div>
                                     </div>
                                 </div>
@@ -157,6 +162,7 @@
                     </div>
                 </div>
             </div>
+        {% endfor %}
         </div>
 
 

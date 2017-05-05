@@ -131,7 +131,7 @@
                                     <div class="col-sm-3 text-center">
                                     <div class="container" style="display:inline; width:100%;">
                                     <div class="panel panel-default bootcards-media" style="width:100%;">
-                                    <div class="panel-heading" align="left" style="width: 100%;">
+                                    <div class="panel-heading" align="center" style="width: 100%;">
                                         {{ trip.tripName }}
                                         <a href="/trips/{{ trip.tripName }}/edit" class="btn btn-primary" style="display: block; margin: 0 auto;">Edit</a>
                                     </div>
@@ -144,7 +144,11 @@
                                         <div class="row">
                                             &nbsp; To: {{ trip.tripDateTo }}
                                             <br>&nbsp; {{ trip.viewsNum }} views
+                                        </div>
+                                        <div class="panel-footer">
+                                            <div class="row" align="left" style="display: inline-block; width: 135%;">
                                             <a href="/trips/{{ trip.tripName }}/additineraries" class="btn btn-primary" style="display: block; margin: 0 auto;">Add Itineraries</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
