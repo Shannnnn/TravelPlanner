@@ -1,6 +1,6 @@
 <html lang="en">
 <head>
-	<meta charset="utf-8">
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
@@ -26,13 +26,6 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>
 
-    <style>
-        .dropdown {
-            position: relative;
-            display: inline-block;
-            alignment: left;
-        }
-    </style>
 </head>
 <body class="float-landing" data-spy="scroll" data-offset="70" data-taget=".navbar-default">
         <nav class="navbar navbar-default navbar-fixed-top">
@@ -63,8 +56,7 @@
                 <div class="row">
                     <div class="col-sm-8 col-sm-offset-2 text-center">
                         <div class="card">
-                            <a href="/admin/users/create" class="btn btn-info pull-left" role="button">Add User</a>
-                            <div class="dropdown">
+                            <div class="dropdown text-left">
                                 <button class="dropdown btn dropdown-toggle" type="button" data-toggle="dropdown">Sort
                                 <span class="caret"></span></button>
                                 <div class="dropdown-menu">
@@ -76,6 +68,7 @@
                                     </ul>
                                 </div>
                             </div>
+                            <a href="/admin/users/create" class="btn btn-info pull-left">Add User</a>
                             <a href="" class="btn btn-danger pull-right" style="">Delete</a>
                             <table id="mytable" class="table table-hover">
                                 <thead>
@@ -94,7 +87,11 @@
                                 <tbody>
                                     <tr>
                                         <td><a href="/admin/users/edit/{{r.username}}" class="btn btn-success btn-xs pull-right" style="text-align: center"><span class="glyphicon glyphicon-pencil"></span></a></td>
+                                        {% if r.role_id==1%}
+                                        <td style="text-align: center"><input type="checkbox" class="checkthis" id="" value="{{r.username}}" disabled readonly/></td>
+                                        {% else %}
                                         <td style="text-align: center"><input type="checkbox" class="checkthis" id="{{r.username}}" value="{{r.username}}"/></td>
+                                        {% endif %}
                                         <td>{{r.id}}</td>
                                         <td>{{r.username}}</td>
                                         <td>{{r.email}}</td>
@@ -111,22 +108,24 @@
                                 </tbody>
                                 {% endfor %}
                             </table>
-                            <ul class="pagination pull-right">
-                                <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
-                                <li class="active"><a href="#">1</a></li>
-                                <li><a href="#">2</a></li>
-                                <li><a href="#">3</a></li>
-                                <li><a href="#">4</a></li>
-                                <li><a href="#">5</a></li>
-                                <li><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
-                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-    </div>
-</div>
+        <div class="container text-center">
+            <nav class="navbar navbar-default navbar-fixed-bottom">
+                <ul class="pagination" style="alignment: center">
+                    <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+                    <li class="active"><a href="#">1</a></li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li><a href="#">4</a></li>
+                    <li><a href="#">5</a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+                </ul>
+            </nav>
+        </div>
 
     <!--Common plugins-->
         <script type="text/javascript" src="{{ url_for('.static', filename='js/jquery.min.js') }}"></script>
