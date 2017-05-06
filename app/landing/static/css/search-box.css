@@ -40,7 +40,7 @@ input[name="search_1"]:focus:hover {
 }
 
 input[name="search_1"]:focus {
-  width: 370px;
+  width: 350px;
   z-index: 1;
   border-bottom: 1px solid #BBB;
   cursor: text;

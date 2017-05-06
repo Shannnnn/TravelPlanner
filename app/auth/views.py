@@ -55,13 +55,6 @@ def sortuser():
     result = User.query.filter_by(role_id='3')
     return render_template('admin/users.html', result=result)
 
-#@auth_blueprint.route('/admin/users/create', methods=['GET', 'POST'])
-#@login_required
-#@required_roles('Admin')
-#def createuser():
-#    form = AdminEditForm()
-#    return render_template('admin/createusers.html', form = form)
-
 # USERS --> read
 @auth_blueprint.route('/admin/users', methods=['GET','POST'])
 @login_required
@@ -70,30 +63,22 @@ def manageusers():
     result = User.query.all()
     return render_template('admin/users.html', result=result)
 
-#open addusers()
 @auth_blueprint.route('/admin/users/create', methods=['GET','POST'])
 @login_required
 @required_roles('Admin')
-def createusers():
-    form = EditForm()
-    return render_template('admin/createusers.html', form=form)
-
-#create user
-auth_blueprint.route('/admin/users/new', methods=['GET','POST'])
-@login_required
-@required_roles('Admin')
 def addusers():
-    form = EditForm()
-    if form.validate_on_submit():
-        user = User.create(username=request.form['username'], role_id=request.form['role_id'], first_name=request.form['first_name'],
-                    last_name=request.form['last_name'], address=request.form['address'], city=request.form['city'],
-                    country=request.form['country'], birth_date=request.form['birth_date'], contact_num=request.form['contact_num'],
-                    description=request.form['description'])
-        db.session.add(user)
-        db.session.commit()
-        result = User.query.all()
-        flash("Your changes have been saved.")
-        return render_template('admin/users.html', result=result)
+    form = CreateForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            user = User.create(username=form.username.data, role_id=form.role_id.data, first_name=form.first_name.data,
+                            last_name=form.last_name.data, email=form.email.data, address=form.address.data, city=form.city.data,
+                            country=form.country.data, birth_date=form.birth_date.data, contact_num=form.contact_num.data,
+                            description=form.description.data)
+            db.session.add(user)
+            db.session.commit()
+            result = User.query.all()
+            flash("Your changes have been saved.")
+            return render_template('admin/users.html', result=result)
     return render_template('admin/createusers.html', form=form)
 
 #update
@@ -304,7 +289,6 @@ def user_profile(username):
     return render_template('users/userprofile.html', user=user, csID=str(current_user.id), csPic=str(cas))
 
 @auth_blueprint.route('/userprofile/<username>/edit', methods=['GET', 'POST'])
-@auth_blueprint.route('/userprofile/edit/<username>', methods=['GET', 'POST'])
 @login_required
 @required_roles('User')
 def edit(username):

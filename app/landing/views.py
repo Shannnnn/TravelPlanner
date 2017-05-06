@@ -4,7 +4,7 @@ from flask_login import LoginManager, current_user, AnonymousUserMixin
 from app import db, app
 from decorators import send_email, verify, POSTS_PER_PAGE
 from sqlalchemy import func, desc
-from app.trips.model import Trips
+from app.trips.model import Trips, Itineraries
 from app.auth.model import User, Photos
 from model import Anonymous
 
@@ -53,13 +53,14 @@ def siteSearch():
 def mock(Tripname):
     trips = Trips.query.filter_by(tripName=Tripname).first()
     trips.viewsNum = trips.viewsNum + 1
+
+    itern = Itineraries.query.filter_by(tripID=trips.tripID).all()
+
     db.session.add(trips)
     db.session.commit()
-    label = []
     label = verify()
-    return render_template('view_trip.html', title=trips.tripName, trips=trips, label=label)
+    return render_template('view_trip.html', title=trips.tripName, trips=trips, label=label, ite=itern)
 
-@landing_blueprint.route('/trip-plans/')
 @landing_blueprint.route('/trip-plans/<linklabel>', methods=['GET','POST'])
 def view_each(linklabel='all trips made in this site'):
     label=verify()
@@ -112,7 +113,7 @@ def paginate(index):
   
     return jsonify(result1=tripnameL, result2=fromL, result3=toL, result4=tripViews, result5=image, size=len(tripnameL), determiner=determiner)
 
-@landing_blueprint.route('/sendRepsonse')
+@landing_blueprint.route('/sendResponse')
 def sendMail():
     body = "From: %s \n Email: %s \n Message: %s" % (request.args.get('name'), request.args.get('email'), request.args.get('body'))
     send_email('TravelPlanner', 'travelplannerSy@gmail.com', ['travelplannerSy@gmail.com'], body)

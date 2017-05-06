@@ -23,12 +23,20 @@
 
     <!--  CSS for Demo Purpose, don't include it in your project     -->
     <link rel="stylesheet" href="{{ url_for('.static', filename='css//demo.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/simple-line-icons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/pace.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/landing-style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/help.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/sweetalert.css') }}">
 
     <!--     Fonts and icons     -->
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
     <link rel="stylesheet" type='text/css' href="http://fonts.googleapis.com/css?family=Roboto:400,700,300">
     <link rel="stylesheet" href="{{ url_for('.static', filename='css/pe-icon-7-stroke.css') }}">
-
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 </head>
 <body>
 
@@ -44,7 +52,7 @@
 
     	<div class="sidebar-wrapper">
             <div class="logo">
-                <a class="simple-text" herf="/main/">
+                <a class="simple-text" href="/main/">
                     TravelPlanner
                 </a>
             </div>
@@ -118,37 +126,42 @@
                                 <h4 class="title">Your Trips</h4>
                                 <h5><a href="/trips/createtrip" class="button">Add a Trip</a></h5>
                             </div>
-                            <div class="content">
-                                <div class="table">
-                                    <table class="table">
-                                        <tbody>
-                                        <tr>
-                                            {% for trip in trips %}
-                                            <td style="font-size: large">{{trip.tripName}}</td>
-                                            {% endfor %}
-                                        </tr>
-                                        <tr>
-                                            {% for trip in trips %}
-                                            <td style="font-size: large">{{trip.tripDateFrom}}</td>
-                                            {% endfor %}
-                                        </tr>
-                                        <tr>
-                                            {% for trip in trips %}
-                                            <td style="font-size: large">{{trip.tripDateTo}}</td>
-                                            {% endfor %}
-                                        </tr>
-                                        </tbody>
-                                    </table>
+                                <div class="row">
+                                    {% for trip in trips %}
+                                    <div class="col-sm-3 text-center">
+                                    <div class="container" style="display:inline; width:100%;">
+                                    <div class="panel panel-default bootcards-media" style="width:100%;">
+                                    <div class="panel-heading" align="center" style="width: 100%;">
+                                        {{ trip.tripName }}
+                                        <a href="/trips/{{ trip.tripName }}/edit" class="btn btn-primary" style="display: block; margin: 0 auto;">Edit</a>
+                                    </div>
+                                    <div class="panel-body" style="width: 100%; height: 100%;" align="center">
+                                    <img style="height: 100%; width: 100%; object-fit:contain;" src="https://i.ytimg.com/vi/QGiJFumHUPo/maxresdefault.jpg"/></div>
+                                    <div class="panel-footer" align="left" style="display: inline-block; width: 100%;">
+                                        <div class="row">
+                                            &nbsp; From: {{ trip.tripDateFrom }}
+                                        </div>
+                                        <div class="row">
+                                            &nbsp; To: {{ trip.tripDateTo }}
+                                            <br>&nbsp; {{ trip.viewsNum }} views
+                                        </div>
+                                        <div class="panel-footer">
+                                            <div class="row" align="left" style="display: inline-block; width: 135%;">
+                                            <a href="/trips/{{ trip.tripName }}/additineraries" class="btn btn-primary" style="display: block; margin: 0 auto;">Add Itineraries</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
 
 </body>

@@ -1,8 +1,8 @@
 import os
 from flask import Flask, render_template, redirect, Blueprint, request, flash, url_for, send_from_directory
 from flask_login import current_user
-from forms import TripForm
-from model import Trips
+from forms import TripForm, ItineraryForm, EditTripForm
+from model import Trips, Itineraries
 from app import db
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
@@ -57,6 +57,57 @@ def addtrip():
 
 @trip_blueprint.route('/', methods=['GET'])
 def trips():
-    cursor = db.session.execute("""SELECT "tripName", "tripDateFrom", "tripDateTo" from "trips" WHERE "userID" = '{userID_}'""".format(userID_=current_user.id))
-    return render_template('/trip.html', trips = cursor.fetchall())
+    trip = Trips.query.filter_by(userID=current_user.id)
+    return render_template('/trip.html', trips=trip)
 
+@trip_blueprint.route('/<tripName>/edit', methods=['GET', 'POST'])
+def editTrips(tripName):
+    tripname = Trips.query.filter_by(tripName=tripName).first()
+    form = EditTripForm()
+    trips = Trips.query.all()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            tripname.tripName = form.trip_name.data
+            tripname.tripDateFrom = form.trip_date_from.data
+            tripname.tripDateTo = form.trip_date_to.data
+            db.session.add(tripname)
+            db.session.commit()
+        return render_template('trip.html', trips=trips)
+    else:
+        form.trip_name.data = tripname.tripName
+        form.trip_date_from.data = tripname.tripDateFrom
+        form.trip_date_to.data = tripname.tripDateTo
+    return render_template('edittrip.html', form=form, tripname=tripname)
+
+@trip_blueprint.route('/<tripName>/additineraries', methods=['GET', 'POST'])
+def additineraries(tripName):
+    tripid = Trips.query.filter_by(tripName=tripName).first()
+    error = None
+    itineraryForm = ItineraryForm()
+    if request.method == 'POST':
+        if itineraryForm.validate_on_submit():
+            itineraryform = Itineraries(itineraryName=itineraryForm.itinerary_name.data,
+                             itineraryDateFrom=itineraryForm.itinerary_date_from.data,
+                             itineraryDateTo=itineraryForm.itinerary_date_to.data,
+                             itineraryDesc=itineraryForm.itinerary_desc.data,
+                             itineraryTimeFrom=itineraryForm.itinerary_time_from.data,
+                             itineraryTimeTo=itineraryForm.itinerary_time_to.data,
+                             tripID=tripid.tripID)
+            db.session.add(itineraryform)
+            db.session.commit()
+            return redirect(url_for("trip_blueprint.additineraries", tripName=tripName))
+
+    ph = Photos.query.filter_by(id=current_user.profile_pic).first()
+    if ph is None:
+        cas = 'default'
+    else:
+        cas = ph.photoName
+
+    return render_template('addItinerary.html', error=error, itineraries=itineraries, form=itineraryForm, csID=str(current_user.id), csPic=str(cas))
+
+@trip_blueprint.route('/<tripName>/itineraries', methods=['GET'])
+def itineraries(tripName):
+    tripid = Trips.query.filter_by(tripName=tripName).first()
+    itinerary = Itineraries.query.filter_by(tripID=tripid.tripID)
+    trip = Trips.query.filter_by(userID=current_user.id)
+    return render_template('itineraries.html', trips=trip, itineraries=itinerary)
