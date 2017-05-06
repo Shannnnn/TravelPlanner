@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<!--contact-->
+         <section id="intro" class="intro-section" style="background-image: url('{{ url_for('.static', filename='images/misc/GP.jpg') }}'); background-repeat: no-repeat; background-size: contain; background-position: center; background-size: 1500px 660px;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2 text-center">
+                        <h1><span style="color: #ffffff;">Got Any Concerns in Mind?</span></h1>
+                        <h4 style="color: #D3D3D3;">
+                            Scroll down below and message us.
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-8 col-sm-offset-2 text-center">
+                        <h1 class="center-title"><span class="text-indigo">Connect with us</span> anytime</h1>
+                        <p class="subtitle">
+                            Please send us messages if ever there are concerns that you want to clarify or add.
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2">
+                        <div class="row">
+                            <div class="col-sm-6 margin-b-30">
+                               <form role="form" onSubmit="return false;">
+                                    <div class="form-group">
+                                        <label for="name">Name</label>
+                                        <input type="text" id="name" name="resID" class="form-control" placeholder="John Doe" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <input type="email" id="email" name="resEMAIL" class="form-control" placeholder="john@doe.com" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="message">Message</label>
+                                        <textarea id="message"  name="resMSG" class="form-control" rows="5" placeholder="Lorem ipsum dolor..." required></textarea>
+                                    </div>
+                                    <input type="submit" value="Send Message" class="btn btn-indigo btn-rounded btn-lg" onclick="sendMail();">
+                                </form>
+                            </div>
+                            <div class="col-sm-6 margin-b-30">
+                                <address>
+                                    <strong><span class="navy">TravelPlanner, 2017.</span></strong><br>
+                                    Andres Bonifacio Avenue, Tibanga, 9200<br>
+                                    Iligan City, Philippines<br>
+                                </address>
+                                <ul class="list-inline">
+                                    <li><a href="http://www.github.com/shannnnn/travelplanner" target="_blank"><i class="fa fa-github" style="color:#ffffff;"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!--end contact-->
+
+{% endblock %} 

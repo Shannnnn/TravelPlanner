@@ -3,6 +3,8 @@ from app import app, mail
 from flask_mail import Message
 from flask_login import current_user
 
+POSTS_PER_PAGE = 4
+
 def determine(id_):
     detail=""
     if(id_==1):

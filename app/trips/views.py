@@ -9,6 +9,7 @@ from flask_admin.contrib.sqla import ModelView
 from flask_admin import BaseView, expose
 from werkzeug import secure_filename
 from PIL import Image
+from app.auth.model import Photos
 
 trip = Flask(__name__)
 trip_blueprint = Blueprint('trip_blueprint', __name__, template_folder='templates', url_prefix='/trips',
@@ -39,14 +40,20 @@ def addtrip():
             if tripForm.file.data and allowed_file(tripForm.file.data.filename):
                 filename = secure_filename(tripForm.file.data.filename)
                 tripForm.file.data.save(os.path.join(img_folder+'trips/', filename))
-            ex = os.path.splitext(filename)[1][1:]
-            st = img_folder+'trips/'+filename
-            img = Image.open(open(str(st), 'rb'))
-            img.save(str(st), format=None, quality=50)
+            #ex = os.path.splitext(filename)[1][1:]
+            #st = img_folder+'trips/'+filename
+            #img = Image.open(open(str(st), 'rb'))
+            #img.save(str(st), format=None, quality=50)
 
             return redirect(url_for('trip_blueprint.addtrip'))
 
-    return render_template('addtrip.html', form=tripForm, error=error)
+    ph = Photos.query.filter_by(id=current_user.profile_pic).first()
+    if ph is None:
+        cas = 'default'
+    else:
+        cas = ph.photoName
+
+    return render_template('addtrip.html', form=tripForm, error=error, csID=str(current_user.id), csPic=str(cas))
 
 @trip_blueprint.route('/', methods=['GET'])
 def trips():

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block content %}
+
+        <section id="intro" class="intro-section" style="background-image: url('{{ url_for('.static', filename='images/misc/team.jpeg') }}'); background-repeat: no-repeat; background-size: contain; background-position: center; background-size: 1500px 660px;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2 text-center">
+                        <h1><span style="color: #ffffff;">About Us</span></h1>
+                        <h4 style="color: #D3D3D3;">
+                            Find out more about us and what we do.
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+		<!--team section-->
+        <section id="team" class="team-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-8 col-sm-offset-2 text-center">
+                        <h1 class="center-title">Who We <span class="text-indigo">Are?</span></h1>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4 margin-b-30">
+                    </div>
+                    <div class="col-sm-4 margin-b-30">
+                        <img style="height: 30%; width: 30%; object-fit:contain;" src="{{ url_for('.static', filename='images/misc/ninja-simple-512.png') }}" alt="" class="img-circle">
+                        <h4>Malik Maulana</h4>
+                        <p>
+                            Adviser<br>Mindanao State University-Iligan Institute of Technology
+                        </p>
+                    </div>
+                    <div class="col-sm-4 margin-b-30">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4 margin-b-30">
+                        <img style="height: 30%; width: 30%; object-fit:contain;" src="{{ url_for('.static', filename='images/misc/ninja-simple-512.png') }}" alt="" class="img-circle">
+                        <h4>Seanne Canoy</h4>
+                        <p>
+                            BSCS-III Student<br>Mindanao State University-Iligan Institute of Technology
+                        </p>
+                    </div>  
+                    <div class="col-sm-4 margin-b-30">
+                        <img style="height: 30%; width: 30%; object-fit:contain;" src="{{ url_for('.static', filename='images/misc/ninja-simple-512.png') }}" alt="" class="img-circle">
+                        <h4>Joanna Ompoc</h4>
+                        <p>
+                            BSCS-III Student<br>Mindanao State University-Iligan Institute of Technology
+                        </p>
+                    </div>  
+                    <div class="col-sm-4 margin-b-30">
+                        <img style="height: 30%; width: 30%; object-fit:contain;" src="{{ url_for('.static', filename='images/misc/ninja-simple-512.png') }}" alt="" class="img-circle">
+                        <h4>Chezl Van</h4>
+                        <p>
+                            BSCS-IV Student<br>Mindanao State University-Iligan Institute of Technology
+                        </p>
+                    </div>  
+                </div>
+                <div class="row">
+                    <div class="col-sm-4 margin-b-30">
+                        <img style="height: 30%; width: 30%; object-fit:contain;" src="{{ url_for('.static', filename='images/misc/ninja-simple-512.png') }}" alt="" class="img-circle">
+                        <h4>Shealtiel Cañon</h4>
+                        <p>
+                            BSCS-III Student<br>Mindanao State University-Iligan Institute of Technology
+                        </p>
+                    </div>  
+                    <div class="col-sm-4 margin-b-30">
+                        <img style="height: 30%; width: 30%; object-fit:contain;" src="{{ url_for('.static', filename='images/misc/ninja-simple-512.png') }}" alt="" class="img-circle">
+                        <h4>Dexter Esin</h4>
+                        <p>
+                            BSCS-IV Student<br>Mindanao State University-Iligan Institute of Technology
+                        </p>
+                    </div>  
+                    <div class="col-sm-4 margin-b-30">
+                        <img style="height: 30%; width: 30%; object-fit:contain;" src="{{ url_for('.static', filename='images/misc/ninja-simple-512.png') }}" alt="" class="img-circle">
+                        <h4>Earl Mark E. Barangot</h4>
+                        <p>
+                            BSCS-III Student<br>Mindanao State University-Iligan Institute of Technology
+                        </p>
+                    </div>  
+                </div>
+            </div>
+        </section>
+        <!--end team section-->
+
+{% endblock %} 

@@ -30,7 +30,7 @@ class User(db.Model, UserMixin):
     birth_date = db.Column(db.Date)
     contact_num = db.Column(db.BIGINT)
     description = db.Column(db.String(300))
-    profile_pic = db.Column(db.String(70))
+    profile_pic = db.Column(db.Integer, nullable=True)
     
     #User Information modification on first login
     first_login = db.Column(db.Boolean, default=True, nullable=False)
@@ -49,7 +49,7 @@ class User(db.Model, UserMixin):
         self.birth_date = None
         self.contact_num = 0
         self.description = ""
-        self.profile_pic = "default"
+        self.profile_pic =  None
 
     def create(self, username, email, password, role_id, first_name, last_name, address, city, country, birth_date, contact_num, description):
         self.username = username
@@ -162,3 +162,21 @@ class Connection(db.Model):
                                                                                       self.user_a_id,
                                                                                       self.user_b_id,
                                                                                       self.status)
+
+class Photos(db.Model):
+    __tablename__ = "User_Photos"
+
+    id = db.Column(db.Integer, primary_key=True)
+    photoName = db.Column(db.String(300))
+    photoDate = db.Column(db.Date)
+    photoLocation = db.Column(db.String(300))
+    userID = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+
+    def __init__(self, photoName, photoDate, photoLocation, userID):
+        self.photoName = photoName
+        self.photoDate = photoDate
+        self.photoLocation = photoLocation
+        self.userID = userID
+
+    def __repr__(self):
+        return '<photoName {}>'.format(self.photoName)

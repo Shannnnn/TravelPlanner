@@ -2,16 +2,17 @@ import os
 from flask import Flask, render_template, redirect, Blueprint, request, flash, url_for
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user, AnonymousUserMixin
 from werkzeug.security import check_password_hash
-from model import User, Role, Anonymous
-from forms import LoginForm, RegisterForm, EditForm, SearchForm, AdminEditForm
-from forms import LoginForm, RegisterForm, EditForm, SearchForm, TripForm
+from model import User, Role, Anonymous, Photos
+from forms import LoginForm, RegisterForm, EditForm, SearchForm, AdminEditForm, TripForm
 from model import User, Role
 from app import db, app
-from decorators import required_roles, get_friends, get_friend_requests, allowed_file, deleteTrip_user
+from decorators import required_roles, get_friends, get_friend_requests, allowed_file, deleteTrip_user, img_folder
 from app.landing.views import landing_blueprint
 from werkzeug import secure_filename
 from PIL import Image
 from app.trips.model import Trips
+import datetime
+import time
 
 auth = Flask(__name__)
 auth_blueprint = Blueprint('auth_blueprint', __name__, template_folder='templates', static_folder='static', static_url_path='/static/')
@@ -21,7 +22,6 @@ login_manager.init_app(app)
 login_manager.login_view = 'auth_blueprint.login'
 login_manager.anonymous_user = Anonymous
 
-img_folder = 'app/auth/static/images/'
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -227,7 +227,13 @@ def connections():
 @login_required
 @required_roles('User')
 def home():
-    return render_template('users/dashboard.html', username=current_user.username, profile=current_user.profile_pic)
+    ph = Photos.query.filter_by(id=current_user.profile_pic).first()
+    if ph is None:
+        cas = 'default'
+    else:
+        cas = ph.photoName
+        
+    return render_template('users/dashboard.html', username=current_user.username, csID=str(current_user.id), csPic=str(cas))
 
 
 @auth_blueprint.route('/new-trip')
@@ -289,8 +295,13 @@ def search_users(query):
 @login_required
 @required_roles('User')
 def user_profile(username):
+    ph = Photos.query.filter_by(id=current_user.profile_pic).first()
+    if ph is None:
+        cas = 'default'
+    else:
+        cas = ph.photoName
     user = User.query.filter_by(username=username).first()
-    return render_template('users/userprofile.html', user=user)
+    return render_template('users/userprofile.html', user=user, csID=str(current_user.id), csPic=str(cas))
 
 @auth_blueprint.route('/userprofile/<username>/edit', methods=['GET', 'POST'])
 @auth_blueprint.route('/userprofile/edit/<username>', methods=['GET', 'POST'])
@@ -299,41 +310,52 @@ def user_profile(username):
 def edit(username):
     user = User.query.filter_by(username=username).first()
     form = EditForm()
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            current_user.first_name = form.first_name.data
-            current_user.last_name = form.last_name.data
-            current_user.address = form.address.data
-            current_user.city = form.city.data
-            current_user.country = form.country.data
-            current_user.birth_date = form.birth_date.data
-            current_user.contact_num = form.contact_num.data
-            current_user.description = form.description.data
+    if form.validate_on_submit():
+        current_user.first_name = form.first_name.data
+        current_user.last_name = form.last_name.data
+        current_user.address = form.address.data
+        current_user.city = form.city.data
+        current_user.country = form.country.data
+        current_user.birth_date = form.birth_date.data
+        current_user.contact_num = form.contact_num.data
+        current_user.description = form.description.data
 
-            if form.file.data.filename==None or form.file.data.filename=='':
-                current_user.profile_pic = current_user.profile_pic
-            else:
-                if(current_user.profile_pic=='default'):
-                    pass
-                else:
-                    os.remove(img_folder+'users/'+str(current_user.profile_pic))
+        now_loc = img_folder+str(current_user.id)
+        if os.path.isdir(now_loc)==False:
+            os.makedirs(now_loc)
 
-                current_user.profile_pic=form.file.data.filename
+        if form.file.data.filename==None or form.file.data.filename=='':
+            current_user.profile_pic = current_user.profile_pic
+        else:  
+            if form.file.data and allowed_file(form.file.data.filename):
+                filename = secure_filename(form.file.data.filename)
+                form.file.data.save(os.path.join(now_loc+'/', filename))
 
-                if form.file.data and allowed_file(form.file.data.filename):
-                    filename = secure_filename(form.file.data.filename)
-                    form.file.data.save(os.path.join(img_folder+'users/', filename))
-                ex = os.path.splitext(filename)[1][1:]
-                st = img_folder+'users/'+filename
-                img = Image.open(open(str(st), 'rb'))
-                img.save(str(st), format=None, quality=50)
+                uploadFolder = now_loc+'/'
+                nameNow = str(int(time.time()))+'.'+str(os.path.splitext(filename)[1][1:])
+                os.rename(uploadFolder+filename, uploadFolder+nameNow)
 
-            db.session.add(current_user)
+            date = datetime.datetime.today().strftime('%m/%d/%y')
+            photo = Photos(photoName=nameNow, photoDate=date, photoLocation=now_loc, userID=current_user.id)          
+            db.session.add(photo)
             db.session.commit()
 
+            ph_1 = Photos.query.filter_by(userID=current_user.id).all()
+            for p in ph_1:
+                if p.photoName==str(nameNow):
+                    current_user.profile_pic=p.id
 
-            flash("Your changes have been saved.")
-            return render_template('users/userprofile.html', user=user)
+        db.session.add(current_user)
+        db.session.commit()
+
+        ph = Photos.query.filter_by(id=current_user.profile_pic).first()
+        if ph is None:
+            cas = 'default'
+        else:
+            cas = ph.photoName
+
+        flash("Your changes have been saved.")
+        return render_template('users/userprofile.html', user=user, csID=str(current_user.id), csPic=str(cas))
     else:
         form.first_name.data = current_user.first_name
         form.last_name.data = current_user.last_name
@@ -343,7 +365,13 @@ def edit(username):
         form.birth_date.data = current_user.birth_date
         form.contact_num.data = current_user.contact_num
         form.description.data = current_user.description
-        return render_template('users/edit_profile.html', user=user, form=form)
+
+        ph = Photos.query.filter_by(id=current_user.profile_pic).first()
+        if ph is None:
+            cas = 'default'
+        else:
+            cas = ph.photoName
+        return render_template('users/edit_profile.html', user=user, form=form, csID=str(current_user.id), csPic=str(cas))
 
 
 @auth_blueprint.route('/login', methods=['GET', 'POST'])

@@ -174,10 +174,10 @@
                                 <div class="author">
                                      <a href="#">
                                     <!--<img class="avatar border-gray" src="{{current_user.gravatar(size=256)}}" alt="..."/>-->
-                                    {% if current_user.profile_pic=='default' %}
+                                     {% if csPic=='default' %}
                                         <img class="avatar border-gray" src="{{current_user.gravatar(size=256)}}" alt="..."/>
                                      {% else %}
-                                        <img class="avatar border-gray" src="/static//images/users/{{ current_user.profile_pic }}" alt="..."/>
+                                        <img class="avatar border-gray" src="{{ url_for('auth_blueprint.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..."/>
                                      {% endif %}
 
                                       <h4 class="title">{{current_user.first_name}} {{current_user.last_name}}<br />

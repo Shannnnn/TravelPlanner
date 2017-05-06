@@ -2,9 +2,10 @@ from flask import Flask, render_template, redirect, Blueprint, request, flash, u
 from flask_login import current_user
 from flask_login import LoginManager, current_user, AnonymousUserMixin
 from app import db, app
-from decorators import send_email, verify
+from decorators import send_email, verify, POSTS_PER_PAGE
 from sqlalchemy import func, desc
 from app.trips.model import Trips
+from app.auth.model import User, Photos
 from model import Anonymous
 
 landing = Flask(__name__)
@@ -14,7 +15,6 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.anonymous_user = Anonymous
 
-POSTS_PER_PAGE = 4
 
 @landing_blueprint.route('/')
 @landing_blueprint.route('/index')
@@ -23,6 +23,31 @@ def index():
     trips = Trips.query.order_by(desc(Trips.tripID)).paginate(1, POSTS_PER_PAGE, False)
     trips_for_most = Trips.query.order_by(Trips.tripID).paginate(1, POSTS_PER_PAGE, False)
     return render_template('index.html', title='TravelPlanner-Home', trips=trips, trips_m=trips_for_most, label=label)
+
+@landing_blueprint.route('/about')
+def about():
+    label=verify()
+    return render_template('about.html', title='About', label=label)
+
+@landing_blueprint.route('/response')
+def sendUs():
+    label=verify()
+    return render_template('response.html', title='Response', label=label)
+
+@landing_blueprint.route('/siteSearch', methods=['GET','POST'])
+def siteSearch():
+    label=verify()
+    user_photos = []
+    #var = request.form['search_1']
+    trips = db.session.query(Trips).filter(func.concat(Trips.tripName, ' ', Trips.tripDateFrom, ' ', Trips.tripDateTo).like('%'+request.args.get('search_1')+'%')).all()
+    users = db.session.query(User).filter(func.concat(User.username, ' ', User.first_name, ' ', User.last_name).like('%'+request.args.get('search_1')+'%')).all()
+    for r in users:
+        ph = Photos.query.filter_by(id=r.profile_pic).first()
+        if ph is None:
+            user_photos.append("default")
+        else:
+            user_photos.append(str(ph.photoName))
+    return render_template('search.html', title='Search Result', label=label, trips=trips, users=users, ph_1=user_photos)
 
 @landing_blueprint.route('/view/<Tripname>', methods=['GET','POST'])
 def mock(Tripname):

@@ -125,10 +125,10 @@
                             <div class="content">
                                 <div class="author">
                                      <a href="#">
-                                     {% if current_user.profile_pic=='default' %}
+                                     {% if csPic=='default' %}
                                         <img class="avatar border-gray" src="{{current_user.gravatar(size=256)}}" alt="..."/>
                                      {% else %}
-                                        <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+current_user.profile_pic) }} " alt="..."/>
+                                        <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..."/>
                                      {% endif %}
                                       <h4 class="title">{{username}}<br />
                                       </h4>
