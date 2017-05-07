@@ -5,7 +5,7 @@ from werkzeug.security import check_password_hash
 from model import User, Role, Anonymous, Photos
 from forms import LoginForm, RegisterForm, EditForm, SearchForm, AdminEditForm, TripForm
 from app import db, app
-from decorators import required_roles, get_friends, get_friend_requests, allowed_file, deleteTrip_user, img_folder
+from decorators import required_roles, get_friends, get_friend_requests, allowed_file, deleteTrip_user, img_folder, is_friends_or_pending
 from app.landing.views import landing_blueprint
 from werkzeug import secure_filename
 from PIL import Image
@@ -221,6 +221,27 @@ def home():
         cas = ph.photoName
 
     return render_template('users/dashboard.html', username=current_user.username, csID=str(current_user.id), csPic=str(cas), user=user)
+
+
+@auth_blueprint.route("/users/<int:id>")
+def user_profile(id):
+    """Show user profile."""
+
+    user = db.session.query(User).filter(User.id == id).one()
+
+    total_friends = len(get_friends(user.id).all())
+
+    user_a_id = session["current_user"]["id"]
+    user_b_id = user.id
+
+    # Check connection status between user_a and user_b
+    friends, pending_request = is_friends_or_pending(user_a_id, user_b_id)
+
+    return render_template("/users/heyhey.html",
+                           user=user,
+                           total_friends=total_friends,
+                           friends=friends,
+                           pending_request=pending_request)
 
 
 @auth_blueprint.route('/add-friend', methods=["POST"])
