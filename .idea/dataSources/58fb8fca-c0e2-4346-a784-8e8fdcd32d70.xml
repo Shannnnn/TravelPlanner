@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="PostgreSQL - travelplannerdb@localhost">
+  <database-model serializer="dbm" rdbms="POSTGRES" format-version="2.6">
+    <database id="1" name="travelplannerdb">
+      <object-id>16542</object-id>
+      <visible>1</visible>
+    </database>
+    <database id="2" name="postgres">
+      <object-id>12401</object-id>
+    </database>
+    <database id="3" name="travelplanner">
+      <object-id>16636</object-id>
+    </database>
+    <schema id="4" parent="1" name="public">
+      <object-id>2200</object-id>
+      <visible>1</visible>
+      <introspection-state-number>586</introspection-state-number>
+      <introspection-timestamp>2017-05-07.19:32:39.941</introspection-timestamp>
+    </schema>
+    <schema id="5" parent="1" name="pg_catalog">
+      <object-id>11</object-id>
+    </schema>
+    <schema id="6" parent="1" name="pg_toast">
+      <object-id>99</object-id>
+    </schema>
+    <schema id="7" parent="1" name="pg_temp_1">
+      <object-id>11848</object-id>
+    </schema>
+    <schema id="8" parent="1" name="pg_toast_temp_1">
+      <object-id>11849</object-id>
+    </schema>
+    <schema id="9" parent="1" name="information_schema">
+      <object-id>12113</object-id>
+    </schema>
+    <sequence id="10" parent="4" name="connections_connection_id_seq">
+      <object-id>16570</object-id>
+      <state-number>577</state-number>
+    </sequence>
+    <sequence id="11" parent="4" name="itineraries_itineraryID_seq">
+      <object-id>16601</object-id>
+      <state-number>579</state-number>
+    </sequence>
+    <sequence id="12" parent="4" name="roles_id_seq">
+      <object-id>16543</object-id>
+      <state-number>574</state-number>
+    </sequence>
+    <sequence id="13" parent="4" name="trips_tripID_seq">
+      <object-id>16588</object-id>
+      <state-number>578</state-number>
+    </sequence>
+    <sequence id="14" parent="4" name="users_id_seq">
+      <object-id>16553</object-id>
+      <state-number>575</state-number>
+    </sequence>
+    <sequence id="15" parent="4" name="visits_visit_id_seq">
+      <object-id>16617</object-id>
+      <state-number>586</state-number>
+    </sequence>
+    <table id="16" parent="4" name="connections">
+      <object-id>16572</object-id>
+      <state-number>577</state-number>
+    </table>
+    <table id="17" parent="4" name="itineraries">
+      <object-id>16603</object-id>
+      <state-number>579</state-number>
+    </table>
+    <table id="18" parent="4" name="roles">
+      <object-id>16545</object-id>
+      <state-number>575</state-number>
+    </table>
+    <table id="19" parent="4" name="trips">
+      <object-id>16590</object-id>
+      <state-number>586</state-number>
+    </table>
+    <table id="20" parent="4" name="users">
+      <object-id>16555</object-id>
+      <state-number>586</state-number>
+    </table>
+    <table id="21" parent="4" name="visits">
+      <object-id>16619</object-id>
+      <state-number>586</state-number>
+    </table>
+    <column id="22" parent="16" name="connection_id">
+      <state-number>577</state-number>
+      <mandatory>1</mandatory>
+      <data-type>integer|0</data-type>
+      <default-expression>nextval(&apos;connections_connection_id_seq&apos;::regclass)</default-expression>
+    </column>
+    <column id="23" parent="16" name="user_a_id">
+      <state-number>577</state-number>
+      <mandatory>1</mandatory>
+      <data-type>integer|0</data-type>
+    </column>
+    <column id="24" parent="16" name="user_b_id">
+      <state-number>577</state-number>
+      <mandatory>1</mandatory>
+      <data-type>integer|0</data-type>
+    </column>
+    <column id="25" parent="16" name="status">
+      <state-number>577</state-number>
+      <mandatory>1</mandatory>
+      <data-type>varchar(100)|0</data-type>
+    </column>
+    <index id="26" parent="16" name="connections_pkey">
+      <object-id>16576</object-id>
+      <columns>connection_id</columns>
+      <desc-columns></desc-columns>
+      <unique>1</unique>
+    </index>
+    <key id="27" parent="16" name="connections_pkey">
+      <object-id>16577</object-id>
+      <columns>connection_id</columns>
+      <underlying-index>connections_pkey</underlying-index>
+      <primary>1</primary>
+    </key>
+    <foreign-key id="28" parent="16" name="connections_user_a_id_fkey">
+      <object-id>16578</object-id>
+      <columns>user_a_id</columns>
+      <ref-key>~.users.users_pkey</ref-key>
+      <cascade-update-rule>restrict</cascade-update-rule>
+      <cascade-delete-rule>restrict</cascade-delete-rule>
+    </foreign-key>
+    <foreign-key id="29" parent="16" name="connections_user_b_id_fkey">
+      <object-id>16583</object-id>
+      <columns>user_b_id</columns>
+      <ref-key>~.users.users_pkey</ref-key>
+      <cascade-update-rule>restrict</cascade-update-rule>
+      <cascade-delete-rule>restrict</cascade-delete-rule>
+    </foreign-key>
+    <column id="30" parent="17" name="itineraryID">
+      <state-number>579</state-number>
+      <mandatory>1</mandatory>
+      <data-type>integer|0</data-type>
+      <default-expression>nextval(&apos;&quot;itineraries_itineraryID_seq&quot;&apos;::regclass)</default-expression>
+    </column>
+    <column id="31" parent="17" name="itineraryName">
+      <state-number>579</state-number>
+      <data-type>varchar(70)|0</data-type>
+    </column>
+    <column id="32" parent="17" name="itineraryDesc">
+      <state-number>579</state-number>
+      <data-type>varchar(1000)|0</data-type>
+    </column>
+    <column id="33" parent="17" name="itineraryDateFrom">
+      <state-number>579</state-number>
+      <data-type>date|0</data-type>
+    </column>
+    <column id="34" parent="17" name="itineraryDateTo">
+      <state-number>579</state-number>
+      <data-type>date|0</data-type>
+    </column>
+    <column id="35" parent="17" name="tripID">
+      <state-number>579</state-number>
+      <data-type>integer|0</data-type>
+    </column>
+    <index id="36" parent="17" name="itineraries_pkey">
+      <object-id>16610</object-id>
+      <columns>itineraryID</columns>
+      <desc-columns></desc-columns>
+      <unique>1</unique>
+    </index>
+    <key id="37" parent="17" name="itineraries_pkey">
+      <object-id>16611</object-id>
+      <columns>itineraryID</columns>
+      <underlying-index>itineraries_pkey</underlying-index>
+      <primary>1</primary>
+    </key>
+    <foreign-key id="38" parent="17" name="itineraries_tripID_fkey">
+      <object-id>16612</object-id>
+      <columns>tripID</columns>
+      <ref-key>~.trips.trips_pkey</ref-key>
+      <cascade-update-rule>restrict</cascade-update-rule>
+      <cascade-delete-rule>restrict</cascade-delete-rule>
+    </foreign-key>
+    <column id="39" parent="18" name="id">
+      <state-number>574</state-number>
+      <mandatory>1</mandatory>
+      <data-type>integer|0</data-type>
+      <default-expression>nextval(&apos;roles_id_seq&apos;::regclass)</default-expression>
+    </column>
+    <column id="40" parent="18" name="name">
+      <state-number>574</state-number>
+      <data-type>varchar(64)|0</data-type>
+    </column>
+    <index id="41" parent="18" name="roles_pkey">
+      <object-id>16549</object-id>
+      <columns>id</columns>
+      <desc-columns></desc-columns>
+      <unique>1</unique>
+    </index>
+    <index id="42" parent="18" name="roles_name_key">
+      <object-id>16551</object-id>
+      <columns>name</columns>
+      <desc-columns></desc-columns>
+      <unique>1</unique>
+    </index>
+    <key id="43" parent="18" name="roles_pkey">
+      <object-id>16550</object-id>
+      <columns>id</columns>
+      <underlying-index>roles_pkey</underlying-index>
+      <primary>1</primary>
+    </key>
+    <key id="44" parent="18" name="roles_name_key">
+      <object-id>16552</object-id>
+      <columns>name</columns>
+      <underlying-index>roles_name_key</underlying-index>
+    </key>
+    <column id="45" parent="19" name="tripID">
+      <state-number>578</state-number>
+      <mandatory>1</mandatory>
+      <data-type>integer|0</data-type>
+      <default-expression>nextval(&apos;&quot;trips_tripID_seq&quot;&apos;::regclass)</default-expression>
+    </column>
+    <column id="46" parent="19" name="tripName">
+      <state-number>578</state-number>
+      <data-type>varchar(70)|0</data-type>
+    </column>
+    <column id="47" parent="19" name="tripDateFrom">
+      <state-number>578</state-number>
+      <data-type>date|0</data-type>
+    </column>
+    <column id="48" parent="19" name="tripDateTo">
+      <state-number>578</state-number>
+      <data-type>date|0</data-type>
+    </column>
+    <column id="49" parent="19" name="userID">
+      <state-number>578</state-number>
+      <mandatory>1</mandatory>
+      <data-type>integer|0</data-type>
+    </column>
+    <column id="50" parent="19" name="viewsNum">
+      <state-number>578</state-number>
+      <data-type>integer|0</data-type>
+    </column>
+    <index id="51" parent="19" name="trips_pkey">
+      <object-id>16594</object-id>
+      <columns>tripID</columns>
+      <desc-columns></desc-columns>
+      <unique>1</unique>
+    </index>
+    <key id="52" parent="19" name="trips_pkey">
+      <object-id>16595</object-id>
+      <columns>tripID</columns>
+      <underlying-index>trips_pkey</underlying-index>
+      <primary>1</primary>
+    </key>
+    <foreign-key id="53" parent="19" name="trips_userID_fkey">
+      <object-id>16596</object-id>
+      <columns>userID</columns>
+      <ref-key>~.users.users_pkey</ref-key>
+      <cascade-update-rule>restrict</cascade-update-rule>
+      <cascade-delete-rule>restrict</cascade-delete-rule>
+    </foreign-key>
+    <column id="54" parent="20" name="id">
+      <state-number>575</state-number>
+      <mandatory>1</mandatory>
+      <data-type>integer|0</data-type>
+      <default-expression>nextval(&apos;users_id_seq&apos;::regclass)</default-expression>
+    </column>
+    <column id="55" parent="20" name="username">
+      <state-number>575</state-number>
+      <mandatory>1</mandatory>
+      <data-type>varchar(15)|0</data-type>
+    </column>
+    <column id="56" parent="20" name="email">
+      <state-number>575</state-number>
+      <mandatory>1</mandatory>
+      <data-type>varchar(50)|0</data-type>
+    </column>
+    <column id="57" parent="20" name="password">
+      <state-number>575</state-number>
+      <data-type>varchar(80)|0</data-type>
+    </column>
+    <column id="58" parent="20" name="role_id">
+      <state-number>575</state-number>
+      <data-type>integer|0</data-type>
+    </column>
+    <column id="59" parent="20" name="first_name">
+      <state-number>575</state-number>
+      <data-type>varchar(128)|0</data-type>
+    </column>
+    <column id="60" parent="20" name="last_name">
+      <state-number>575</state-number>
+      <data-type>varchar(128)|0</data-type>
+    </column>
+    <column id="61" parent="20" name="address">
+      <state-number>575</state-number>
+      <data-type>varchar(150)|0</data-type>
+    </column>
+    <column id="62" parent="20" name="city">
+      <state-number>575</state-number>
+      <data-type>varchar(30)|0</data-type>
+    </column>
+    <column id="63" parent="20" name="country">
+      <state-number>575</state-number>
+      <data-type>varchar(30)|0</data-type>
+    </column>
+    <column id="64" parent="20" name="birth_date">
+      <state-number>575</state-number>
+      <data-type>date|0</data-type>
+    </column>
+    <column id="65" parent="20" name="contact_num">
+      <state-number>575</state-number>
+      <data-type>bigint|0</data-type>
+    </column>
+    <column id="66" parent="20" name="description">
+      <state-number>575</state-number>
+      <data-type>varchar(300)|0</data-type>
+    </column>
+    <column id="67" parent="20" name="search_vector">
+      <state-number>575</state-number>
+      <data-type>tsvector|0</data-type>
+    </column>
+    <column id="68" parent="20" name="first_login">
+      <state-number>575</state-number>
+      <mandatory>1</mandatory>
+      <data-type>boolean|0</data-type>
+    </column>
+    <index id="69" parent="20" name="users_pkey">
+      <object-id>16562</object-id>
+      <columns>id</columns>
+      <desc-columns></desc-columns>
+      <unique>1</unique>
+    </index>
+    <index id="70" parent="20" name="ix_users_search_vector">
+      <object-id>16569</object-id>
+      <columns>search_vector</columns>
+      <desc-columns></desc-columns>
+    </index>
+    <key id="71" parent="20" name="users_pkey">
+      <object-id>16563</object-id>
+      <columns>id</columns>
+      <underlying-index>users_pkey</underlying-index>
+      <primary>1</primary>
+    </key>
+    <foreign-key id="72" parent="20" name="users_role_id_fkey">
+      <object-id>16564</object-id>
+      <columns>role_id</columns>
+      <ref-key>~.roles.roles_pkey</ref-key>
+      <cascade-update-rule>restrict</cascade-update-rule>
+      <cascade-delete-rule>restrict</cascade-delete-rule>
+    </foreign-key>
+    <column id="73" parent="21" name="visit_id">
+      <state-number>586</state-number>
+      <mandatory>1</mandatory>
+      <data-type>integer|0</data-type>
+      <default-expression>nextval(&apos;visits_visit_id_seq&apos;::regclass)</default-expression>
+    </column>
+    <column id="74" parent="21" name="id">
+      <state-number>586</state-number>
+      <mandatory>1</mandatory>
+      <data-type>integer|0</data-type>
+    </column>
+    <column id="75" parent="21" name="trip_id">
+      <state-number>586</state-number>
+      <mandatory>1</mandatory>
+      <data-type>integer|0</data-type>
+    </column>
+    <index id="76" parent="21" name="visits_pkey">
+      <object-id>16623</object-id>
+      <columns>visit_id</columns>
+      <desc-columns></desc-columns>
+      <unique>1</unique>
+    </index>
+    <key id="77" parent="21" name="visits_pkey">
+      <object-id>16624</object-id>
+      <columns>visit_id</columns>
+      <underlying-index>visits_pkey</underlying-index>
+      <primary>1</primary>
+    </key>
+    <foreign-key id="78" parent="21" name="visits_id_fkey">
+      <object-id>16625</object-id>
+      <columns>id</columns>
+      <ref-key>~.users.users_pkey</ref-key>
+      <cascade-update-rule>restrict</cascade-update-rule>
+      <cascade-delete-rule>restrict</cascade-delete-rule>
+    </foreign-key>
+    <foreign-key id="79" parent="21" name="visits_trip_id_fkey">
+      <object-id>16630</object-id>
+      <columns>trip_id</columns>
+      <ref-key>~.trips.trips_pkey</ref-key>
+      <cascade-update-rule>restrict</cascade-update-rule>
+      <cascade-delete-rule>restrict</cascade-delete-rule>
+    </foreign-key>
+  </database-model>
+</dataSource>
