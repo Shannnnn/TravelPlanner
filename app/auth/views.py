@@ -223,6 +223,33 @@ def home():
     return render_template('users/dashboard.html', username=current_user.username, csID=str(current_user.id), csPic=str(cas), user=user)
 
 
+@auth_blueprint.route('/add-friend', methods=["POST"])
+@login_required
+@required_roles('User')
+def add_friend():
+    """Send a friend request to another user."""
+
+    user_a_id = session["current_user"]["id"]
+    user_b_id = request.form.get("user_b_id")
+
+    # Check connection status between user_a and user_b
+    is_friends, is_pending = is_friends_or_pending(user_a_id, user_b_id)
+
+    if user_a_id == user_b_id:
+        return "You cannot add yourself as a friend."
+    elif is_friends:
+        return "You are already friends."
+    elif is_pending:
+        return "Your friend request is pending."
+    else:
+        requested_connection = Connection(user_a_id=user_a_id,
+                                          user_b_id=user_b_id,
+                                          status="Requested")
+        db.session.add(requested_connection)
+        db.session.commit()
+        print "User ID %s has sent a friend request to User ID %s" % (user_a_id, user_b_id)
+        return "Request Sent"
+
 
 @auth_blueprint.route('/friends')
 @auth_blueprint.route('/friends/<int:page>', methods=['GET', 'POST'])
