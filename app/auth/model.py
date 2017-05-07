@@ -1,8 +1,5 @@
-from app import db
 from flask_login import UserMixin, AnonymousUserMixin
 from app import db, app
-from flask_login import UserMixin
-from flask_whooshalchemy import whoosh_index
 from werkzeug.security import generate_password_hash
 from flask import request
 import hashlib
@@ -151,8 +148,7 @@ class Connection(db.Model):
     user_a = db.relationship("User", foreign_keys=[user_a_id], backref=db.backref("sent_connections"))
     user_b = db.relationship("User", foreign_keys=[user_b_id], backref=db.backref("received_connections"))
     
-    def __init__(self, connection_id, user_a_id, user_b_id, status):
-        self.connection_id = connection_id
+    def __init__(self, user_a_id, user_b_id, status):
         self.user_a_id = user_a_id
         self.user_b_id = user_b_id
         self.status = status

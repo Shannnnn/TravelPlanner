@@ -288,10 +288,16 @@ def add_friend():
 def show_friends(page=1):
     """Show friend requests and list of all friends"""
 
+    ph = Photos.query.filter_by(id=current_user.profile_pic).first()
+    if ph is None:
+        cas = 'default'
+    else:
+        cas = ph.photoName
+
     users = User.query.order_by(desc(User.id)).paginate(page, POSTS_PER_PAGE, False)
 
     # This returns User objects for current user's friend requests
-    received_friend_requests, sent_friend_requests = get_friend_requests("current_user.id")
+    received_friend_requests, sent_friend_requests = get_friend_requests(session["current_user"]["id"])
 
     # This returns a query for current user's friends (not User objects), but adding .all() to the end gets list of User objects
     friends = get_friends(session["current_user"]["id"]).all()
@@ -300,7 +306,8 @@ def show_friends(page=1):
                            received_friend_requests=received_friend_requests,
                            sent_friend_requests=sent_friend_requests,
                            friends=friends,
-                           page=page)
+                           users=users,
+                           page=page, csID=str(current_user.id), csPic=str(cas))
 
 
 @auth_blueprint.route("/friends/search/", methods=["GET"])
@@ -309,11 +316,17 @@ def show_friends(page=1):
 def search_users():
     """Search for a user and return results."""
 
+    ph = Photos.query.filter_by(id=current_user.profile_pic).first()
+    if ph is None:
+        cas = 'default'
+    else:
+        cas = ph.photoName
+
     # Returns users for current user's friend requests
-    received_friend_requests, sent_friend_requests = get_friend_requests("current_user.id")
+    received_friend_requests, sent_friend_requests = get_friend_requests(session["current_user"]["id"])
 
     # Returns query for current user's friends (not User objects) so add .all() to the end to get list of User objects
-    friends = get_friends("current_user.id").all()
+    friends = get_friends(session["current_user"]["id"]).all()
 
     user_input = request.args.get("q")
 
@@ -324,7 +337,7 @@ def search_users():
                            received_friend_requests=received_friend_requests,
                            sent_friend_requests=sent_friend_requests,
                            friends=friends,
-                           search_results=search_results)
+                           search_results=search_results, csID=str(current_user.id), csPic=str(cas))
 
 @auth_blueprint.route('/userprofile/<username>')
 @login_required
