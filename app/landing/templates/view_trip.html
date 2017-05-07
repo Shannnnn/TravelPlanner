@@ -1,8 +1,69 @@
 {% extends "base.html" %}
+
+{% block styles %}
+    <!-- Animation library for notifications   -->
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/animate.min.css') }}">
+
+    <!--  Light Bootstrap Table core CSS  -->  
+   
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/light-version.css') }}">
+    <!--  CSS for Demo Purpose, don't include it in your project     -->
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css//demo.css') }}">
+
+    <!--     Fonts and icons     -->
+    <link rel="stylesheet" type='text/css' href="http://fonts.googleapis.com/css?family=Roboto:400,700,300">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/pe-icon-7-stroke.css') }}">
+    <style type="text/css">
+
+
+    </style>
+ {% endblock %}
+
 {% block content %}
 
-        <section id="pricing" class="pricing-section">
-            <div class="container pricing-section">
+       
+        <section id="pricing" class="pricing-section" style="background-image: url('{{ url_for('.static', filename='images/misc/back.jpg') }}'); background-repeat: repeat-y; background-size: 1500px 700px;">
+
+
+            <div class="container">
+                <div class="row">
+                   <div class="col-md-3">
+                              <div class="card card-user">
+                                  <div class="image">
+                                  </div>
+                                  <div class="content">
+                                      <div class="author">
+                                          {% if ph_1[0]=='default' %}
+                                              <img class="avatar border-gray" src="{{user.gravatar(size=256)}}" alt="..."/>
+                                          {% else %}
+                                              <img class="avatar border-gray" src="{{ url_for('auth_blueprint.static', filename='images/users/') }}{{ user.id }}/{{ ph_1[0] }}" alt="..."/>
+                                          {% endif %}
+                                        
+                                          <h4 class="title">{{user.username}}</h4><br/>
+                                          <h5> {{user.first_name}} {{user.last_name}}</h5>
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div class="card card-user">
+                                  <div class="content">
+                                      <h5>Other trips by same user</h5><br>
+                                      {% for tr in suggestedTrips %}
+                                      <a href="/main/view/{{ tr.tripName }}">
+                                        <div class="card" align="center">
+                                          <div class="card-block" style="display: inline-block;">
+                                          <br>
+                                            <h4>{{tr.tripName}}  &nbsp;&nbsp;<i class="fa fa-eye" aria-hidden="true"></i> {{ tr.viewsNum }} </h4>
+                                          </div>
+                                        </div>
+                                        </a>
+                                      {% endfor %}
+                                  </div>
+                              </div>
+                     </div>
+     
+        <div class="col-md-8" style="background-color: #ffffff;">
+            <div class="container pricing-section" style="width: 100vh; background-color: #ffffff;">
               <header class="page-header">
                 <h1 style="color: #333;">{{ title }}</h1>
               </header>
@@ -30,6 +91,9 @@
                 
                 {% endfor %}
               </ul>
+            </div>
+                        </div>
+                       </div>
             </div>
         </section>
 

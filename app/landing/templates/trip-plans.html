@@ -25,7 +25,7 @@
                                                       <div class="form-group">
                                                         <label for="filter">Filter by</label>
                                                         <select class="form-control" id="filterOptions" name="option" required>
-                                                            <option value="all-trips" selected>All Trips</option>
+                                                            <option value="all trips made in this site" selected>All Trips</option>
                                                             <option value="most-popular">Most popular</option>
                                                             <option value="newest-trip-plans">Newest</option>
                                                         </select>
@@ -51,16 +51,22 @@
                      </div>
                 </div>
 
+
+
                 <br><br>
                 <div class="row">
                     <h3>Results for {{ search_label }}</h3>
+                    <div class="container" style="display: inline-block;">
+                        <input class="form-control" type="text" id="filter_within" style="width:60vh;">
+                    </div>
                     <div>
                         {% for trip in trips %}
-                        <a href="/main/view/{{ trip.tripName }}" target="_blank">
+                        <div id="able" value="{{ trip.tripName }}" data-filter="{{ trip.tripName }}">
+                        <a href="/main/view/{{ trip.tripName }}" target="_blank"  value="{{ trip.tripName }}">
                         <div class="col-sm-3 text-center">
                             <div class="container" style="display:inline; width:100%;">
                                 <div class="panel panel-default bootcards-media" style="width:100%;"> 
-                                    <div class="panel-heading" align="left" style="width: 100%;">{{ trip.tripName }}</div>
+                                    <div class="panel-heading" align="left" style="width: 100%;" id="able_1">{{ trip.tripName }}</div>
                                     <div class="panel-body" style="width: 100%; height: 100%;" align="center">
                                     <img style="height: 100%; width: 100%; object-fit:contain;" src="{{ url_for('trip_blueprint.static', filename='images/trips/'+trip.img_thumbnail ) }} "/></div>
                                     <div class="panel-footer" align="left" style="display: inline-block; width: 100%;">
@@ -76,6 +82,7 @@
                             </div>
                         </div>
                         </a>
+                        </div>
                         {% endfor %}
                     </div>
                 </div>
