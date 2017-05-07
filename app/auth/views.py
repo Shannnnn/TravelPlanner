@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, redirect, Blueprint, request, flash, url_for, session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user, AnonymousUserMixin
 from werkzeug.security import check_password_hash
-from model import User, Role, Anonymous, Photos
+from model import User, Role, Anonymous, Photos, Connection
 from forms import LoginForm, RegisterForm, EditForm, SearchForm, AdminEditForm, TripForm
 from app import db, app
 from decorators import required_roles, get_friends, get_friend_requests, allowed_file, deleteTrip_user, img_folder, is_friends_or_pending
@@ -12,6 +12,8 @@ from PIL import Image
 from app.trips.model import Trips
 import datetime
 import time
+from sqlalchemy_searchable import search
+from sqlalchemy import func, desc
 
 auth = Flask(__name__)
 auth_blueprint = Blueprint('auth_blueprint', __name__, template_folder='templates', static_folder='static', static_url_path='/static/')
@@ -224,8 +226,14 @@ def home():
 
 
 @auth_blueprint.route("/users/<int:id>")
-def user_profile(id):
+def users(id):
     """Show user profile."""
+
+    ph = Photos.query.filter_by(id=current_user.profile_pic).first()
+    if ph is None:
+        cas = 'default'
+    else:
+        cas = ph.photoName
 
     user = db.session.query(User).filter(User.id == id).one()
 
@@ -237,11 +245,12 @@ def user_profile(id):
     # Check connection status between user_a and user_b
     friends, pending_request = is_friends_or_pending(user_a_id, user_b_id)
 
-    return render_template("/users/heyhey.html",
+    return render_template("users/dashboard.html",
                            user=user,
                            total_friends=total_friends,
                            friends=friends,
-                           pending_request=pending_request)
+                           pending_request=pending_request,
+                           csID=str(current_user.id), csPic=str(cas))
 
 
 @auth_blueprint.route('/add-friend', methods=["POST"])
@@ -297,7 +306,7 @@ def show_friends(page=1):
 @auth_blueprint.route("/friends/search/", methods=["GET"])
 @login_required
 @required_roles('User')
-def search_users(query):
+def search_users():
     """Search for a user and return results."""
 
     # Returns users for current user's friend requests
@@ -309,15 +318,13 @@ def search_users(query):
     user_input = request.args.get("q")
 
     # Search user's query in users table of db and return all search results
-    results = User.query.whoosh_search(query).all()
+    search_results = search(db.session.query(User), user_input).all()
 
     return render_template("users/browse_friends.html",
                            received_friend_requests=received_friend_requests,
                            sent_friend_requests=sent_friend_requests,
                            friends=friends,
-                           query=query,
-                           form=form,
-                           results=results)
+                           search_results=search_results)
 
 @auth_blueprint.route('/userprofile/<username>')
 @login_required
