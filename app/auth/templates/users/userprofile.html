@@ -1,7 +1,7 @@
 {% extends '/users/base.html' %}
 
 {% block content %}
-        <div class="content">
+        <div class="content" id="user-info" data-userid="{{ user.id }}">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-8">
@@ -31,8 +31,8 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <label for="exampleInputEmail1">Email address</label>
-                                                <input type="text" class="form-control" value="{{current_user.email}}" readonly>
+                                                <label>Email address</label>
+                                                <input type="email" class="form-control" value="{{current_user.email}}" readonly>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -86,7 +86,7 @@
                                      <a href="#">
                                     <!--<img class="avatar border-gray" src="{{current_user.gravatar(size=256)}}" alt="..."/>-->
                                     {% if csPic=='default' %}
-                                        <img class="avatar border-gray" src="{{current_user.gravatar(size=256)}}" alt="..."/>
+                                        <img class="avatar border-gray" src="{{current_user.gravatar(size=200)}}" alt="..."/>
                                      {% else %}
                                         <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..."/>
                                      {% endif %}

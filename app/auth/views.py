@@ -4,7 +4,6 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from werkzeug.security import check_password_hash
 from model import User, Role, Anonymous, Photos
 from forms import LoginForm, RegisterForm, EditForm, SearchForm, AdminEditForm, TripForm
-from model import User, Role
 from app import db, app
 from decorators import required_roles, get_friends, get_friend_requests, allowed_file, deleteTrip_user, img_folder
 from app.landing.views import landing_blueprint
@@ -22,6 +21,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'auth_blueprint.login'
 login_manager.anonymous_user = Anonymous
 
+POSTS_PER_PAGE = 9
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -213,61 +213,56 @@ def connections():
 @required_roles('User')
 def home():
     ph = Photos.query.filter_by(id=current_user.profile_pic).first()
+    user = db.session.query(User).filter(User.id == current_user.id).one()
+
     if ph is None:
         cas = 'default'
     else:
         cas = ph.photoName
-        
-    return render_template('users/dashboard.html', username=current_user.username, csID=str(current_user.id), csPic=str(cas))
+
+    return render_template('users/dashboard.html', username=current_user.username, csID=str(current_user.id), csPic=str(cas), user=user)
 
 
-@auth_blueprint.route('/new-trip')
+
+@auth_blueprint.route('/friends')
+@auth_blueprint.route('/friends/<int:page>', methods=['GET', 'POST'])
 @login_required
 @required_roles('User')
-def new_trip():
-    return render_template('users/trip.html')
-
-@auth_blueprint.route('/friends', methods=['GET','POST'])
-@login_required
-@required_roles('User')
-def show_friends():
+def show_friends(page=1):
     """Show friend requests and list of all friends"""
-    form = SearchForm()
+
+    users = User.query.order_by(desc(User.id)).paginate(page, POSTS_PER_PAGE, False)
+
     # This returns User objects for current user's friend requests
     received_friend_requests, sent_friend_requests = get_friend_requests("current_user.id")
 
     # This returns a query for current user's friends (not User objects), but adding .all() to the end gets list of User objects
-    friends = get_friends("current_user.id").all()
+    friends = get_friends(session["current_user"]["id"]).all()
 
-    if request.method == 'POST' and form.validate_on_submit():
-        return redirect(url_for('auth_blueprint.show_friends'))
     return render_template("users/friends.html",
                            received_friend_requests=received_friend_requests,
                            sent_friend_requests=sent_friend_requests,
                            friends=friends,
-                           query=form.search.data,
-                           form=form)
+                           page=page)
 
 
-@auth_blueprint.route("/friends/search/<query>", methods=["GET", "POST"])
+@auth_blueprint.route("/friends/search/", methods=["GET"])
 @login_required
 @required_roles('User')
 def search_users(query):
     """Search for a user and return results."""
-    form = SearchForm()
+
     # Returns users for current user's friend requests
     received_friend_requests, sent_friend_requests = get_friend_requests("current_user.id")
 
     # Returns query for current user's friends (not User objects) so add .all() to the end to get list of User objects
     friends = get_friends("current_user.id").all()
 
-    #user_input = request.args.get("q")
+    user_input = request.args.get("q")
+
     # Search user's query in users table of db and return all search results
-    #search_results = search(db.session.query(User), user_input).all()
     results = User.query.whoosh_search(query).all()
 
-    if request.method == 'POST' and form.validate_on_submit():
-        return redirect(url_for('auth_blueprint.search_users'))
     return render_template("users/browse_friends.html",
                            received_friend_requests=received_friend_requests,
                            sent_friend_requests=sent_friend_requests,
@@ -428,7 +423,7 @@ def register():
                 "num_sent_requests": 0,
                 "num_total_requests": 0
             }
-                
+
             flash('Log In')
             return redirect(url_for('auth_blueprint.login'))
         return render_template('users/registration.html', form=form)
