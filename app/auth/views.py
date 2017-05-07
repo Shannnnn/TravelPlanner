@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, redirect, Blueprint, request, flash, url_for
+from flask import Flask, render_template, redirect, Blueprint, request, flash, url_for, session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user, AnonymousUserMixin
 from werkzeug.security import check_password_hash
 from model import User, Role, Anonymous, Photos
@@ -377,6 +377,22 @@ def login():
                         db.session.add(user)
                         db.session.commit()
                         return redirect(url_for('auth_blueprint.edit', username=request.form['username']))
+
+                        # Get current user's friend requests and number of requests to display in badges
+                        received_friend_requests, sent_friend_requests = get_friend_requests(current_user.id)
+                        num_received_requests = len(received_friend_requests)
+                        num_sent_requests = len(sent_friend_requests)
+                        num_total_requests = num_received_requests + num_sent_requests
+
+                        # Use a nested dictionary for session["current_user"] to store more than just user_id
+                        session["current_user"] = {
+                            "first_name": current_user.first_name,
+                            "id": current_user.id,
+                            "num_received_requests": num_received_requests,
+                            "num_sent_requests": num_sent_requests,
+                            "num_total_requests": num_total_requests
+                        }
+
                     return redirect(url_for('auth_blueprint.home', name=request.form['username']))
                 elif user.role_id == 1:
                     if user is not None and check_password_hash(user.password, request.form['password']):
@@ -403,6 +419,16 @@ def register():
             user = User(username=request.form['username'], email=request.form['email'], password=request.form['password'], role_id=3)          
             db.session.add(user)
             db.session.commit()
+
+            # Add same info to session for new user as per /login route
+            session["current_user"] = {
+                "first_name": user.first_name,
+                "id": user.id,
+                "num_received_requests": 0,
+                "num_sent_requests": 0,
+                "num_total_requests": 0
+            }
+                
             flash('Log In')
             return redirect(url_for('auth_blueprint.login'))
         return render_template('users/registration.html', form=form)
