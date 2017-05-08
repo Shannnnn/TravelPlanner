@@ -104,3 +104,14 @@ function callit(num, text){
   $('#exampleModalLong').append(Stringrespify)
   $('#exampleModalLong').modal('show'); 
 }
+
+
+$('#filter_within').on('keyup', function(){
+    $('div[data-filter]').hide();
+   var txt = $('#filter_within').val();
+   if(txt){
+    $('div[data-filter]:contains("'+txt+'")').show();
+    }else{
+      $('div[data-filter]').show();
+    }
+});
