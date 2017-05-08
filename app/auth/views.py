@@ -226,6 +226,8 @@ def home():
 
 
 @auth_blueprint.route("/users/<int:id>")
+@login_required
+@required_roles('User')
 def users(id):
     """Show user profile."""
 
@@ -245,7 +247,7 @@ def users(id):
     # Check connection status between user_a and user_b
     friends, pending_request = is_friends_or_pending(user_a_id, user_b_id)
 
-    return render_template("users/dashboard.html",
+    return render_template("users/user.html",
                            user=user,
                            total_friends=total_friends,
                            friends=friends,

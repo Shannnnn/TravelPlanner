@@ -83,18 +83,16 @@
                             </div>
                             <div class="content">
                                 <div class="author">
-                                     <a href="#">
                                     <!--<img class="avatar border-gray" src="{{current_user.gravatar(size=256)}}" alt="..."/>-->
                                     {% if csPic=='default' %}
-                                        <img class="avatar border-gray" src="{{current_user.gravatar(size=200)}}" alt="..."/>
+                                        <img class="img-circle img-responsive" src="{{current_user.gravatar(size=200)}}" alt="..."/>
                                      {% else %}
-                                        <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..."/>
+                                        <img class="img-circle img-responsive" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..." style="width:150px;height:150px;">
                                      {% endif %}
                                       <h4 class="title">{{current_user.first_name}} {{current_user.last_name}}<br/>
                                          <small>{{current_user.username}}</small><br><br>
                                          <small>"{{current_user.description}}"</small>
                                       </h4>
-                                    </a>
                                 </div>
                                 <p class="description text-center"></p>
                             </div>

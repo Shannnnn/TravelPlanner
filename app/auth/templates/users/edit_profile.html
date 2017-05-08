@@ -3,6 +3,20 @@
 
 {% block content %}
 
+{% block script %}
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+    $( function() {
+        $( "#datepicker" ).datepicker();
+    });
+    $( function() {
+        $( "#datepicker2" ).datepicker();
+    });
+    </script>
+{% endblock %}
+
         <div class="content">
             <div class="container-fluid">
                 <div class="row">
@@ -30,7 +44,7 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                                 <div class="form-group">
-                                                    {{wtf.form_field(form.birth_date)}}
+                                                    {{wtf.form_field(form.birth_date, id="datepicker")}}
                                                 </div>
                                         </div>
                                     </div>
@@ -87,19 +101,17 @@
                             </div>
                             <div class="content">
                                 <div class="author">
-                                     <a href="#">
                                     <!--<img class="avatar border-gray" src="{{current_user.gravatar(size=256)}}" alt="..."/>-->
                                     {% if csPic=='default' %}
-                                        <img class="avatar border-gray" src="{{current_user.gravatar(size=256)}}" alt="..."/>
+                                        <img class=""img-circle img-responsive" src="{{current_user.gravatar(size=200)}}" alt="..."/>
                                      {% else %}
-                                        <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..."/>
+                                        <img class="img-circle img-responsive" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..." style="width:150px;height:150px;">
                                      {% endif %}
 
                                       <h4 class="title">{{current_user.first_name}} {{current_user.last_name}}<br />
                                          <small>{{current_user.username}}</small><br><br>
                                          <small>"{{current_user.description}}"</small>
                                       </h4>
-                                    </a>
                                 </div>
                                 <p class="description text-center"></p>
                             </div>

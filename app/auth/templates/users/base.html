@@ -54,10 +54,10 @@
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         {% if session.get('current_user') %}
           <ul class="nav navbar-nav">
-            <li><a href="/users/{{ session.current_user.id }}">Dashboard</a></li>
+            <li><a href="/home">Dashboard</a></li>
             <li><a href="/userprofile/<username>">Profile</a></li>
             <li><a href="/friends">Friends <span class="badge">{{ session.current_user.num_total_requests }}</span></a></li>
-            <li><a href="/trips/createtrip">Trips</a></li>
+            <li><a href="/trips">Trips</a></li>
           </ul>
 
           <!-- Searchbox feature for trips -->
