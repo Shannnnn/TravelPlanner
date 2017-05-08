@@ -1,4 +1,4 @@
-{% extends 'users/base.html' %}
+{% extends 'users/base1.html' %}
 
 {% block title %}User: {{ user.username }}{% endblock %}
 
@@ -8,9 +8,9 @@
       <div class="row">
         <div class="col-xs-12 col-md-2">
                 {% if csPic=='default' %}
-                <img class="avatar border-gray" src="{{current_user.gravatar(size=150)}}" alt="..." style="width:150px;height:150px;">
+                <img class="img-circle img-responsive" src="{{current_user.gravatar(size=150)}}" alt="..." style="width:150px;height:150px;">
                 {% else %}
-                <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..." style="width:150px;height:150px;">
+                <img class="img-circle img-responsive" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..." style="width:150px;height:150px;">
                 {% endif %}
                 <h4 class="title">{{user.username}}<br />
                 </h4>

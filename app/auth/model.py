@@ -4,13 +4,14 @@ from werkzeug.security import generate_password_hash
 from flask import request
 import hashlib
 from sqlalchemy_searchable import make_searchable
+
+from sqlalchemy_utils.types import TSVectorType
 from sqlalchemy.orm import backref
 
 make_searchable()
 
 class User(db.Model, UserMixin):
     __tablename__ = "users"
-    #__searchable__ = ['username', 'first_name', 'last_name']
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(15), nullable=False)
@@ -28,7 +29,9 @@ class User(db.Model, UserMixin):
     contact_num = db.Column(db.BIGINT)
     description = db.Column(db.String(300))
     profile_pic = db.Column(db.Integer, nullable=True)
-    
+
+    search_vector = db.Column(TSVectorType('first_name', 'last_name', 'username', 'email'))
+
     #User Information modification on first login
     first_login = db.Column(db.Boolean, default=True, nullable=False)
 
