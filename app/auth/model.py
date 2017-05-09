@@ -16,7 +16,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(15), nullable=False)
     email = db.Column(db.String(50), nullable=False)
-    password = db.Column(db.String(80))
+    password = db.Column(db.String(800))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     roles = db.relationship('Role', back_populates='users')
     # profile
@@ -30,7 +30,7 @@ class User(db.Model, UserMixin):
     description = db.Column(db.String(300))
     profile_pic = db.Column(db.Integer, nullable=True)
 
-    search_vector = db.Column(TSVectorType('first_name', 'last_name', 'username', 'email'))
+    # search_vector = db.Column(TSVectorType('first_name', 'last_name', 'username', 'email'))
 
     #User Information modification on first login
     first_login = db.Column(db.Boolean, default=True, nullable=False)

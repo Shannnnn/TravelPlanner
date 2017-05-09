@@ -8,7 +8,7 @@
                     <div class="col-md-8">
                         <div class="card">
                             <div class="header">
-                                <h4 class="title">Your Trips</h4>
+                                <h4 class="title">{{ current_user.username }}'s Trips</h4>
                                 <h5><a href="/trips/createtrip" class="button">Add a Trip</a></h5>
                             </div>
                                 <div class="row">
@@ -20,8 +20,11 @@
                                         {{ trip.tripName }}
                                         <a href="/trips/{{ trip.tripName }}/edit" class="btn btn-primary" style="display: block; margin: 0 auto;">Edit</a>
                                     </div>
-                                    <div class="panel-body" style="width: 100%; height: 100%;" align="center">
-                                    <img style="height: 100%; width: 100%; object-fit:contain;" src="https://i.ytimg.com/vi/QGiJFumHUPo/maxresdefault.jpg"/></div>
+                                    <a href="/trips/{{ trip.tripName }}/itineraries">
+                                        <div class="panel-body" style="width: 100%; height: 100%;" align="center">
+                                            <img style="height: 100%; width: 100%; object-fit:contain;" src="https://i.ytimg.com/vi/QGiJFumHUPo/maxresdefault.jpg"/>
+                                        </div>
+                                    </a>
                                     <div class="panel-footer" align="left" style="display: inline-block; width: 100%;">
                                         <div class="row">
                                             &nbsp; From: {{ trip.tripDateFrom }}
