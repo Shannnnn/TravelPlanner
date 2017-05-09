@@ -1,214 +1,111 @@
-<!doctype html>
-<html lang="en">
-<head>
-	<meta charset="utf-8" />
-	<link rel="icon" type="image/png" href="#">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+{% extends 'users/base1.html' %}
 
-	<title>TravelPlanner</title>
+{% block title %}User: {{ user.username }}{% endblock %}
 
-	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <meta name="viewport" content="width=device-width" />
+{% block content %}
+  <div class="jumbotron top-header" id="user-info" data-userid="{{ user.id }}">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12 col-md-2">
+                {% if csPic=='default' %}
+                <img class="img-circle img-responsive" src="{{current_user.gravatar(size=150)}}" alt="..." style="width:150px;height:150px;">
+                {% else %}
+                <img class="img-circle img-responsive" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..." style="width:150px;height:150px;">
+                {% endif %}
+                <h4 class="title">{{user.username}}<br />
+                </h4>
+        </div>
+        <div class="col-xs-12 col-md-6">
+          <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+        </div><!-- /.col -->
+      </div><!-- /.row -->
+    </div><!-- /.container -->
+  </div><!-- /.jumbotron -->
 
-
-    <!-- Bootstrap core CSS     -->
-    <link rel="stylesheet" href="{{ url_for('.static', filename='css/bootstrap.min.css') }}">
-
-    <!-- Animation library for notifications   -->
-    <link rel="stylesheet" href="{{ url_for('.static', filename='css/animate.min.css') }}">
-
-    <!--  Light Bootstrap Table core CSS    -->
-    <link rel="stylesheet" href="{{ url_for('.static', filename='css/light-bootstrap-dashboard.css') }}">
-
-    <!--  CSS for Demo Purpose, don't include it in your project     -->
-    <link rel="stylesheet" href="{{ url_for('.static', filename='css//demo.css') }}">
-
-    <!--     Fonts and icons     -->
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type='text/css' href="http://fonts.googleapis.com/css?family=Roboto:400,700,300">
-    <link rel="stylesheet" href="{{ url_for('.static', filename='css/pe-icon-7-stroke.css') }}">
-
-</head>
-<body>
-
-<div class="wrapper">
-    <div class="sidebar" data-color="purple">
-
-    <!--
-
-        Tip 1: you can change the color of the sidebar using: data-color="blue | azure | green | orange | red | purple"
-        Tip 2: you can also add an image using data-image tag
-
-    -->
-
-    	<div class="sidebar-wrapper">
-            <div class="logo">
-                <a class="simple-text" href="/main/">
-                    TravelPlanner
-                </a>
-            </div>
-
-            <ul class="nav">
-                <li>
-                    <a href="/home">
-                        <i class="pe-7s-graph"></i>
-                        <p>Dashboard</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="/userprofile/{{username}}">
-                        <i class="pe-7s-user"></i>
-                        <p>User Profile</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="/trips/">
-                        <i class="pe-7s-note2"></i>
-                        <p>Trips</p>
-                    </a>
-                    </a>
-                </li>
-                <li>
-                    <a href="/friends">
-                        <i class="pe-7s-male"></i>
-                        <p>Friends</p>
-                    </a>
-                </li>
-            </ul>
-    	</div>
-    </div>
-
-    <div class="main-panel">
-        <nav class="navbar navbar-default navbar-fixed">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navigation-example-2">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="#">Dashboard</a>
+  <div class="container" id="main-section">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card ">
+                <div class="header">
+                    <h4 class="title">Welcome to TravelPlanner, {{current_user.username}}</h4>
                 </div>
-                <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav navbar-left">
-                        <li>
-								<p class="hidden-lg hidden-md">Dashboard</p>
-                        </li>
-                    </ul>
-
-                    <ul class="nav navbar-nav navbar-right">
-                        <li>
-                           <a href="">
-                               <p>Account</p>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/logout">
-                                <p>Log out</p>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-
-
-        <div class="content">
-            <div class="container-fluid">
-                <div class="row">
-
-                    <div class="col-md-3">
-                        <div class="card card-user">
-                            <div class="image">
-                            </div>
-                            <div class="content">
-                                <div class="author">
-                                     <a href="#">
-                                     {% if current_user.profile_pic=='default' %}
-                                        <img class="avatar border-gray" src="{{current_user.gravatar(size=256)}}" alt="..."/>
-                                     {% else %}
-                                        <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+current_user.profile_pic) }} " alt="..."/>
-                                     {% endif %}
-                                      <h4 class="title">{{username}}<br />
-                                      </h4>
-                                    </a>
-                                </div>
-                                <div style="text-align:center">
-                                    <a href="/userprofile/{{username}}">View profile</a>
-                                </div>
-                            </div>
-                        </div>
+                <div class="content">
+                    <div class="table-full-width">
+                        <table class="user-stats">
+                            <tr>
+                              <th class="stats-label">Friends</th>
+                              <td class="stats-value">{{ total_friends }}</td>
+                            </tr>
+                        </table>
                     </div>
-
-                    <div class="col-md-6">
-                        <div class="card ">
-                            <div class="header">
-                                <h4 class="title">Welcome to TravelPlanner, {{username}}</h4>
-                            </div>
-                            <div class="content">
-                                <div class="table-full-width">
-                                    <table class="table">
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                <a href="/userprofile/{{username}}/edit" style="text-align:center">Complete Your Profile</a>
-                                                <p>Complete your profile and write a short bio about yourself.</p>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                <a href="#">Learn how to create a trip.</a>
-                                                <p>Get ready to search for the perfect place and prepare for a memorable trip.</p>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="col-md-6">
-                        <div class="card ">
-                            <div class="header">
-                                <h4 class="title">Trips</h4>
-                            </div>
-                            <div class="content">
-                                <div class="table-full-width">
-                                    <table class="table">
-                                        <tbody>
-                                            <tr>
-                                                <td>No upcoming trips.</td>
-                                                <td class="td-actions text-right">
-                                                    <a href = "/trips/createtrip">Create new trip</a>
-                                                    <a href = "/new-trip">Create new trip</a>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="table-full-width">
+                        <table class="table">
+                            <tbody>
+                            <tr>
+                                <td>
+                                    <a href="/userprofile/{{username}}/edit" style="text-align:center">Complete Your Profile</a>
+                                    <p>Complete your profile and write a short bio about yourself.</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href="#">Learn how to create a trip.</a>
+                                    <p>Get ready to search for the perfect place and prepare for a memorable trip.</p>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
+      <div class="col-xs-12 col-md-4">
+        <div class="panel panel-default">
+          <!-- Default panel contents -->
+          <div class="panel-heading">
+            <h3>Recent Trip</h3>
+          </div>
 
-</body>
+          <!-- List group -->
+          {% if recent_trip %}
+            <div class="list-group">
+              {% for visit in recent_trips %}
+                <a href="/trips/{{ visit.trips.trip_id }}" class="list-group-item">
+                  <div class="media">
+                    <div class="media-left">
+                      <img class="media-object" src="" alt="Image for {{ trips.trip_name }}">
+                    </div>
+                    <div class="media-body">
+                      <h4 class="media-heading"></h4>
+                      <p>
+                        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>
+                        <br>
+                        <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
+                      </p>
+                    </div>
+                  </div>
+                </a>
+              {% endfor %}
+                <a href="#" class="list-group-item">See rest of the trips.</a>
+            </div>
+          {% else %}
+            <div class="table-full-width">
+                <table class="table">
+                    <tbody>
+                    <tr>
+                      <td>No upcoming trips.</td>
+                      <td class="td-actions text-right">
+                          <a href = "/trips/createtrip">Create new trip</a>
+                      </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+          {% endif %}
+        </div><!-- /.panel -->
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container -->
 
-    <!--   Core JS Files   -->
-    <script type="text/javascript" src="{{ url_for('.static', filename='js/jquery-1.10.2.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('.static', filename='js/bootstrap.min.js') }}"></script>
-
-	<!--  Checkbox, Radio & Switch Plugins -->
-    <script type="text/javascript" src="{{ url_for('.static', filename='js/bootstrap-checkbox-radio-switch.js') }}"></script>
-
-    <!--  Google Maps Plugin    -->
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
-
-</html>
+{% endblock %}

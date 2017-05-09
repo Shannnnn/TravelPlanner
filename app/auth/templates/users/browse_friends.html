@@ -1,115 +1,10 @@
-<!doctype html>
-<html lang="en">
-<head>
-    {% import "bootstrap/wtf.html" as wtf %}
-	<meta charset="utf-8" />
-	<link rel="icon" type="image/png" href="#">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+{% extends '/users/base1.html' %}
 
-	<title>TravelPlanner</title>
+{% block title %}Friends: Search Results{% endblock %}
 
-	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <meta name="viewport" content="width=device-width" />
+{% block content %}
 
-
-    <!-- Bootstrap core CSS     -->
-    <link rel="stylesheet" href="{{ url_for('.static', filename='css/bootstrap.min.css') }}">
-
-    <!-- Animation library for notifications   -->
-    <link rel="stylesheet" href="{{ url_for('.static', filename='css/animate.min.css') }}">
-
-    <!--  Light Bootstrap Table core CSS    -->
-    <link rel="stylesheet" href="{{ url_for('.static', filename='css/light-bootstrap-dashboard.css') }}">
-
-    <!--  CSS for Demo Purpose, don't include it in your project     -->
-    <link rel="stylesheet" href="{{ url_for('.static', filename='css//demo.css') }}">
-
-    <!--     Fonts and icons     -->
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type='text/css' href="http://fonts.googleapis.com/css?family=Roboto:400,700,300">
-    <link rel="stylesheet" href="{{ url_for('.static', filename='css/pe-icon-7-stroke.css') }}">
-
-</head>
-<body>
-
-<div class="wrapper">
-    <div class="sidebar" data-color="purple">
-
-    <!--
-
-        Tip 1: you can change the color of the sidebar using: data-color="blue | azure | green | orange | red | purple"
-        Tip 2: you can also add an image using data-image tag
-
-    -->
-
-    	<div class="sidebar-wrapper">
-            <div class="logo">
-                <a class="simple-text" href="/main/">
-                    TravelPlanner
-                </a>
-            </div>
-
-            <ul class="nav">
-                <li>
-                    <a href="/home">
-                        <i class="pe-7s-graph"></i>
-                        <p>Dashboard</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="/userprofile/{{username}}">
-                        <i class="pe-7s-user"></i>
-                        <p>User Profile</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="/trips/">
-                        <i class="pe-7s-note2"></i>
-                        <p>Trips</p>
-                    </a>
-                </li>
-            </ul>
-    	</div>
-    </div>
-
-    <div class="main-panel">
-        <nav class="navbar navbar-default navbar-fixed">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navigation-example-2">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="#">Dashboard</a>
-                </div>
-                <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav navbar-left">
-                        <li>
-								<p class="hidden-lg hidden-md">Dashboard</p>
-                        </li>
-                    </ul>
-
-                    <ul class="nav navbar-nav navbar-right">
-                        <li>
-                           <a href="">
-                               <p>Account</p>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/logout">
-                                <p>Log out</p>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-
-
-        <div class="content">
-        <div class="container" id="main-section">
+  <div class="container" id="main-section">
 
     <div>
 
@@ -121,20 +16,20 @@
         <li role="presentation" class="dropdown">
           <a href="#" id="tab-drop" class="dropdown-toggle" data-toggle="dropdown" aria-controls="tab-drop-contents" aria-expanded="false">
             Friend Requests
-            <span class="badge">{{ current_user.num_total_requests }}</span>
+            <span class="badge">{{ session.current_user.num_total_requests }}</span>
             <span class="caret"></span>
           </a>
           <ul class="dropdown-menu" aria-labelledby="tab-drop" id="tab-drop-contents">
             <li>
               <a href="#received-friend-requests" id="received-friend-requests-tab" role="tab" data-toggle="tab" aria-controls="received-friend-requests">
                 Received
-                <span class="badge">{{ current_user.num_received_requests }}</span>
+                <span class="badge">{{ session.current_user.num_received_requests }}</span>
               </a>
             </li>
             <li>
               <a href="#sent-friend-requests" id="sent-friend-requests-tab" role="tab" data-toggle="tab" aria-controls="sent-friend-requests">
                 Sent
-                <span class="badge">{{ current_user.num_sent_requests }}</span>
+                <span class="badge">{{ session.current_user.num_sent_requests }}</span>
               </a>
             </li>
           </ul>
@@ -154,10 +49,10 @@
             {% if friends %}
               {% for friend in friends %}
                 <div class="col-xs-6 col-sm-2" id="user-profile-pic-sm">
-                  <a href="users/{{ friend.user_id }}">
-                    {% if friend.user_id == 1 %}
+                  <a href="users/{{ friend.id }}">
+                    {% if friend.id == 1 %}
                       <img class="img-circle img-responsive" src="/static/img/profile-cartman.jpg">
-                    {% elif friend.user_id == 4 %}
+                    {% elif friend.id == 4 %}
                       <img class="img-circle img-responsive" src="/static/img/profile-kenny.jpg">
                     {% else %}
                       <img class="img-circle img-responsive" src="/static/img/profile-avatar.png">
@@ -183,12 +78,8 @@
             {% if received_friend_requests %}
               {% for received_friend_request in received_friend_requests %}
                 <div class="col-xs-6 col-sm-2" id="user-profile-pic-sm">
-                  <a href="users/{{ received_friend_request.user_id }}">
-                    {% if received_friend_request.user_id == 3 %}
-                      <img class="img-circle img-responsive" src="/static/img/profile-stan-marsh.jpg">
-                    {% else %}
-                      <img class="img-circle img-responsive" src="/static/img/profile-avatar.png">
-                    {% endif %}
+                  <a href="users/{{ received_friend_request.id }}">
+                      <img class="img-circle img-responsive" src="">
                     {{ received_friend_request.first_name }} {{ received_friend_request.last_name }}
                   </a>
                   <br><br>
@@ -210,8 +101,8 @@
           <div class="row">
             {% if sent_friend_requests %}
               {% for sent_friend_request in sent_friend_requests %}
-                <div class="col-xs-6 col-sm-2" id="user-profile-pic-sm">
-                  <a href="users/{{ sent_friend_request.user_id }}">
+                <div class="col-xs-6 col-sm-2" id="user-profile-pic-sm"> 
+                  <a href="users/{{ sent_friend_request.id }}">
                    <img class="img-circle img-responsive" src="/static/img/profile-avatar.png">
                     {{ sent_friend_request.first_name }} {{ sent_friend_request.last_name }}
                   </a>
@@ -230,29 +121,36 @@
         <!-- Find Friends tab content -->
         <div role="tabpanel" class="tab-pane fade active in" id="find-friends" aria-labelledby="find-friends-tab">
           <h2>Find Friends</h2>
-          {% if results %}
-            <h5 class="search-results">({{ query | length }} results)</h5>
+          {% if search_results %}
+            <h5 class="search-results">({{ search_results | length }} results)</h5>
             <div class="row">
-              {% for user in results %}
+              {% for user in search_results %}
                 <div class="col-xs-12 col-md-6">
-                    <a href="/users/{{ User.id }}" class="list-group-item">
+                  <div class="list-group" id="restaurant-list"><!-- Need to fix this id across the other restaurant pages -->
+                    <a href="/users/{{ user.id }}" class="list-group-item">
                       <div class="media">
                         <div class="media-left">
-                          <img class="media-object" alt="Image for {{ User.first_name }}">
+                            {% if csPic=='default' %}
+                                <img class="avatar border-gray" src="{{current_user.gravatar(size=90)}}" alt="Image for {{ user.first_name }}"/>
+                            {% else %}
+                                <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="Image for {{ user.first_name }}" style="width:150px;height:150px;">
+                            {% endif %}
                         </div><!-- /.media-left -->
                         <div class="media-body">
-                          <h3 class="media-heading">{{ User.first_name }} {{ User.last_name }}</h3>
+                          <h3 class="media-heading">{{ user.first_name }} {{ user.last_name }}</h3>
                           <p>
-                            <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Location: {{ user.city }}, {{ user.country}}
+                            <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Location: {{user.address}}, {{ user.city }}
                           </p>
                         </div><!-- /.media-body -->
                       </div><!-- /.media -->
                     </a>
+                  </div><!-- /.list-group -->
                 </div><!-- /.col -->
+              {% endfor %}
                 <div class="col-xs-12">
                   <p>Not who you're looking for? Please try searching again below.</p>
                   <!-- Search engine for users -->
-                  <form class="navbar-form navbar-left" role="search" action="/friends/search/<query>">
+                  <form class="navbar-form navbar-left" role="search" action="/friends/search">
                     <div class="input-group">
                       <input class="form-control" id="searchbox" type="search" name="q" aria-label="Find Friend" placeholder="Find friend by name">
                       <span class="input-group-btn">
@@ -261,18 +159,14 @@
                     </div>
                   </form>
                 </div>
-              {% endfor %}
             {% else %}
               <h5 class="search-results">No results found.</h5>
-              <p>Is your friend a user of TravelPlanner? Get them to sign up now, or please searching again below.</p>
+              <p>Is your friend a user of TravelPlanner? Get them to sign up now, or please searching again below. </p>
               <!-- Search engine for users -->
-              <form class="navbar-form navbar-left" role="search" action="/friends/search/<query>">
-              {{form.hidden_tag()}}
+              <form class="navbar-form navbar-left" role="search" action="/friends/search">
                 <div class="input-group">
-                    <div class="form-group">
-                        {{wtf.form_field(form.search)}}
-                    </div>
-                    <span class="input-group-btn">
+                  <input class="form-control" id="searchbox" type="search" name="q" aria-label="Find Friend" placeholder="Find friend by name">
+                  <span class="input-group-btn">
                     <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
                   </span>
                 </div>
@@ -287,22 +181,4 @@
 
   </div><!-- /.container -->
 
-
-        </div>
-    </div>
-</div>
-
-
-</body>
-
-    <!--   Core JS Files   -->
-    <script type="text/javascript" src="{{ url_for('.static', filename='js/jquery-1.10.2.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('.static', filename='js/bootstrap.min.js') }}"></script>
-
-	<!--  Checkbox, Radio & Switch Plugins -->
-    <script type="text/javascript" src="{{ url_for('.static', filename='js/bootstrap-checkbox-radio-switch.js') }}"></script>
-
-    <!--  Google Maps Plugin    -->
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
-
-</html>
+{% endblock %}

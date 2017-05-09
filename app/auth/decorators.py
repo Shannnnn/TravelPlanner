@@ -68,11 +68,11 @@ def get_friends(id):
 
     return friends
 
-available_extension = set(['png', 'jpg', 'PNG', 'JPG'])
+img_folder = 'app/auth/static/images/users/'
 
 def allowed_file(filename):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1] in available_extension
+           filename.rsplit('.', 1)[1] in set(['png', 'jpg', 'PNG', 'JPG'])
 
 def deleteTrip_user(userID):
     trips = Trips.query.filter_by(userID=userID).all()

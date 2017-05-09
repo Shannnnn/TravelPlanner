@@ -39,6 +39,17 @@ class RegisterForm(Form):
 
 
 class EditForm(Form):
+    first_name = StringField('First Name', validators=[DataRequired()])
+    last_name = StringField('Last Name', validators=[DataRequired()])
+    address = StringField('Address', validators=[DataRequired()])
+    city = StringField('City', validators=[DataRequired()])
+    country = StringField('Country', validators=[DataRequired()])
+    birth_date = DateField('Birth Date(mm/dd/yyyy)', format='%m/%d/%Y', validators=[DataRequired()])
+    contact_num = IntegerField('Contact Number', validators=[DataRequired()])
+    description = StringField('Description')
+    file = FileField('Choose Profile Picture', validators=[DataRequired()])
+
+class AdminEditForm(Form):
     username = StringField('Username', validators=[DataRequired()])
     role_id = StringField('Role ID', validators=[DataRequired()])
     password = StringField('Password', validators=[DataRequired(), Length(min=6, max=25)])
@@ -65,15 +76,5 @@ class TripForm(Form):
 class SearchForm(Form):
     search = StringField('',validators=[DataRequired()])
 
-class AdminEditForm(Form):
-    username = StringField('Username', validators=[DataRequired()])
-    first_name = StringField('First Name', validators=[DataRequired()])
-    last_name = StringField('Last Name', validators=[DataRequired()])
-    address = StringField('Address', validators=[DataRequired()])
-    city = StringField('City', validators=[DataRequired()])
-    country = StringField('Country', validators=[DataRequired()])
-    birth_date = DateField('Birth Date(mm/dd/yyyy)', format='%m/%d/%Y', validators=[DataRequired()])
-    contact_num = IntegerField('Contact Number', validators=[DataRequired()])
-    description = StringField('Description')
-    role_id = IntegerField('Role ID', validators=[DataRequired()])
+
 

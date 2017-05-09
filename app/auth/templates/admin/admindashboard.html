@@ -35,7 +35,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="/admin/main">TravelPlanner</a>
+                    <a class="navbar-brand" href="/main">TravelPlanner</a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav  smooth-scroll navbar-right">
@@ -49,16 +49,41 @@
                 </div><!--/.nav-collapse -->
             </div><!--/.container-fluid -->
         </nav>
-        <div class="content">
+        <section id="features" class="features-section">
             <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-8 col-sm-offset-2 text-center">
-                        <div class="card">
-                        </div>
-                    </div>
-                </div>
+                  <div class="row">
+                      <div class="col-sm-8 col-sm-offset-2">
+                          <div class="card">
+                              <div class="col-md-3">
+                                  <div class="list-group">
+                                    <a href="/admin/users" class="list-group-item visitor">
+                                      <h3 class="pull-right">
+                                        <i class="fa fa-group"></i>
+                                      </h3>
+                                      <h4 class="list-group-item-heading count">{{users|count}}</h4>
+                                      <p class="list-group-item-text">Users Count</p>
+                                    </a>
+                                    <a href="/admin/trips" class="list-group-item visitor">
+                                      <h3 class="pull-right">
+                                        <i class="fa fa-map"></i>
+                                      </h3>
+                                      <h4 class="list-group-item-heading count">{{trips|count}}</h4>
+                                      <p class="list-group-item-text">Trips Count</p>
+                                    </a>
+                                    <a href="/admin" class="list-group-item visitor">
+                                      <h3 class="pull-right">
+                                        <i class="fa fa-sign"></i>
+                                      </h3>
+                                      <h4 class="list-group-item-heading count"></h4>
+                                      <p class="list-group-item-text">Notifications</p>
+                                    </a>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
             </div>
-        </div>
+        </section>
     </div>
 </div>
 

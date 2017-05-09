@@ -5,7 +5,8 @@ function return_Result(){
 
 //Newest Trips and Most popular
 function state(tripname, from, to, views, image){
-      return   '<div class="col-sm-3 text-center">'+
+      return   '<a href="/main/view/'+tripname+'" target="_blank">'+
+      '<div class="col-sm-3 text-center">'+
                             '<div class="container" style="display:inline; width:100%;">'+
                                 '<div class="panel panel-default bootcards-media" style="width:100%;">'+ 
                                     '<div class="panel-heading" align="left" style="width: 100%;">'+tripname+'</div>'+
@@ -14,16 +15,15 @@ function state(tripname, from, to, views, image){
                                     '<div class="panel-footer" align="left" style="display: inline-block; width: 100%;">'+
                                       '<div class="row">'+
                                             '&nbsp; From:'+from+
-                                            '<a href="/main/view/'+tripname+'" target="_blank" class="btn btn-primary" style="float: right;">View Trip</a>'+
                                         '</div>'+
                                         '<div class="row">'+
                                             '&nbsp; To:'+to+
-                                            '&nbsp; '+views+' views'+
+                                            '&nbsp; <p class="fa fa-eye" aria-hidden="true"></p> '+views+
                                         '</div>'+
                                     '</div>'+
                                 '</div>'+
                             '</div>'+ 
-                        '</div>';
+                        '</div>'+'</a>';
 
 }
 
@@ -81,3 +81,37 @@ var item = ["#res", 'a[name="new_next"]', "#res_1", 'a[name="most_next"]']
         });
         return false;
     }
+
+
+
+
+function callit(num, text){
+  $('#exampleModalLong').html("")
+  Stringrespify = '<div class="modal-dialog" role="document">'+
+    '<div class="modal-content">'+
+      '<div class="modal-header">'+
+        '<h5 class="modal-title" id="exampleModalLongTitle">'+text+'</h5>'+
+      '</div>'+
+      '<div class="modal-body">'+
+        '<img style="height: 100%; width: 100%; object-fit:contain;" src="/main/static//images/misc/'+num+'.jpg"/>'+
+      '</div>'+
+      '<div class="modal-footer">'+
+        '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+
+  $('#exampleModalLong').append(Stringrespify)
+  $('#exampleModalLong').modal('show'); 
+}
+
+
+$('#filter_within').on('keyup', function(){
+    $('div[data-filter]').hide();
+   var txt = $('#filter_within').val();
+   if(txt){
+    $('div[data-filter]:contains("'+txt+'")').show();
+    }else{
+      $('div[data-filter]').show();
+    }
+});

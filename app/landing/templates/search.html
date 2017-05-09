@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block styles %}
+    <!-- Animation library for notifications   -->
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/animate.min.css') }}">
+
+    <!--  Light Bootstrap Table core CSS  -->  
+   
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/light-version.css') }}">
+    <!--  CSS for Demo Purpose, don't include it in your project     -->
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css//demo.css') }}">
+
+    <!--     Fonts and icons     -->
+    <link rel="stylesheet" type='text/css' href="http://fonts.googleapis.com/css?family=Roboto:400,700,300">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/pe-icon-7-stroke.css') }}">
+    <style type="text/css">
+
+
+    </style>
+ {% endblock %}
+{% block content %}
+<section id="intro" class="intro-section" style="background-image: url('{{ url_for('.static', filename='images/misc/blur0.jpg') }}'); background-repeat: no-repeat; background-size: contain; background-position: center; background-size: 1500px 660px;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2 text-center">
+                        <h1><span style="color: #ffffff;">Search the site</span></h1>
+                        <h4 style="color: #D3D3D3;">
+                            Find more Trips and the users who made them.
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <br>
+    <section>
+	<div class="container">
+	<div class="row">
+        <h3>Returned Result for Trips</h3>
+        <div>
+        {% for trip in trips %}
+            <a href="/main/view/{{ trip.tripName }}" target="_blank">
+                        <div class="col-sm-3 text-center">
+                            <div class="container" style="display:inline; width:100%;">
+                                <div class="panel panel-default bootcards-media" style="width:100%;"> 
+                                    <div class="panel-heading" align="left" style="width: 100%;">{{ trip.tripName }}</div>
+                                    <div class="panel-body" style="width: 100%; height: 100%;" align="center">
+                                    <img style="height: 100%; width: 100%; object-fit:contain;" src="{{ url_for('trip_blueprint.static', filename='images/trips/'+trip.img_thumbnail ) }} "/></div>
+                                    <div class="panel-footer" align="left" style="display: inline-block; width: 100%;">
+                                        <div class="row">
+                                            &nbsp; From: {{ trip.tripDateFrom }} 
+                                        </div>
+                                        <div class="row">
+                                            &nbsp; To: {{ trip.tripDateTo }}
+                                            &nbsp; <p class="fa fa-eye" aria-hidden="true"></p> {{ trip.viewsNum }} 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+        {% endfor %}
+        </div>
+    </div>
+
+     <div class="row">
+        <h3>Returned Result for Users</h3>
+        <div>
+        	{% for user in users %}
+    		 <div class="col-md-3">
+                    <div class="card card-user">
+                       	<div class="image">
+                       	</div>
+                       	<div class="content">
+                            <div class="author">
+                                {% if ph_1[loop.index-1]=='default' %}
+                                    <img class="avatar border-gray" src="{{user.gravatar(size=256)}}" alt="..."/>
+                                {% else %}
+                                    <img class="avatar border-gray" src="{{ url_for('auth_blueprint.static', filename='images/users/') }}{{ user.id }}/{{ ph_1[loop.index-1] }}" alt="..."/>
+                                {% endif %}
+                            	
+                                <h4 class="title">{{user.username}}<br/></h4>
+                            </div>
+                        </div>
+                    </div>
+           </div>
+           {% endfor %}
+        </div>
+    </div>
+    </div>
+    </section>
+
+{% endblock %} 

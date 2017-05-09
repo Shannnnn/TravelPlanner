@@ -1,19 +1,17 @@
-from app import db
 from flask_login import UserMixin, AnonymousUserMixin
 from app import db, app
-from flask_login import UserMixin
-from flask_whooshalchemy import whoosh_index
 from werkzeug.security import generate_password_hash
 from flask import request
 import hashlib
 from sqlalchemy_searchable import make_searchable
+
+from sqlalchemy_utils.types import TSVectorType
 from sqlalchemy.orm import backref
 
 make_searchable()
 
 class User(db.Model, UserMixin):
     __tablename__ = "users"
-    #__searchable__ = ['username', 'first_name', 'last_name']
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(15), nullable=False)
@@ -30,8 +28,10 @@ class User(db.Model, UserMixin):
     birth_date = db.Column(db.Date)
     contact_num = db.Column(db.BIGINT)
     description = db.Column(db.String(300))
-    profile_pic = db.Column(db.String(70))
-    
+    profile_pic = db.Column(db.Integer, nullable=True)
+
+    search_vector = db.Column(TSVectorType('first_name', 'last_name', 'username', 'email'))
+
     #User Information modification on first login
     first_login = db.Column(db.Boolean, default=True, nullable=False)
 
@@ -49,21 +49,7 @@ class User(db.Model, UserMixin):
         self.birth_date = None
         self.contact_num = 0
         self.description = ""
-        self.profile_pic = "default"
-
-    def create(self, username, email, password, role_id, first_name, last_name, address, city, country, birth_date, contact_num, description):
-        self.username = username
-        self.email = email
-        self.password = generate_password_hash(password)
-        self.role_id = role_id
-        self.first_name = first_name
-        self.last_name = last_name
-        self.address = address
-        self.city = city
-        self.country = country
-        self.birth_date = birth_date
-        self.contact_num = contact_num
-        self.description = description
+        self.profile_pic =  None
 
     def isAuthenticated(self):
         return True
@@ -151,8 +137,7 @@ class Connection(db.Model):
     user_a = db.relationship("User", foreign_keys=[user_a_id], backref=db.backref("sent_connections"))
     user_b = db.relationship("User", foreign_keys=[user_b_id], backref=db.backref("received_connections"))
     
-    def __init__(self, connection_id, user_a_id, user_b_id, status):
-        self.connection_id = connection_id
+    def __init__(self, user_a_id, user_b_id, status):
         self.user_a_id = user_a_id
         self.user_b_id = user_b_id
         self.status = status
@@ -162,3 +147,21 @@ class Connection(db.Model):
                                                                                       self.user_a_id,
                                                                                       self.user_b_id,
                                                                                       self.status)
+
+class Photos(db.Model):
+    __tablename__ = "User_Photos"
+
+    id = db.Column(db.Integer, primary_key=True)
+    photoName = db.Column(db.String(300))
+    photoDate = db.Column(db.Date)
+    photoLocation = db.Column(db.String(300))
+    userID = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+
+    def __init__(self, photoName, photoDate, photoLocation, userID):
+        self.photoName = photoName
+        self.photoDate = photoDate
+        self.photoLocation = photoLocation
+        self.userID = userID
+
+    def __repr__(self):
+        return '<photoName {}>'.format(self.photoName)

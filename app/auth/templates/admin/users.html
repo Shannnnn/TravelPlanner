@@ -37,11 +37,11 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="/admin/main">TravelPlanner</a>
+                    <a class="navbar-brand" href="/main">TravelPlanner</a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav  smooth-scroll navbar-right">
-                        <li><a href="/admin">Admin Dashboard</a></li>
+                        <li><a href="/admin">Admin Dashboard<span class="badge">{{ users|count }}</span></a></a></li>
                         <li class="active"><a href="/admin/users">Users</a></li>
                         <li><a href="/admin/trips">Trip Plans</a></li>
                         <li><a href="/admin/settings">Settings</a></li>
@@ -68,46 +68,51 @@
                                     </ul>
                                 </div>
                             </div>
-                            <a href="/admin/users/create" class="btn btn-info pull-left">Add User</a>
-                            <a href="" class="btn btn-danger pull-right" style="">Delete</a>
-                            <table id="mytable" class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th style="text-align: center"><input type="checkbox" id="checkall"/></th>
-                                        <th>ID</th>
-                                        <th>Username</th>
-                                        <th>Email</th>
-                                        <th>First Name</th>
-                                        <th>Last Name</th>
-                                        <th>Role</th>
-                                    </tr>
-                                </thead>
-                                {% for r in result %}
-                                <tbody>
-                                    <tr>
-                                        <td><a href="/admin/users/edit/{{r.username}}" class="btn btn-success btn-xs pull-right" style="text-align: center"><span class="glyphicon glyphicon-pencil"></span></a></td>
-                                        {% if r.role_id==1%}
-                                        <td style="text-align: center"><input type="checkbox" class="checkthis" id="" value="{{r.username}}" disabled readonly/></td>
-                                        {% else %}
-                                        <td style="text-align: center"><input type="checkbox" class="checkthis" id="{{r.username}}" value="{{r.username}}"/></td>
-                                        {% endif %}
-                                        <td>{{r.id}}</td>
-                                        <td>{{r.username}}</td>
-                                        <td>{{r.email}}</td>
-                                        <td>{{r.first_name}}</td>
-                                        <td>{{r.last_name}}</td>
-                                        {% if r.role_id==1 %}
-                                        <td>Admin</td>
-                                        {% elif r.role_id==2 %}
-                                        <td>Moderator</td>
-                                        {% else %}
-                                        <td>Member</td>
-                                        {% endif %}
-                                    </tr>
-                                </tbody>
-                                {% endfor %}
-                            </table>
+                            <form action="/admin/users/remove" method="POST" name="deletelist">
+                                <a href="/admin/users/create" class="btn btn-info pull-left">Add User</a>
+                                <a type="submit" class="btn btn-danger pull-right" style="">Delete</a>
+                                <table id="mytable" class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th style="text-align: center"><input type="checkbox" id="checkall"/></th>
+                                            <th>ID</th>
+                                            <th>Username</th>
+                                            <th>Email</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Role</th>
+                                        </tr>
+                                    </thead>
+                                    {% for r in result %}
+                                    <tbody>
+                                        <tr>
+                                            <td><a href="/admin/users/edit/{{r.username}}" class="btn btn-success btn-xs pull-right" style="text-align: center"><span class="glyphicon glyphicon-pencil"></span></a></td>
+                                            {% if r.role_id==1%}
+                                            <td style="text-align: center"><input type="checkbox" class="checkthis" value="{{r.username}}" disabled readonly/></td>
+                                            {% else %}
+                                            <td style="text-align: center"><input type="checkbox" class="checkthis" id="{{r.username}}" value="{{r.username}}"/></td>
+                                            {% endif %}
+                                            <td>{{r.id}}</td>
+                                            <td>{{r.username}}</td>
+                                            <td>{{r.email}}</td>
+                                            <td>{{r.first_name}}</td>
+                                            <td>{{r.last_name}}</td>
+                                            {% if r.role_id==1 %}
+                                            <td>Admin</td>
+                                            {% elif r.role_id==2 %}
+                                            <td>Moderator</td>
+                                            {% else %}
+                                            <td>Member</td>
+                                            {% endif %}
+                                        </tr>
+                                    </tbody>
+                                    <script>
+
+                                    </script>
+                                    {% endfor %}
+                                </table>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -159,6 +164,16 @@
 
                      $("[data-toggle=tooltip]").tooltip();
                  });
+        </script>
+        <script>
+            function ConfirmDelete()
+            {
+              var x = confirm("Are you sure you want to delete?");
+              if (x)
+                  return true;
+              else
+                return false;
+            }
         </script>
 </body>
 </html>
