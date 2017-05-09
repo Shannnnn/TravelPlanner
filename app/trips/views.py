@@ -60,10 +60,10 @@ def editTrips(tripName):
     trips = Trips.query.all()
     if request.method == 'POST':
         if form.validate_on_submit():
-            tripname.tripName = form.trip_name.data
-            tripname.tripDateFrom = form.trip_date_from.data
-            tripname.tripDateTo = form.trip_date_to.data
-            db.session.add(tripname)
+            form = Itineraries(tripName=form.trip_name.data,
+                               tripDateFrom=form.trip_date_from.data,
+                               tripDateTo=form.trip_date_to.data)
+            db.session.add(form)
             db.session.commit()
         return render_template('trip.html', trips=trips)
     else:
