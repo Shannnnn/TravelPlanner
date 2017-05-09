@@ -41,11 +41,11 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="/admin/main">TravelPlanner</a>
+                    <a class="navbar-brand" href="/main">TravelPlanner</a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav  smooth-scroll navbar-right">
-                        <li><a href="/admin">Admin Dashboard</a></li>
+                        <li><a href="/admin">Admin Dashboard<span class="badge">{{ users|count }}</span></a></a></li>
                         <li class="active"><a href="/admin/users">Users</a></li>
                         <li><a href="/admin/trips">Trip Plans</a></li>
                         <li><a href="/admin/settings">Settings</a></li>
@@ -59,67 +59,67 @@
             <div class="content">
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="card">
-                            <div class="header">
-                                <h4 class="title">Edit Profile</h4>
-                            </div>
-                            <form action="" method="POST" name="edit">
-                                {{form.hidden_tag()}}
-                                <div class="content">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                {{wtf.form_field(form.first_name)}}
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                {{wtf.form_field(form.last_name)}}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                {{wtf.form_field(form.birth_date)}}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                {{wtf.form_field(form.address)}}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                {{wtf.form_field(form.city)}}
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                {{wtf.form_field(form.country)}}
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                {{wtf.form_field(form.contact_num)}}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                {{wtf.form_field(form.description)}}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <button type="submit" class="btn btn-info btn-fill pull-right">Edit Profile</button>
-                                    <div class="clearfix"></div>
+                        <div class="col-sm-8 col-sm-offset-2 text-center">
+                            <div class="card">
+                                <div class="header">
+                                    <h4 class="title">Edit Profile</h4>
                                 </div>
-                            </form>
+                                <form action="/admin/users/edit/{{username}}" method="POST" name="edit">
+                                    {{form.hidden_tag()}}
+                                    <div class="content">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    {{wtf.form_field(form.first_name)}}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    {{wtf.form_field(form.last_name)}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    {{wtf.form_field(form.birth_date)}}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    {{wtf.form_field(form.contact_num)}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    {{wtf.form_field(form.address)}}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    {{wtf.form_field(form.city)}}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    {{wtf.form_field(form.country)}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    {{wtf.form_field(form.description)}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-info btn-fill pull-right">Edit Profile</button>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </form>
+                                </div>
                             </div>
                         </div>
                     </div>
