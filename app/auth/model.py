@@ -51,20 +51,6 @@ class User(db.Model, UserMixin):
         self.description = ""
         self.profile_pic =  None
 
-    def create(self, username, email, password, role_id, first_name, last_name, address, city, country, birth_date, contact_num, description):
-        self.username = username
-        self.email = email
-        self.password = generate_password_hash(password)
-        self.role_id = role_id
-        self.first_name = first_name
-        self.last_name = last_name
-        self.address = address
-        self.city = city
-        self.country = country
-        self.birth_date = birth_date
-        self.contact_num = contact_num
-        self.description = description
-
     def isAuthenticated(self):
         return True
  
