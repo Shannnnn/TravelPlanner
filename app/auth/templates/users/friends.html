@@ -83,7 +83,11 @@
                                       {% if csPic=='default' %}
                                         <img class="avatar border-gray" src="{{current_user.gravatar(size=90)}}" alt="Image for {{ user.first_name }}"/>
                                      {% else %}
+<<<<<<< HEAD
+                                        <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+usID[loop.index-1]+'/'+csPic[loop.index-1]) }}" alt="Image for {{ user.first_name }}"/>
+=======
                                         <img class=""avatar border-gray" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="Image for {{ user.first_name }}" style="width:150px;height:150px;">
+>>>>>>> 33f5be7d9e47a9056e7bbbdf0fc20e645ec78ec1
                                      {% endif %}
                                     </div><!-- /.media-left -->
                                     <div class="media-body">

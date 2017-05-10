@@ -1,17 +1,18 @@
 function return_Result(){
     var res = $('input[name="searchbar"]').val();
-    window.location.replace("/main/trip-plans/"+res);
+    window.location.replace("/main/planned-trips/"+res);
 }
 
 //Newest Trips and Most popular
 function state(tripname, from, to, views, image){
-      return   '<a href="/main/view/'+tripname+'" target="_blank">'+
+      return   '<div id="able" value="'+tripname+'" data-filter="'+tripname+'">'+
+      '<a href="/main/view/'+tripname+'" target="_blank">'+
       '<div class="col-sm-3 text-center">'+
                             '<div class="container" style="display:inline; width:100%;">'+
                                 '<div class="panel panel-default bootcards-media" style="width:100%;">'+ 
                                     '<div class="panel-heading" align="left" style="width: 100%;">'+tripname+'</div>'+
-                                    '<div class="panel-body" style="width: 100%; height: 100%;" align="center">'+
-                                    '<img style="height: 100%; width: 100%; object-fit:contain;" src="/trips/static//images/trips/'+image+'"/></div>'+
+                                    '<div class="panel-body" style="width: 270px; height: 125px;" align="center">'+
+                                    '<img style="height: 110%; width: 110%; object-fit:contain;" src="/trips/static//images/trips/'+image+'"/></div>'+
                                     '<div class="panel-footer" align="left" style="display: inline-block; width: 100%;">'+
                                       '<div class="row">'+
                                             '&nbsp; From:'+from+
@@ -23,7 +24,7 @@ function state(tripname, from, to, views, image){
                                     '</div>'+
                                 '</div>'+
                             '</div>'+ 
-                        '</div>'+'</a>';
+                        '</div>'+'</a>'+'</div>';
 
 }
 
@@ -115,3 +116,18 @@ $('#filter_within').on('keyup', function(){
       $('div[data-filter]').show();
     }
 });
+
+
+function trips_plans(keyword, num){
+      $.getJSON('/main/exp/'+keyword, {
+              page : num,
+            }, function(data) {
+              $('#views_ly').html("");
+              var stringRes = "";
+              for(i=0; i<data.size; i++){
+                stringRes+=state(data.result1[i], JSON.stringify(data.result2[i]).slice(5,17), JSON.stringify(data.result3[i]).slice(5,17), data.result4[i], data.result5[i]);
+            }
+            $('#views_ly').append(stringRes);
+        });
+        return false;
+}
