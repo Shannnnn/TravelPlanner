@@ -1,4 +1,4 @@
-{% extends '/users/base1.html' %}
+{% extends 'base1.html' %}
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block content %}
@@ -55,7 +55,20 @@
                                             </div>
                                         </div>
                                     </div>
-
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{wtf.form_field(form.itinerary_location)}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{wtf.form_field(form.itinerary_location_type)}}
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="row">
                                         <div class="col-md-4">
                                                 <div class="form-group">
@@ -69,13 +82,6 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-10">
-                                            <div class="form-group">
-                                                {{wtf.form_field(form.itinerary_desc)}}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
                                         <div class="col-md-4">
                                                 <div class="form-group">
                                                     {{wtf.form_field(form.itinerary_time_from, id="timepicker")}}
@@ -85,6 +91,13 @@
                                                 <div class="form-group">
                                                     {{wtf.form_field(form.itinerary_time_to, id="timepicker2")}}
                                                 </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <div class="form-group">
+                                                {{wtf.form_field(form.itinerary_desc, style="height: 100px;")}}
+                                            </div>
                                         </div>
                                     </div>
 

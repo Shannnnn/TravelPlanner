@@ -1,4 +1,4 @@
-{% extends '/users/base1.html' %}
+{% extends 'base1.html' %}
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block content %}
@@ -23,6 +23,9 @@
                                     <img style="height: 100%; width: 100%; object-fit:contain;" src="https://i.ytimg.com/vi/QGiJFumHUPo/maxresdefault.jpg"/></div>
                                     <div class="panel-footer" align="center" style="display: inline-block; width: 100%;">
                                         <div class="row">
+                                            &nbsp; Location: {{ itinerary.itineraryLocation }}
+                                        </div>
+                                        <div class="row">
                                             &nbsp; From: {{ itinerary.itineraryDateFrom }}
                                         </div>
                                         <div class="row">
@@ -35,7 +38,7 @@
                                             &nbsp; From: {{ itinerary.itineraryTimeFrom }}
                                         </div>
                                         <div class="row">
-                                             &nbsp;  To: {{ itinerary.itineraryTimeTo }}
+                                             &nbsp;To: {{ itinerary.itineraryTimeTo }}
                                         </div>
                                     </div>
                                 </div>

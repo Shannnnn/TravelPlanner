@@ -1,18 +1,29 @@
-from app import app, db
-db.create_all()
-# with app.app_context():
-#     db.create_all()
-    
-#db.create_all()
-
-# from app.auth.model import User
+from app import db
+# db.create_all()
 #
-# name = User('name', 'name@name.com', 'name')
-# name2 = User('name2', 'name2@name2.com', 'name2')
+from app.trips.model import itineraryLocationType
+#
+# name = itineraryLocationType('Restaurant', 'name')
+# name2 = itineraryLocationType('Hotel', 'icon2')
 #
 # db.session.add(name)
 # db.session.add(name2)
 # db.session.commit()
 #
-# names = User.query.all()
-# print names
+# locationTypes = db.session.query(itineraryLocationType.locationType)
+# all = locationTypes.all()
+# print all
+
+l = list()
+m = list()
+
+locationTypeID = db.session.query(itineraryLocationType.locationTypeID)
+locationType = db.session.query(itineraryLocationType.locationType)
+for i in locationTypeID:
+    l.append(i)
+for j in locationType:
+    m.append(j)
+
+valuee = zip(l, m)
+
+print valuee
