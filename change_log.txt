@@ -1,0 +1,22 @@
+May 10 2017 - 8:13 am(Earl Mark E. Barangot)
+	----------- landing_blueprint ---------------
+	*added pagination on trip plans template(for most popular, newwest trips plans, all trips, filtered trip plan)
+		--->included a paginate route to handle the dynamic pagination
+
+	*added functions for easy querying calls
+		---> function were written inside views due to the reason that if it were placed inside decorators it can cause circular calls between modules
+
+	*still some bugs on filtered trip plans
+
+	*updated trip cards(there was a bug in all landing_bluprint templates)
+
+	*added necessary varibles in decorators.py
+
+	*added a new trips-plans template(exp_newtrip.html)
+
+	------------  auth_blueprint ----------------
+	*did some changes on auth_bluprint templates(base.html, dashboard.html, friends.html)
+		---> to be able to see profile pic of other users
+
+	*did some changes on auth_bluprint views
+		---> to handle session['current_user'] successfully from login

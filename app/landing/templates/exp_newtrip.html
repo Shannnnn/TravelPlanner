@@ -56,12 +56,19 @@
                 <br><br>
                 <div class="row">
                     <h3>Results for {{ search_label }}</h3>
-                    <div class="container" style="display: inline-block;">
-                        <input class="form-control" type="text" id="filter_within" style="width:60vh;">
-                    </div>
-                    <div>
-                        {% for trip in trips %}
-                        <div id="able" value="{{ trip.tripName }}" data-filter="{{ trip.tripName }}" >
+                    <div class="text-center">
+                    <ul class="pagination pagination-lg">
+					    <li><a href="javascript:void(0)" onclick="trips_plans('{{ stry }}', 1)">&laquo;</a></li>
+					    {% for i in range(0,numm) %}
+					    <li><a href="javascript:void(0)" onclick="trips_plans('{{ stry }}', {{ loop.index }})">{{ loop.index }}</a></li>
+					    {% endfor %}
+					    <li><a href="javascript:void(0)" onclick="trips_plans('{{ stry }}', {{ numm }})">&raquo;</a></li>
+					</ul>
+					</div>
+                    {% if path==0 %}
+                    <div class="container" id="views_ly">
+                        {% for trip in trips.items %}
+                        <div id="able" value="{{ trip.tripName }}" data-filter="{{ trip.tripName }}" style="border:0px; margin:0; padding: 0; border-collapse: collapse;" >
                         <a href="/main/view/{{ trip.tripName }}" target="_blank"  value="{{ trip.tripName }}">
                         <div class="col-sm-3 text-center">
                             <div class="container" style="display:inline; width:100%;">
@@ -85,6 +92,44 @@
                         </div>
                         {% endfor %}
                     </div>
+                    {% elif path==1 %}
+                        <div class="container" id="views_ly">
+                        {% for trip in trips %}
+                        <div id="able" value="{{ trip.tripName }}" data-filter="{{ trip.tripName }}" style="border:0px; margin:0; padding: 0; border-collapse: collapse;" >
+                        <a href="/main/view/{{ trip.tripName }}" target="_blank"  value="{{ trip.tripName }}">
+                        <div class="col-sm-3 text-center">
+                            <div class="container" style="display:inline; width:100%;">
+                                <div class="panel panel-default bootcards-media" style="width:100%;"> 
+                                    <div class="panel-heading" align="left" style="width: 100%;" id="able_1">{{ trip.tripName }}</div>
+                                    <div class="panel-body" style="width: 270px; height: 125px;" align="center">
+                                    <img style="height: 110%; width: 110%; object-fit:contain;" src="{{ url_for('trip_blueprint.static', filename='images/trips/'+trip.img_thumbnail ) }} "/></div>
+                                    <div class="panel-footer" align="left" style="display: inline-block; width: 100%;">
+                                        <div class="row">
+                                            &nbsp; From: {{ trip.tripDateFrom }} 
+                                        </div>
+                                        <div class="row">
+                                            &nbsp; To: {{ trip.tripDateTo }}
+                                            &nbsp; <p class="fa fa-eye" aria-hidden="true"></p> {{ trip.viewsNum }} 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="text-center">
+                    <ul class="pagination pagination-lg">
+                        <li><a href="javascript:void(0)" onclick="trips_plans('{{ stry }}', 1)">&laquo;</a></li>
+                        {% for i in range(0,numm) %}
+                        <li><a href="javascript:void(0)" onclick="trips_plans('{{ stry }}', {{ loop.index }})">{{ loop.index }}</a></li>
+                        {% endfor %}
+                        <li><a href="javascript:void(0)" onclick="trips_plans('{{ stry }}', {{ numm }})">&raquo;</a></li>
+                    </ul>
+                    </div>
+
                 </div>
 
             </div>

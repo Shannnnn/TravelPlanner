@@ -3,11 +3,12 @@ from app import app, mail
 from flask_mail import Message
 from flask_login import current_user
 
-POSTS_PER_PAGE = 4
+POSTS_PER_PAGE = 12
 maxNum = 1
 maxPage = 3
-max_for_most = 8
-max_for_new = 8
+max_for_most = 15
+max_for_new = 15
+num_of_page = max_for_new/POSTS_PER_PAGE
 
 def determine(id_):
     detail=""
@@ -34,4 +35,6 @@ def send_email(subject, sender, recipients, text_body):
     msg.body = text_body
     thr = Thread(target=send_async_email, args=[app, msg])
     thr.start()
+
+
 

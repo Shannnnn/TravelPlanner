@@ -222,6 +222,20 @@ def home():
     else:
         cas = ph.photoName
 
+    received_friend_requests, sent_friend_requests = get_friend_requests(current_user.id)
+    num_received_requests = len(received_friend_requests)
+    num_sent_requests = len(sent_friend_requests)
+    num_total_requests = num_received_requests + num_sent_requests
+
+                        # Use a nested dictionary for session["current_user"] to store more than just user_id
+    session["current_user"] = {
+        "first_name": current_user.first_name,
+        "id": current_user.id,
+        "num_received_requests": num_received_requests,
+        "num_sent_requests": num_sent_requests,
+        "num_total_requests": num_total_requests
+    }
+
     return render_template('users/dashboard.html', username=current_user.username, csID=str(current_user.id), csPic=str(cas), user=user)
 
 
@@ -229,13 +243,13 @@ def home():
 def users(id):
     """Show user profile."""
 
-    ph = Photos.query.filter_by(id=current_user.profile_pic).first()
+    user = db.session.query(User).filter(User.id == id).one()
+
+    ph = Photos.query.filter_by(id=user.profile_pic).first()
     if ph is None:
         cas = 'default'
     else:
         cas = ph.photoName
-
-    user = db.session.query(User).filter(User.id == id).one()
 
     total_friends = len(get_friends(user.id).all())
 
@@ -250,7 +264,7 @@ def users(id):
                            total_friends=total_friends,
                            friends=friends,
                            pending_request=pending_request,
-                           csID=str(current_user.id), csPic=str(cas))
+                           csID=str(user.id), csPic=str(cas))
 
 
 @auth_blueprint.route('/add-friend', methods=["POST"])
@@ -260,8 +274,9 @@ def add_friend():
     """Send a friend request to another user."""
 
     user_a_id = session["current_user"]["id"]
-    user_b_id = request.form.get("user_b_id")
-
+    #user_b_id = request.form.get("user_b_id")
+    user_b_id = request.form['button_for_add']
+    print user_b_id
     # Check connection status between user_a and user_b
     is_friends, is_pending = is_friends_or_pending(user_a_id, user_b_id)
 
@@ -287,14 +302,19 @@ def add_friend():
 @required_roles('User')
 def show_friends(page=1):
     """Show friend requests and list of all friends"""
-
-    ph = Photos.query.filter_by(id=current_user.profile_pic).first()
-    if ph is None:
-        cas = 'default'
-    else:
-        cas = ph.photoName
-
+    cas = []
+    usID = []
     users = User.query.order_by(desc(User.id)).paginate(page, POSTS_PER_PAGE, False)
+    print users
+    for user in users.items:
+        ph = Photos.query.filter_by(id=user.profile_pic).first()
+        usID.append(str(user.id))
+        if ph is None:
+            cas.append('default')
+        else:
+            cas.append(str(ph.photoName))
+
+    #users = User.query.order_by(desc(User.id)).paginate(page, POSTS_PER_PAGE, False)
 
     # This returns User objects for current user's friend requests
     received_friend_requests, sent_friend_requests = get_friend_requests(session["current_user"]["id"])
@@ -307,7 +327,7 @@ def show_friends(page=1):
                            sent_friend_requests=sent_friend_requests,
                            friends=friends,
                            users=users,
-                           page=page, csID=str(current_user.id), csPic=str(cas))
+                           page=page, csPic=cas, usID=usID)
 
 
 @auth_blueprint.route("/friends/search/", methods=["GET"])
@@ -435,26 +455,28 @@ def login():
                     if user is not None and check_password_hash(user.password, request.form['password']):
                         login_user(user)
                         flash('You are now logged in!')
+
+                    # Get current user's friend requests and number of requests to display in badges
+                    received_friend_requests, sent_friend_requests = get_friend_requests(current_user.id)
+                    num_received_requests = len(received_friend_requests)
+                    num_sent_requests = len(sent_friend_requests)
+                    num_total_requests = num_received_requests + num_sent_requests
+
+                        # Use a nested dictionary for session["current_user"] to store more than just user_id
+                    session["current_user"] = {
+                        "first_name": current_user.first_name,
+                        "id": current_user.id,
+                        "num_received_requests": num_received_requests,
+                        "num_sent_requests": num_sent_requests,
+                        "num_total_requests": num_total_requests
+                    }
                     if user.first_login == True:
                         user.first_login = False
                         db.session.add(user)
                         db.session.commit()
                         return redirect(url_for('auth_blueprint.edit', username=request.form['username']))
 
-                        # Get current user's friend requests and number of requests to display in badges
-                        received_friend_requests, sent_friend_requests = get_friend_requests(current_user.id)
-                        num_received_requests = len(received_friend_requests)
-                        num_sent_requests = len(sent_friend_requests)
-                        num_total_requests = num_received_requests + num_sent_requests
-
-                        # Use a nested dictionary for session["current_user"] to store more than just user_id
-                        session["current_user"] = {
-                            "first_name": current_user.first_name,
-                            "id": current_user.id,
-                            "num_received_requests": num_received_requests,
-                            "num_sent_requests": num_sent_requests,
-                            "num_total_requests": num_total_requests
-                        }
+                    
 
                     return redirect(url_for('auth_blueprint.home', name=request.form['username']))
                 elif user.role_id == 1:

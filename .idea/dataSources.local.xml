@@ -8,8 +8,9 @@
       <case-sensitivity plain-identifiers="lower" quoted-identifiers="exact" />
       <secret-storage>master_key</secret-storage>
       <user-name>postgres</user-name>
-      <introspection-scope>travelplannerdb:public,pg_catalog,postgres</introspection-scope>
-      <resolve-scope>travelplannerdb:public,postgres</resolve-scope>
+      <introspection-schemas>travelplannerdb:pg_catalog,postgres,public</introspection-schemas>
+      <resolve-scope>travelplannerdb:postgres,public</resolve-scope>
+      <unqualified-resolve-schemas>travelplannerdb:postgres,public</unqualified-resolve-schemas>
     </data-source>
   </component>
 </project>
