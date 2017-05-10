@@ -40,7 +40,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="/admin/main">TravelPlanner</a>
+                    <a class="navbar-brand" href="/main">TravelPlanner</a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav  smooth-scroll navbar-right">
@@ -59,31 +59,22 @@
                 <div class="row">
                     <div class="col-sm-8 col-sm-offset-2 text-center">
                         <div class="card">
-                            <a href="" class="btn btn-danger pull-right" style="">Delete</a>
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th colspan="2"></th>
-                                        <th>ID</th>
-                                        <th>Username</th>
-                                        <th>Email</th>
-                                        <th>First Name</th>
-                                        <th>Last Name</th>
-                                    </tr>
-                                </thead>
-                                {% for r in result %}
-                                <tbody>
-                                    <tr>
-                                        <td><a href="/admin/trip/edit/{{r.tripName}}" class="btn btn-success pull-right" style=""><span class="glyphicon glyphicon-pencil"></span></a></td>
-                                        <td style="text-align: center"><input type="checkbox" id="{{r.tripName}}" value="{{r.tripName}}"/></td>
-                                        <td>{{r.tripID}}</td>
-                                        <td>{{r.tripName}}</td>
-                                        <td>{{r.tripDateFrom}}</td>
-                                        <td>{{r.tripDateTo}}</td>
-                                    </tr>
-                                </tbody>
-                                {% endfor %}
-                            </table>
+                            {% for r in result %}
+                                <div class="col-sm-3 text-center">
+                                    <div class="container" style="display:inline; height:100%; width:100%; border: thin">
+                                        <a href="/admin/trips/edit/{{r.tripName}}" class="panel panel-default bootcards-media" style="">
+                                            <div class="panel-heading"><h3 style="text-align: center">{{r.tripName}}</h3></div>
+                                            <div class="panel-footer">
+                                                <div class="row">From: {{r.tripDateFrom}}</div>
+                                                <div class="row">To: {{r.tripDateTo}}</div>
+                                                <div class="row">
+                                                    <p class="fa fa-eye" aria-hidden="true"></p> {{ r.viewsNum }}
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>

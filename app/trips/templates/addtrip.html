@@ -1,124 +1,25 @@
-<!doctype html>
-<html lang="en">
-<head>
-    {% import "bootstrap/wtf.html" as wtf %}
-	<meta charset="utf-8" />
-	<link rel="icon" type="image/png" href="#">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+{% extends 'users/base1.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
 
-	<title>TravelPlanner</title>
+{% block content %}
 
-	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <meta name="viewport" content="width=device-width" />
+{% block styles %}
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css">
+{% endblock %}
+
+{% block scripts %}
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
     $( function() {
-        $( "#datepicker" ).datepicker();
+        $( "#datepicker1" ).datepicker();
     });
     $( function() {
         $( "#datepicker2" ).datepicker();
     });
     </script>
-
-
-    <!-- Bootstrap core CSS     -->
-    <link rel="stylesheet" href="{{ url_for('.static', filename='css/bootstrap.min.css') }}">
-
-    <!-- Animation library for notifications   -->
-    <link rel="stylesheet" href="{{ url_for('.static', filename='css/animate.min.css') }}">
-
-    <!--  Light Bootstrap Table core CSS    -->
-    <link rel="stylesheet" href="{{ url_for('.static', filename='css/light-bootstrap-dashboard.css') }}">
-
-    <!--  CSS for Demo Purpose, don't include it in your project     -->
-    <link rel="stylesheet" href="{{ url_for('.static', filename='css//demo.css') }}">
-
-    <!--     Fonts and icons     -->
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type='text/css' href="http://fonts.googleapis.com/css?family=Roboto:400,700,300">
-    <link rel="stylesheet" href="{{ url_for('.static', filename='css/pe-icon-7-stroke.css') }}">
-
-</head>
-<body>
-
-<div class="wrapper">
-    <div class="sidebar" data-color="purple">
-
-    <!--
-
-        Tip 1: you can change the color of the sidebar using: data-color="blue | azure | green | orange | red | purple"
-        Tip 2: you can also add an image using data-image tag
-
-    -->
-
-    	<div class="sidebar-wrapper">
-            <div class="logo">
-                <a class="simple-text" href="/main/">
-                    TravelPlanner
-                </a>
-            </div>
-
-            <ul class="nav">
-                <li>
-                    <a href="/home">
-                        <i class="pe-7s-graph"></i>
-                        <p>Dashboard</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="/userprofile/{{current_user.username}}">
-                        <i class="pe-7s-user"></i>
-                        <p>User Profile</p>
-                    </a>
-                </li>
-                <li>
-                    <a href="/trips">
-                        <i class="pe-7s-note2"></i>
-                        <p>Trips</p>
-                    </a>
-                </li>
-            </ul>
-    	</div>
-    </div>
-
-    <div class="main-panel">
-		<nav class="navbar navbar-default navbar-fixed">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navigation-example-2">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="#">User Profile</a>
-                </div>
-                <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav navbar-left">
-                        <li>
-								<p class="hidden-lg hidden-md">Dashboard</p>
-                        </li>
-                    </ul>
-
-                    <ul class="nav navbar-nav navbar-right">
-                        <li>
-                           <a href="">
-                               <p>Account</p>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/logout">
-                                <p>Log out</p>
-                            </a>
-                        </li>
-						<li class="separator hidden-lg hidden-md"></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-
+{% endblock %}
 
         <div class="content">
             <div class="container-fluid">
@@ -142,7 +43,7 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                                 <div class="form-group">
-                                                    {{wtf.form_field(form.trip_date_from, id="datepicker")}}
+                                                    {{wtf.form_field(form.trip_date_from, id="datepicker1")}}
                                                 </div>
                                         </div>
                                         <div class="col-md-4">
@@ -193,20 +94,4 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-
-</body>
-
-    <!--   Core JS Files   -->
-    <link rel="stylesheet" type="text/javascript" href="{{ url_for('.static', filename='js/jquery-1.10.2.js') }}">
-    <link rel="stylesheet" type="text/javascript" href="{{ url_for('.static', filename='js/bootstrap.min.js') }}">
-
-	<!--  Checkbox, Radio & Switch Plugins -->
-    <link rel="stylesheet" href="{{ url_for('.static', filename='js/bootstrap-checkbox-radio-switch.js') }}">
-
-    <!--  Google Maps Plugin    -->
-    <link rel="stylesheet" type="text/javascript" href="https://maps.googleapis.com/maps/api/js?sensor=false">
-
-</html>
+{% endblock %}

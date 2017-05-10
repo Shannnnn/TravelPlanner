@@ -4,18 +4,19 @@ from werkzeug.security import generate_password_hash
 from flask import request
 import hashlib
 from sqlalchemy_searchable import make_searchable
+
+from sqlalchemy_utils.types import TSVectorType
 from sqlalchemy.orm import backref
 
 make_searchable()
 
 class User(db.Model, UserMixin):
     __tablename__ = "users"
-    #__searchable__ = ['username', 'first_name', 'last_name']
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(15), nullable=False)
     email = db.Column(db.String(50), nullable=False)
-    password = db.Column(db.String(80))
+    password = db.Column(db.String(800))
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     roles = db.relationship('Role', back_populates='users')
     # profile
@@ -28,7 +29,9 @@ class User(db.Model, UserMixin):
     contact_num = db.Column(db.BIGINT)
     description = db.Column(db.String(300))
     profile_pic = db.Column(db.Integer, nullable=True)
-    
+
+    # search_vector = db.Column(TSVectorType('first_name', 'last_name', 'username', 'email'))
+
     #User Information modification on first login
     first_login = db.Column(db.Boolean, default=True, nullable=False)
 
@@ -47,20 +50,6 @@ class User(db.Model, UserMixin):
         self.contact_num = 0
         self.description = ""
         self.profile_pic =  None
-
-    def create(self, username, email, password, role_id, first_name, last_name, address, city, country, birth_date, contact_num, description):
-        self.username = username
-        self.email = email
-        self.password = generate_password_hash(password)
-        self.role_id = role_id
-        self.first_name = first_name
-        self.last_name = last_name
-        self.address = address
-        self.city = city
-        self.country = country
-        self.birth_date = birth_date
-        self.contact_num = contact_num
-        self.description = description
 
     def isAuthenticated(self):
         return True

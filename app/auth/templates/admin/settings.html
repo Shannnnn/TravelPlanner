@@ -1,5 +1,6 @@
 <html lang="en">
     <head>
+        {% import "bootstrap/wtf.html" as wtf %}
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -34,11 +35,11 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand" href="/admin/main">TravelPlanner</a>
+                        <a class="navbar-brand" href="/main">TravelPlanner</a>
                     </div>
                     <div id="navbar" class="navbar-collapse collapse">
                         <ul class="nav navbar-nav  smooth-scroll navbar-right">
-                            <li><a href="/admin">Admin Dashboard</a></li>
+                            <li><a href="/admin">Admin Dashboard<span class="badge">{{ users|count }}</span></a></a></li>
                             <li><a href="/admin/users">Users</a></li>
                             <li><a href="/admin/trips">Trip Plans</a></li>
                             <li class="active"><a href="/admin/settings">Settings</a></li>
@@ -49,8 +50,28 @@
                 </div>
             </nav>
             <section id="features" class="features-section">
-                <div class="container">
-                    <p>hello</p>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-8 col-sm-offset-2 text-center">
+                            <div class="card">
+                                <form action="" method="post" name="update">
+                                    <div class="row">
+                                        <div class="row">
+                                            <h2>Change Site Name</h2>
+                                            <input class="form-control" type="textfield" placeholder="Travel Planner" id="sitename"/>
+                                        </div>
+                                        <div class="row">
+                                            <h2>Change Site Email</h2>
+                                            <input class="form-control" type="textfield" placeholder="travelplannerSy@gmail.com" id="siteemail"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <a type="submit" class="btn btn-success pull-right" style="">Update</a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
     </body>

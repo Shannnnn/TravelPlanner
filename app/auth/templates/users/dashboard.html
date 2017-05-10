@@ -1,4 +1,4 @@
-{% extends 'users/base.html' %}
+{% extends 'users/base1.html' %}
 
 {% block title %}User: {{ user.username }}{% endblock %}
 
@@ -7,19 +7,18 @@
     <div class="container">
       <div class="row">
         <div class="col-xs-12 col-md-2">
-            <a href="#">
                 {% if csPic=='default' %}
-                <img class="avatar border-gray" src="{{current_user.gravatar(size=150)}}" alt="..."/>
+                <img class="img-circle img-responsive" src="{{current_user.gravatar(size=150)}}" alt="..." style="width:150px;height:150px;">
                 {% else %}
-                <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..."/>
+                <img class="img-circle img-responsive" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..." style="width:150px;height:150px;">
                 {% endif %}
                 <h4 class="title">{{user.username}}<br />
                 </h4>
-            </a>
         </div>
         <div class="col-xs-12 col-md-6">
           <h1>{{ user.first_name }} {{ user.last_name }}</h1>
         </div><!-- /.col -->
+
         <div class="col-xs-12 col-md-4" id="action-box" >
           {% if session.current_user.id != user.id %}
             {% if friends %}
@@ -30,100 +29,13 @@
               <form id="add-friend-form" action="/add-friend" method="post">
                 <button type="submit" class="btn btn-primary" name="button_for_add" id="add-friend-btn" value="{{ user.id }}"><span class="fa fa-user-plus" aria-hidden="true"></span> Add Friend</button>
               </form>
+              {% endif %}
             {% endif %}
         </div><!-- /.col -->
       </div><!-- /.row -->
     </div><!-- /.container -->
   </div><!-- /.jumbotron -->
 
-  <div class="container" id="main-section">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card ">
-                <div class="header">
-                    <h4 class="title">{{user.first_name}}'s Info</h4>
-                </div>
-                <div class="content">
-                    <div class="table-full-width">
-                        <table class="user-stats">
-                            <tr>
-                              <th class="stats-label">Trips</th>
-                              <td class="stats-value">{{ total_trips }}</td>
-                            </tr>
-                            <tr></tr>
-                            <tr>
-                              <th class="stats-label">Friends</th>
-                              <td class="stats-value">{{ total_friends }}</td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="table-full-width">
-                        <table class="table">
-                            <tbody>
-                            <tr>
-                               <th>Address</th>
-                               <td>{{user.address}}</td>
-                            </tr>
-                            <tr>
-                               <th>City</th>
-                               <td>{{user.city}}</td>
-                            </tr>
-                            <tr>
-                               <th>Country</th>
-                               <td>{{user.country}}</td>
-                            </tr>
-                            <tr>
-                               <th>Contact Number</th>
-                               <td>{{user.contact_num}}</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-      <div class="col-xs-12 col-md-4">
-        <div class="panel panel-default">
-          <!-- Default panel contents -->
-          <div class="panel-heading">
-            <h3>Recent Trip</h3>
-          </div>
-
-          <!-- List group -->
-          {% if recent_trip %}
-            <div class="list-group">
-              {% for visit in recent_trips %}
-                <a href="/trips/{{ visit.trips.trip_id }}" class="list-group-item">
-                  <div class="media">
-                    <div class="media-left">
-                      <img class="media-object" src="" alt="Image for {{ trips.trip_name }}">
-                    </div>
-                    <div class="media-body">
-                      <h4 class="media-heading"></h4>
-                      <p>
-                        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>
-                        <br>
-                        <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
-                      </p>
-                    </div>
-                  </div>
-                </a>
-              {% endfor %}
-                <a href="#" class="list-group-item">See rest of the trips.</a>
-            </div>
-          {% else %}
-            <ul class="list-group">
-              <li class="list-group-item">No trips yet.</li>
-            </ul>
-          {% endif %}
-        {% endif %}
-        </div><!-- /.panel -->
-      </div><!-- /.col -->
-    </div><!-- /.row -->
-  </div><!-- /.container -->
-
-  {% if session.current_user.id == user.id %}
   <div class="container" id="main-section">
     <div class="row">
         <div class="col-md-6">
@@ -205,15 +117,9 @@
                 </table>
             </div>
           {% endif %}
-        {% endif %}
         </div><!-- /.panel -->
       </div><!-- /.col -->
     </div><!-- /.row -->
   </div><!-- /.container -->
-
-{% endblock %}
-
-{% block javascript %}
-  <script type="text/javascript" src="{{ url_for('.static', filename='js/add-friend.js') }}"></script>
 
 {% endblock %}

@@ -3,13 +3,14 @@ from flask import Flask, render_template, redirect, Blueprint, request, flash, u
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user, AnonymousUserMixin
 from werkzeug.security import check_password_hash
 from model import User, Role, Anonymous, Photos, Connection
-from forms import LoginForm, RegisterForm, EditForm, SearchForm, AdminEditForm, TripForm
+from forms import LoginForm, RegisterForm, EditForm, SearchForm, AdminEditForm
 from app import db, app
 from decorators import required_roles, get_friends, get_friend_requests, allowed_file, deleteTrip_user, img_folder, is_friends_or_pending
 from app.landing.views import landing_blueprint
 from werkzeug import secure_filename
 from PIL import Image
 from app.trips.model import Trips
+from app.trips.forms import EditTripForm
 import datetime
 import time
 from sqlalchemy_searchable import search
@@ -34,12 +35,20 @@ def load_user(user_id):
 @login_required
 @required_roles('Admin')
 def addash():
-    return render_template('admin/admindashboard.html')
+    users = User.query.all()
+    trips = Trips.query.all()
+    return render_template('admin/admindashboard.html', users=users, trips=trips)
 
-@auth_blueprint.route('/admin/users/sort/<role_id>', methods=['GET', 'POST'])
+@auth_blueprint.route('/admin/settings')
 @login_required
 @required_roles('Admin')
-def sortadmin(role_id):
+def settings():
+    return render_template('admin/settings.html')
+
+@auth_blueprint.route('/admin/users/sort/admin', methods=['GET', 'POST'])
+@login_required
+@required_roles('Admin')
+def sortadmin():
     result = User.query.filter_by(role_id='1')
     return render_template('admin/users.html', result=result)
 
@@ -50,7 +59,7 @@ def sortmod():
     result = User.query.filter_by(role_id='2')
     return render_template('admin/users.html', result=result)
 
-@auth_blueprint.route('/admin/users/sort/user', methods=['GET', 'POST'])
+@auth_blueprint.route('/admin/users/sort/member', methods=['GET', 'POST'])
 @login_required
 @required_roles('Admin')
 def sortuser():
@@ -62,23 +71,23 @@ def sortuser():
 @login_required
 @required_roles('Admin')
 def manageusers():
-    result = User.query.all()
+    result = User.query.order_by(User.id)
     return render_template('admin/users.html', result=result)
 
 @auth_blueprint.route('/admin/users/create', methods=['GET','POST'])
 @login_required
 @required_roles('Admin')
 def addusers():
-    form = CreateForm()
+    form = RegisterForm()
     if request.method == 'POST':
         if form.validate_on_submit():
-            user = User.create(username=form.username.data, role_id=form.role_id.data, first_name=form.first_name.data,
-                            last_name=form.last_name.data, email=form.email.data, address=form.address.data, city=form.city.data,
-                            country=form.country.data, birth_date=form.birth_date.data, contact_num=form.contact_num.data,
-                            description=form.description.data)
+            user = User(username=form.username.data,
+                               email=form.email.data,
+                               password=form.password.data,
+                               role_id = "3")
             db.session.add(user)
             db.session.commit()
-            result = User.query.all()
+            result = User.query.order_by(User.id)
             flash("Your changes have been saved.")
             return render_template('admin/users.html', result=result)
     return render_template('admin/createusers.html', form=form)
@@ -89,45 +98,49 @@ def addusers():
 @required_roles('Admin')
 def editusers(username):
     user = User.query.filter_by(username=username).first()
-    form = EditForm()
+    form = AdminEditForm()
     result = User.query.all()
-    if form.validate_on_submit():
-        user.first_name = form.first_name.data
-        user.last_name = form.last_name.data
-        user.address = form.address.data
-        user.city = form.city.data
-        user.country = form.country.data
-        user.birth_date = form.birth_date.data
-        user.contact_num = form.contact_num.data
-        user.description = form.description.data
-        db.session.add(user)
-        db.session.commit()
-        flash("Your changes have been saved.")
-        return render_template('admin/users.html', result=result)
-    else:
-        form.first_name.data = user.first_name
-        form.last_name.data = user.last_name
-        form.address.data = user.address
-        form.city.data = user.city
-        form.country.data = user.country
-        form.birth_date.data = user.birth_date
-        form.contact_num.data = user.contact_num
-        form.description.data = user.description
-        return render_template('admin/editusers.html', user=user, form=form)
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            user.first_name = form.first_name.data
+            user.last_name = form.last_name.data
+            user.address = form.address.data
+            user.city = form.city.data
+            user.country = form.country.data
+            user.birth_date = form.birth_date.data
+            user.contact_num = form.contact_num.data
+            user.description = form.description.data
+            db.session.add(user)
+            db.session.commit()
+            flash("Your changes have been saved.")
+            return render_template('admin/users.html', result=result)
+        else:
+            form.first_name.data = user.first_name
+            form.last_name.data = user.last_name
+            form.address.data = user.address
+            form.city.data = user.city
+            form.country.data = user.country
+            form.birth_date.data = user.birth_date
+            form.contact_num.data = user.contact_num
+            form.description.data = user.description
+            return render_template('admin/editusers.html', user=user, form=form)
+    return render_template('admin/editusers.html', user=user, form=form)
 
 #delete
-@auth_blueprint.route('/admin/users/remove/<username>', methods=['GET','POST'])
+@auth_blueprint.route('/admin/users/remove', methods=['GET','POST'])
 @login_required
 @required_roles('Admin')
-def deleteusers(username):
-    user = User.query.filter_by(username=username).first()
-    deleteTrip_user(user.id)
-    if user.profile_pic!='default':
-        os.remove(img_folder+'users/'+str(user.profile_pic))
-    db.session.delete(user)
-    db.session.commit()
-    result = User.query.all()
-    return render_template('admin/users.html', result = result)
+def deleteusers():
+    if request.method == 'POST':
+        if request.form.getlist("username"):
+            user = User.query.filter(User.username.in__(request.form['username'])).first()
+            deleteTrip_user(user.id)
+            if user.profile_pic!='default':
+                os.remove(img_folder+'users/'+str(user.profile_pic))
+            db.session.delete(user)
+            db.session.commit()
+            result = User.query.all()
+            return render_template('admin/users.html', result = result)
 
 # TRIPS --> read
 @auth_blueprint.route('/admin/trips')
@@ -137,58 +150,27 @@ def managetrips():
     result = Trips.query.all()
     return render_template('admin/trips.html', result=result)
 
-#create
-@auth_blueprint.route('/admin/trips/new')
-@login_required
-@required_roles('Admin')
-def createtrip():
-    form = TripForm()
-    return render_template('admin/createtrip.html', form=form)
-
-@auth_blueprint.route('/admin/trips/add', methods=['GET','POST'])
-@login_required
-@required_roles('Admin')
-def addtrip():
-    trips = Trips(tripName=request.form['tripName'], tripDateFrom=request.form['tripDateFrom'], tripDateTo=request.form['tripDateTo'],
-                  id=request.form['id'], img_thumbnail=request.form['img_thumbnail'])
-    form = TripForm()
-    trips.tripName = form.tripName.data
-    trips.tripDateFrom = form.tripDateFrom.data
-    trips.tripDateTo = form.tripDateTo.data
-    trips.id = form.id.data
-    trips.img_thumbnail = form.img_thumbnail.data
-    db.session.add(trips)
-    db.session.commit()
-    flash("Your changes have been saved.")
-    return render_template('admin/trips.html', result=result)
-
 #update
 @auth_blueprint.route('/admin/trips/edit/<tripName>', methods=['GET','POST'])
 @login_required
 @required_roles('Admin')
 def edittrips(tripName):
-    trips = Trips.query.filter_by(tripName=tripName).first()
-    result = Trips.query.all()
-    form = TripForm()
-    if form.validate_on_submit():
-        trips.tripName = form.tripName.data
-        trips.tripDateFrom = form.tripDateFrom.data
-        trips.tripDateTo = form.tripDateTo.data
-        trips.id = form.id.data
-        trips.viewsNumber = form.viewsNumber.data
-        trips.img_thumbnail = form.img_thumbnail.data
-        db.session.add(trips)
-        db.session.commit()
-        flash("Your changes have been saved.")
-        return render_template('admin/trips.html', result=result)
+    tripname = Trips.query.filter_by(tripName=tripName).first()
+    form = EditTripForm()
+    trips = Trips.query.all()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            tripname.tripName = form.trip_name.data
+            tripname.tripDateFrom = form.trip_date_from.data
+            tripname.tripDateTo = form.trip_date_to.data
+            db.session.add(tripname)
+            db.session.commit()
+        return render_template('/admin/trips.html', trips=trips)
     else:
-        form.tripName.data = trips.tripName
-        form.tripDateFrom.data = trips.tripDateFrom
-        form.tripDateTo.data = trips.tripDateTo
-        form.id.data = trips.id
-        form.viewsNumber.data = trips.viewsNumber
-        form.img_thumbnail.data = trips.img_thumbnail
-        return render_template('admin/edittrips.html', trips=trips, form=form)
+        form.trip_name.data = tripname.tripName
+        form.trip_date_from.data = tripname.tripDateFrom
+        form.trip_date_to.data = tripname.tripDateTo
+    return render_template('/admin/edittrips.html', form=form, tripname=tripname)
 
 #delete
 @auth_blueprint.route('/admin/trips/remove/<tripName>', methods=['GET','POST'])
@@ -201,12 +183,6 @@ def removetrips(tripName):
     db.session.commit()
     result = Trips.query.all()
     return render_template('admin/trips.html', result=result)
-
-@auth_blueprint.route('/admin/connections')
-@login_required
-@required_roles('Admin')
-def connections():
-    return render_template('admin/connections.html')
 # END ADMIN <----------
 
 
@@ -240,6 +216,8 @@ def home():
 
 
 @auth_blueprint.route("/users/<int:id>")
+@login_required
+@required_roles('User')
 def users(id):
     """Show user profile."""
 
@@ -259,7 +237,7 @@ def users(id):
     # Check connection status between user_a and user_b
     friends, pending_request = is_friends_or_pending(user_a_id, user_b_id)
 
-    return render_template("users/dashboard.html",
+    return render_template("users/user.html",
                            user=user,
                            total_friends=total_friends,
                            friends=friends,
