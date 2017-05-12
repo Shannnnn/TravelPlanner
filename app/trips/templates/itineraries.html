@@ -2,13 +2,12 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block styles %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/semantic.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/semantic.min.css">
+    <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/icon.min.css'>
 {% endblock %}
 
 {% block scripts %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/semantic.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/semantic.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/semantic.min.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -34,7 +33,6 @@
                                     <div class="panel-footer" align="center" style="display: inline-block; width: 100%;">
                                         <div class="row">
                                               Location: {{ itinerary.itineraryLocation }}
-                                            <i class="{{ itineraryLocationType.locationTypeIcon }}"></i>
                                         </div>
                                         <div class="row">
                                             &nbsp; From: {{ itinerary.itineraryDateFrom }}

@@ -33,21 +33,17 @@ class Itineraries(db.Model):
     itineraryName = db.Column(db.String(70))
     itineraryDesc = db.Column(db.String(1000))
     itineraryLocation = db.Column(db.String(80))
-    itineraryDateFrom = db.Column(db.Date)
-    itineraryDateTo = db.Column(db.Date)
-    itineraryTimeFrom = db.Column(db.Time)
-    itineraryTimeTo = db.Column(db.Time)
+    itineraryDate = db.Column(db.Date)
+    itineraryTime = db.Column(db.Time)
     tripID = db.Column(db.Integer, db.ForeignKey("trips.tripID"), nullable=False)
     locationTypeID = db.Column(db.Integer, db.ForeignKey("itinerarylocationtype.locationTypeID"), nullable=True)
 
-    def __init__(self, itineraryName, itineraryDesc, itineraryLocation, itineraryDateFrom, itineraryDateTo, itineraryTimeFrom, itineraryTimeTo, tripID, locationTypeID):
+    def __init__(self, itineraryName, itineraryDesc, itineraryLocation, itineraryDate, itineraryTime, tripID, locationTypeID):
         self.itineraryName = itineraryName
         self.itineraryDesc = itineraryDesc
         self.itineraryLocation = itineraryLocation
-        self.itineraryDateFrom = itineraryDateFrom
-        self.itineraryDateTo = itineraryDateTo
-        self.itineraryTimeFrom = itineraryTimeFrom
-        self.itineraryTimeTo = itineraryTimeTo
+        self.itineraryDateFrom = itineraryDate
+        self.itineraryTimeTo = itineraryTime
         self.tripID = tripID
         self.locationTypeID = locationTypeID
 

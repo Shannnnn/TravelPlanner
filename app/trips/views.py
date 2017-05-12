@@ -89,12 +89,10 @@ def additineraries(tripName):
     if request.method == 'POST':
         if itineraryForm.validate_on_submit():
             itineraryform = Itineraries(itineraryName=itineraryForm.itinerary_name.data,
-                             itineraryDateFrom=itineraryForm.itinerary_date_from.data,
-                             itineraryDateTo=itineraryForm.itinerary_date_to.data,
+                             itineraryDate=itineraryForm.itinerary_date.data,
                              itineraryDesc=itineraryForm.itinerary_desc.data,
                              itineraryLocation=itineraryForm.itinerary_location.data,
-                             itineraryTimeFrom=itineraryForm.itinerary_time_from.data,
-                             itineraryTimeTo=itineraryForm.itinerary_time_to.data,
+                             itineraryTime=itineraryForm.itinerary_time.data,
                              locationTypeID=itineraryForm.itinerary_location_type.data,
                              tripID=tripid.tripID)
             db.session.add(itineraryform)
@@ -113,10 +111,8 @@ def additineraries(tripName):
 def itineraries(tripName):
     tripid = Trips.query.filter_by(tripName=tripName).first()
     itinerary = Itineraries.query.filter_by(tripID=tripid.tripID)
-    itinerary2 = Itineraries.query.filter_by(tripID=tripid.tripID).first()
-    itinerarylocationtype1 = itineraryLocationType.query.filter_by(locationTypeID=itinerary2.locationTypeID)
     trip = Trips.query.filter_by(userID=current_user.id, tripName=tripName).first()
-    return render_template('itineraries.html', trip=trip, itineraryLocationType=itinerarylocationtype1, itineraries=itinerary)
+    return render_template('itineraries.html', trip=trip, itineraries=itinerary)
 
 @trip_blueprint.route('/<tripName>/<itineraryName>/edit', methods=['GET', 'POST'])
 def editItineraries(tripName, itineraryName):
@@ -128,24 +124,20 @@ def editItineraries(tripName, itineraryName):
     if request.method == 'POST':
         if form.validate_on_submit():
             itineraryname.itineraryName = form.itinerary_name.data
-            itineraryname.itineraryDateFrom = form.itinerary_date_from.data
-            itineraryname.itineraryDateTo = form.itinerary_date_to.data
+            itineraryname.itineraryDate = form.itinerary_date.data
             itineraryname.itineraryDesc = form.itinerary_desc.data
             itineraryname.itineraryLocation = form.itinerary_location.data
             itineraryname.locationTypeID = form.itinerary_location_type.data
-            itineraryname.itineraryTimeFrom = form.itinerary_time_from.data
-            itineraryname.itineraryTimeTo = form.itinerary_time_to.data
+            itineraryname.itineraryTime = form.itinerary_time.data
             db.session.add(itineraryname)
             db.session.commit()
             return redirect(url_for("trip_blueprint.itineraries", tripName=tripName))
         return render_template('itineraries.html', trip=tripname, itineraries=itineraries)
     else:
         form.itinerary_name.data = itineraryname.itineraryName
-        form.itinerary_date_from.data = itineraryname.itineraryDateFrom
-        form.itinerary_date_to.data = itineraryname.itineraryDateTo
+        form.itinerary_date.data = itineraryname.itineraryDate
         form.itinerary_desc.data = itineraryname.itineraryDesc
         form.itinerary_location_type.data = itineraryname.locationTypeID
         form.itinerary_location.data = itineraryname.itineraryLocation
-        form.itinerary_time_from.data = itineraryname.itineraryTimeFrom
-        form.itinerary_time_to.data = itineraryname.itineraryTimeTo
+        form.itinerary_time.data = itineraryname.itineraryTime
     return render_template('edititineraries.html', form=form, tripname=tripname)
