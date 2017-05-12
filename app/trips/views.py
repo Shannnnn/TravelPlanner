@@ -1,8 +1,8 @@
 import os
-from flask import Flask, render_template, redirect, Blueprint, request, flash, url_for, send_from_directory
+from flask import Flask, render_template, redirect, Blueprint, request, jsonify, url_for, send_from_directory
 from flask_login import current_user
 from forms import TripForm, ItineraryForm, EditTripForm, EditItineraryForm
-from model import Trips, Itineraries, itineraryLocationType
+from model import Trips, Itineraries, itineraryLocationType, Country, City
 from app import db
 from werkzeug import secure_filename
 from app.auth.model import Photos
@@ -21,14 +21,19 @@ def allowed_file(filename):
 
 @trip_blueprint.route('/createtrip', methods=['GET', 'POST'])
 def addtrip():
+    global a
     error = None
     tripForm = TripForm()
+    tripForm.trip_country.choices = [(a.countryID, a.countryName) for a in Country.query]
+    tripForm.trip_city.choices = [(a.cityID, a.cityName) for a in City.query]
     if request.method == 'POST':
         if tripForm.validate_on_submit():
             tripform = Trips(tripName=tripForm.trip_name.data,
                              tripDateFrom=tripForm.trip_date_from.data,
                              tripDateTo=tripForm.trip_date_to.data,
                              userID=current_user.id,
+                             tripCountry=tripForm.trip_country.data,
+                             tripCity=tripForm.trip_city.data,
                              img_thumbnail=tripForm.file.data.filename)
             db.session.add(tripform)
             db.session.commit()
@@ -108,8 +113,10 @@ def additineraries(tripName):
 def itineraries(tripName):
     tripid = Trips.query.filter_by(tripName=tripName).first()
     itinerary = Itineraries.query.filter_by(tripID=tripid.tripID)
+    itinerary2 = Itineraries.query.filter_by(tripID=tripid.tripID).first()
+    itinerarylocationtype1 = itineraryLocationType.query.filter_by(locationTypeID=itinerary2.locationTypeID)
     trip = Trips.query.filter_by(userID=current_user.id, tripName=tripName).first()
-    return render_template('itineraries.html', trip=trip, itineraries=itinerary)
+    return render_template('itineraries.html', trip=trip, itineraryLocationType=itinerarylocationtype1, itineraries=itinerary)
 
 @trip_blueprint.route('/<tripName>/<itineraryName>/edit', methods=['GET', 'POST'])
 def editItineraries(tripName, itineraryName):
@@ -117,6 +124,7 @@ def editItineraries(tripName, itineraryName):
     itineraryname = Itineraries.query.filter_by(tripID=tripname.tripID, itineraryName=itineraryName).first()
     itineraries = Itineraries.query.all()
     form = EditItineraryForm()
+    form.itinerary_location_type.choices = [(a.locationTypeID, a.locationType) for a in itineraryLocationType.query]
     if request.method == 'POST':
         if form.validate_on_submit():
             itineraryname.itineraryName = form.itinerary_name.data

@@ -1,11 +1,11 @@
 from flask_wtf import Form
-from wtforms import StringField, PasswordField, ValidationError, DateField, IntegerField, FileField, SelectField, TextAreaField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
-from model import itineraryLocationType
-from app import db
+from wtforms import StringField, DateField, FileField, SelectField, TextAreaField
+from wtforms.validators import DataRequired
 
 class TripForm(Form):
     trip_name = StringField('Trip Name', validators=[DataRequired()])
+    trip_city = SelectField('City', choices=[])
+    trip_country = SelectField('Country', choices=[])
     trip_date_from = DateField('From(mm/dd/yyyy)', format='%m/%d/%Y', validators=[DataRequired()])
     trip_date_to = DateField('To(mm/dd/yyyy)', format='%m/%d/%Y', validators=[DataRequired()])
     file = FileField('Choose Thumbnail', validators=[DataRequired()])
@@ -22,6 +22,7 @@ class ItineraryForm(Form):
 
 class EditTripForm(Form):
     trip_name = StringField('Trip Name', validators=[DataRequired()])
+    trip_location = SelectField('Location', choices=[])
     trip_date_from = DateField('From(mm/dd/yyyy)', format='%m/%d/%Y', validators=[DataRequired()])
     trip_date_to = DateField('To(mm/dd/yyyy)', format='%m/%d/%Y', validators=[DataRequired()])
 

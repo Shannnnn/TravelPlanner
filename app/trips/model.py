@@ -6,16 +6,20 @@ class Trips(db.Model):
     tripName = db.Column(db.String(70))
     tripDateFrom = db.Column(db.Date)
     tripDateTo = db.Column(db.Date)
+    tripCountry = db.Column(db.String(70))
+    tripCity = db.Column(db.String(70))
     userID = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     viewsNum = db.Column(db.Integer)
     img_thumbnail = db.Column(db.String(70))
     # status = db.Column(db.Boolean, default=True, nullable=False)
     # visibility = db.Column(db.Boolean, default=False, nullable=False)
 
-    def __init__(self, tripName, tripDateFrom, tripDateTo, userID, img_thumbnail):
+    def __init__(self, tripName, tripDateFrom, tripDateTo, tripCity, tripCountry, userID, img_thumbnail):
         self.tripName = tripName
         self.tripDateFrom = tripDateFrom
         self.tripDateTo = tripDateTo
+        self.tripCity = tripCity
+        self.tripCountry = tripCountry
         self.userID = userID
         self.viewsNum = 0
         self.img_thumbnail = img_thumbnail
@@ -62,3 +66,32 @@ class itineraryLocationType(db.Model):
 
     def __repr__(self):
         return '<locationType {}>'.format(self.locationType)
+
+
+class City(db.Model):
+    __tablename__ = "cities"
+    cityID = db.Column(db.Integer, primary_key=True)
+    cityName = db.Column(db.String(80))
+    cityCode = db.Column(db.String(80))
+    countryID = db.Column(db.Integer, db.ForeignKey('countries.countryID'), nullable=False)
+
+    def __init__(self, cityName, cityCode, countryID):
+        self.cityName = cityName
+        self.cityName = cityCode
+        self.countryID = countryID
+
+    def __repr__(self):
+        return '<cityName {}>'.format(self.cityCode)
+
+class Country(db.Model):
+    __tablename__ = "countries"
+    countryID = db.Column(db.Integer, primary_key=True)
+    countryName = db.Column(db.String(80))
+    countryCode = db.Column(db.String(80))
+
+    def __init__(self, countryName, countryCode):
+        self.countryName = countryName
+        self.countryCode = countryCode
+
+    def __repr__(self):
+        return '<countryName {}>'.format(self.countryName)
