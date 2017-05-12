@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, redirect, Blueprint, request, flash, url_for, session
+from flask import Flask, render_template, redirect, Blueprint, request, flash, url_for, session, jsonify
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user, AnonymousUserMixin
 from werkzeug.security import check_password_hash
 from model import User, Role, Anonymous, Photos, Connection
@@ -418,6 +418,37 @@ def edit(username):
             cas = ph.photoName
         return render_template('users/edit_profile.html', user=user, form=form, csID=str(current_user.id), csPic=str(cas))
 
+@auth_blueprint.route('/user/photos')
+@login_required
+@required_roles('User')
+def select_photo():
+    ph = Photos.query.filter_by(id=current_user.profile_pic).first()
+    user = db.session.query(User).filter(User.id == current_user.id).one()
+
+    if ph is None:
+        cas = 'default'
+    else:
+        cas = ph.photoName
+
+    photos = Photos.query.filter_by(userID=current_user.id).all()
+
+    return render_template('users/photos.html', username=current_user.username, csID=str(current_user.id), csPic=str(cas), user=user, photos=photos)
+
+@auth_blueprint.route('/set_profile')
+@login_required
+@required_roles('User')
+def modify_prophoto():
+    current_user.profile_pic = int(request.args.get('id'))
+    db.session.add(current_user)
+    db.session.commit()
+
+    ph = Photos.query.filter_by(id=current_user.profile_pic).first()
+
+    if ph is None:
+        cas = 'default'
+    else:
+        cas = ph.photoName 
+    return jsonify(response='ok', userid=current_user.id, filename=cas)
 
 @auth_blueprint.route('/login', methods=['GET', 'POST'])
 def login():

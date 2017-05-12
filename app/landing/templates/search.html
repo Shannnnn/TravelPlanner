@@ -36,8 +36,17 @@
 	<div class="container">
 	<div class="row">
         <h3>Returned Result for Trips</h3>
-        <div>
-        {% for trip in trips %}
+        <div class="text-center">
+        <ul class="pagination pagination-lg">
+            <li><a href="javascript:void(0)" onclick="trips_plans_for_main_search('{{ stry }}', 1)">&laquo;</a></li>
+            {% for i in range(0,numm) %}
+            <li><a href="javascript:void(0)" onclick="trips_plans_for_main_search('{{ stry }}', {{ loop.index }})">{{ loop.index }}</a></li>
+            {% endfor %}
+            <li><a href="javascript:void(0)" onclick="trips_plans_for_main_search('{{ stry }}', {{ numm }})">&raquo;</a></li>
+        </ul>
+        </div>
+        <div id="views_res">
+        {% for trip in trips.items %}
             <a href="/main/view/{{ trip.tripName }}" target="_blank">
                         <div class="col-sm-3 text-center">
                             <div class="container" style="display:inline; width:100%;">
@@ -62,31 +71,8 @@
         </div>
     </div>
 
-     <div class="row">
-        <h3>Returned Result for Users</h3>
-        <div>
-        	{% for user in users %}
-    		 <div class="col-md-3">
-                    <div class="card card-user">
-                       	<div class="image">
-                       	</div>
-                       	<div class="content">
-                            <div class="author">
-                                {% if ph_1[loop.index-1]=='default' %}
-                                    <img class="avatar border-gray" src="{{user.gravatar(size=256)}}" alt="..."/>
-                                {% else %}
-                                    <img class="avatar border-gray" src="{{ url_for('auth_blueprint.static', filename='images/users/') }}{{ user.id }}/{{ ph_1[loop.index-1] }}" alt="..."/>
-                                {% endif %}
-                            	
-                                <h4 class="title">{{user.username}}<br/></h4>
-                            </div>
-                        </div>
-                    </div>
-           </div>
-           {% endfor %}
-        </div>
-    </div>
     </div>
     </section>
+    
 
 {% endblock %} 

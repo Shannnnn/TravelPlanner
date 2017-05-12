@@ -38,7 +38,7 @@ class Itineraries(db.Model):
     itineraryTimeFrom = db.Column(db.Time)
     itineraryTimeTo = db.Column(db.Time)
     tripID = db.Column(db.Integer, db.ForeignKey("trips.tripID"), nullable=False)
-    locationTypeID = db.Column(db.Integer, db.ForeignKey("itinerarylocationtype.locationTypeID"), nullable=False)
+    locationTypeID = db.Column(db.Integer, db.ForeignKey("itinerarylocationtype.locationTypeID"), nullable=True)
 
     def __init__(self, itineraryName, itineraryDesc, itineraryLocation, itineraryDateFrom, itineraryDateTo, itineraryTimeFrom, itineraryTimeTo, tripID, locationTypeID):
         self.itineraryName = itineraryName

@@ -1,0 +1,86 @@
+{% extends 'users/base1.html' %}
+
+{% block title %}User: {{ user.username }}{% endblock %}
+
+{% block content %}
+  <div class="jumbotron top-header" id="user-info" data-userid="{{ user.id }}">
+    <div class="container">
+      <div class="row">
+        <div class="col-xs-12 col-md-2" >
+          <div id="imggg">
+                {% if csPic=='default' %}
+                <img class="img-circle img-responsive" src="{{current_user.gravatar(size=150)}}" alt="..." style="width:150px;height:150px;">
+                {% else %}
+                <img class="img-circle img-responsive" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..." style="width:150px;height:150px;">
+                {% endif %}
+          </div>
+                <h4 class="title">{{user.username}}<br />
+                </h4>
+        </div>
+        <div class="col-xs-12 col-md-6">
+          <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+        </div><!-- /.col -->
+
+      </div><!-- /.row -->
+    </div><!-- /.container -->
+  </div><!-- /.jumbotron -->
+
+  <div class="container" id="main-section">
+    <div class="container text-center">
+          {% for p in photos %}
+            <a href="javascript:void(0)" onclick="photo_change('{{ csID }}', '{{ p.photoName }}', '{{ p.id }}');">
+            <img class="img-thumbnail" src="{{ url_for('.static', filename='images/users/'+csID+'/'+p.photoName) }}" alt="..." style="width: 200px; height:200px;"></a>
+          {% endfor %}
+        </div>
+  </div><!-- /.container -->
+
+  <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/sweetalert.min.js') }}"></script>
+  <script type="text/javascript">
+
+  function modify_profile(pid){
+      $.getJSON('/set_profile', {
+              id : pid,
+            }, function(data) {
+            
+            if(data.response=='ok'){
+              alert('Profile Picture changed!');
+              $('#imggg').html("");
+              $('#imggg').append('<img class="img-circle img-responsive" src="/static//images/users/'+data.userid+'/'+data.filename+'" alt="..." style="width:150px;height:150px;">');
+            }
+            else
+              alert('An error occured!');
+            
+        });
+        return false;
+}
+    function photo_change(id, filename, pid){
+      $('#exampleModalLong').html("")
+      Stringrespify = '<div class="modal-dialog" role="document" style="width: 1000px; height:500px;">'+
+        '<div class="modal-content">'+
+          '<div class="modal-header">'+
+            '<h5 class="modal-title" id="exampleModalLongTitle">'+filename+'</h5>'+
+          '</div>'+
+          '<div class="modal-body" style="width: 1000px; height: 700px;">'+
+            '<img style="height: 100%; width: 100%; object-fit:contain;" src="/static//images/users/'+id+'/'+filename+'"/>'+
+          '</div>'+
+          '<div class="modal-footer">'+
+            '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>'+
+            '<button type="button" class="btn btn-secondary" onclick="modify_profile('+pid+')">Set as Profile picture</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>';
+
+      $('#exampleModalLong').append(Stringrespify)
+      $('#exampleModalLong').modal('show'); 
+    }
+
+  </script>
+{% endblock %}
+

@@ -14,6 +14,7 @@ Register
 <link rel="stylesheet" href="{{ url_for('.static', filename='css/font-awesome.min.css') }}">
 <link rel="stylesheet" href="{{ url_for('.static', filename='css/pace.css') }}">
 <link rel="stylesheet" href="{{ url_for('.static', filename='css/landing-style.css') }}">
+<link rel="stylesheet" href="{{ url_for('landing_blueprint.static', filename='css/search-box.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -31,6 +32,16 @@ Register
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav  smooth-scroll navbar-right">
+                        <li>
+                            <div class="container" id="se">
+                                <div id="wrap">
+                                  <form action="/main/siteSearch" method="get">
+                                      <input id="search" name="search_1" type="text" placeholder="Search the site">
+                                      <input id="search_submit" name="search_submit" type="submit">
+                                  </form>
+                                </div>
+                            </div>
+                        </li>
                         <li><a href="/main/#intro">Intro</a></li>
                         <li><a href="/main/#features">Features</a></li>
                         <li><a href="/main/#pricing">Trip Plans</a></li>

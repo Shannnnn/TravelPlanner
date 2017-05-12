@@ -26,6 +26,10 @@ def change_val(var1, var2, var3):
 def ret_op1():
     return op1
 
+def til_(n):
+    l = ['Most Popular', 'Newest Trips', 'All Trips']
+    return l[n]
+
 def main_determiner(category_count):
     count = 0
     if category_count%(POSTS_PER_PAGE)==0:
@@ -52,25 +56,31 @@ def determine_pic(users, counter):
             user_photos.append(return_res_for_pic(r))
     return user_photos
 
+#query function helpers
+def trip_query_0(var):
+    return Trips.query.filter(func.concat(Trips.tripName, ' ', Trips.tripDateFrom, ' ', 
+        Trips.tripDateTo).ilike('%'+var+'%'))
+
 def trip_query_1(num, PER_PAGE):
     return Trips.query.order_by(desc(Trips.tripID)).paginate(num, PER_PAGE, False)
 
 def trip_query_2(num, PER_PAGE):
-    return Trips.query.filter(Trips.viewsNum>maxNum).paginate(num, PER_PAGE, False)
+    return Trips.query.filter(Trips.viewsNum>maxNum).paginate(num, PER_PAGE, False)  
 
-def trip_query_3(var):
-    return db.session.query(Trips).filter(func.concat(Trips.tripName, ' ', Trips.tripDateFrom, ' ', Trips.tripDateTo).ilike('%'+var+'%')).all()
+def trip_query_3(var, var2):
+    return Trips.query.filter(or_((func.concat(Trips.tripName, ' ', Trips.tripDateFrom, ' ', 
+           Trips.tripDateTo).ilike('%'+var+'%')), Trips.tripID.in_(var2))).distinct()
 
-def user_query_1(var):
-    return db.session.query(User).filter(func.concat(User.username, ' ', User.first_name, ' ', User.last_name).ilike('%'+var+'%')).all()
+def trip_query_4(num, var):
+    tripIDS=[]
+    itere = Itineraries.query.filter(func.concat(Itineraries.itineraryName,' ', Itineraries.itineraryDesc).ilike('%'+var+'%')).all()
+    if itere is None:
+        return trip_query_0(var).paginate(num, POSTS_PER_PAGE, False), main_determiner(len(trip_query_0(var).all()))
 
-def til_(n):
-    l = ['Most Popular', 'Newest Trips', 'All Trips']
-    return l[n]
+    for i in itere:
+        tripIDS.append(i.tripID)
 
-def trip_query_0(num, var):
-    return Trips.query.filter(func.concat(Trips.tripName, ' ', Trips.tripDateFrom, ' ', Trips.tripDateTo).ilike('%'+var+'%')).paginate(num, POSTS_PER_PAGE, False)
-
+    return trip_query_3(var, tripIDS).paginate(num, POSTS_PER_PAGE, False), main_determiner(len(trip_query_3(var, tripIDS).all()))
 
 def trip_query_mod_1(n, page_):
     if n==0:
@@ -83,11 +93,14 @@ def trip_query_mod_1(n, page_):
 
 def trip_query_for_fil(n, page_, base_string1, base_string2):
     if n==0:
-        trips = Trips.query.filter(and_(or_(func.concat(Trips.tripName, ' ', Trips.tripDateFrom, ' ', Trips.tripDateTo).ilike('%'+base_string1+'%')), 
-            func.concat(Trips.tripName, ' ', Trips.tripDateFrom, ' ', Trips.tripDateTo).ilike('%'+base_string2+'%')), Trips.viewsNum>maxNum).paginate(page_, POSTS_PER_PAGE, False)
+        trips = Trips.query.filter(and_(or_(func.concat(Trips.tripName, ' ', Trips.tripDateFrom, ' '
+            , Trips.tripDateTo).ilike('%'+base_string1+'%')), func.concat(Trips.tripName, ' ', 
+            Trips.tripDateFrom, ' ', Trips.tripDateTo).ilike('%'+base_string2+'%')), 
+            Trips.viewsNum>maxNum).paginate(page_, POSTS_PER_PAGE, False)
     elif n==2 or n==1:
-        trips = Trips.query.filter(or_(func.concat(Trips.tripName, ' ', Trips.tripDateFrom, ' ', Trips.tripDateTo).ilike('%'+base_string1+'%')), 
-            func.concat(Trips.tripName, ' ', Trips.tripDateFrom, ' ', Trips.tripDateTo).ilike('%'+base_string2+'%')).paginate(page_, POSTS_PER_PAGE, False)
+        trips = Trips.query.filter(or_(func.concat(Trips.tripName, ' ', Trips.tripDateFrom, ' ', 
+                Trips.tripDateTo).ilike('%'+base_string1+'%')), func.concat(Trips.tripName, ' ', 
+                Trips.tripDateFrom, ' ', Trips.tripDateTo).ilike('%'+base_string2+'%')).paginate(page_, POSTS_PER_PAGE, False)
     return trips
 
 
@@ -95,7 +108,9 @@ def trip_query_for_fil(n, page_, base_string1, base_string2):
 @landing_blueprint.route('/')
 @landing_blueprint.route('/index')
 def index():
-    return render_template('index.html', title='TravelPlanner-Home', trips=trip_query_1(1, 4), trips_m=trip_query_2(1, 4), label=verify())
+    trip_index = trip_query_1(1, 4)
+    trip_index_most = trip_query_2(1, 4)
+    return render_template('index.html', title='TravelPlanner-Home', trips=trip_index, trips_m=trip_index_most, label=verify())
 
 @landing_blueprint.route('/about')
 @landing_blueprint.route('/about/')
@@ -109,7 +124,27 @@ def sendUs():
 
 @landing_blueprint.route('/siteSearch', methods=['GET','POST'])
 def siteSearch():
-    return render_template('search.html', title='Search Result', label=verify(), trips=trip_query_3(request.args.get('search_1')), users=user_query_1(request.args.get('search_1')), ph_1=determine_pic(user_query_1(request.args.get('search_1')),1))
+    #main_count = main_determiner(len(trip_query_0(request.args.get('search_1')).all()))
+    trips, main_count = trip_query_4(1, request.args.get('search_1'))
+    return render_template('search.html', title='Search Result', label=verify(), 
+            trips=trips, stry=request.args.get('search_1'), numm=main_count)
+
+@landing_blueprint.route('/search_main_/<keyword>')
+def paginate_search(keyword):
+    tripnameL, fromL, toL, tripViews, image = ([] for i in range(5))
+    page_string = request.args.get('page')
+
+    trips = trip_query_0(keyword).paginate(int(page_string), POSTS_PER_PAGE, False)
+
+    for trip in trips.items:
+        tripnameL.append(trip.tripName)
+        fromL.append(trip.tripDateFrom)
+        toL.append(trip.tripDateTo)
+        tripViews.append(trip.viewsNum)
+        image.append(trip.img_thumbnail)
+  
+    return jsonify(result1=tripnameL, result2=fromL, result3=toL, result4=tripViews, result5=image, size=len(tripnameL))
+
 
 @landing_blueprint.route('/view/<Tripname>', methods=['GET','POST'])
 def mock(Tripname):
@@ -124,7 +159,8 @@ def mock(Tripname):
 
     db.session.add(trips)
     db.session.commit()
-    return render_template('view_trip.html', title=trips.tripName, trips=trips, label=verify(), ite=itern, user=user, ph_1=determine_pic(user,0), suggestedTrips=all_trips)
+    return render_template('view_trip.html', title=trips.tripName, trips=trips, label=verify(), 
+            ite=itern, user=user, ph_1=determine_pic(user,0), suggestedTrips=all_trips)
 
 @landing_blueprint.route('/paginate/<int:index>')
 def paginate(index):
@@ -172,7 +208,7 @@ def paginate_1(linklabel):
                 trips = trip_query_for_fil(index_1, int(page_string), env_variables[1], env_variables[2])
 
     else:
-        trips = trip_query_0(int(page_string), linklabel)
+        trips = trip_query_0(linklabel).paginate(int(page_string), POSTS_PER_PAGE, False)
     
     for trip in trips.items:
         tripnameL.append(trip.tripName)
@@ -187,9 +223,10 @@ def paginate_1(linklabel):
 @landing_blueprint.route('/planned-trips/<linklabel>', methods=['GET','POST'])
 def exp_(linklabel='all trips made in this site'):
     til=linklabel
-    trips = trip_query_0(1, str(linklabel))
+    trips = trip_query_0(str(linklabel)).paginate(1, POSTS_PER_PAGE, False)
 
-    main_count = main_determiner(len(trip_query_3(linklabel)))
+
+    main_count = main_determiner(len(trip_query_0(linklabel).all()))
 
     count_=[max_for_most, max_for_new, len(Trips.query.order_by(Trips.tripID).all())]
     lbl = ['most-popular','newest-trip-plans','all trips made in this site']
@@ -205,17 +242,16 @@ def exp_(linklabel='all trips made in this site'):
     elif linklabel=='filtered_result':
         for index_1, r_1 in enumerate(lbl):
             if request.args.get('option')==r_1:
-                trips = trip_query_for_fil(index_1, 1, str(request.args.get('country')), str(request.args.get('country')))
+                trips = trip_query_for_fil(index_1, 1, str(request.args.get('country')), str(request.args.get('city')))
                 main_count = main_determiner(count_[index_1])
 
-        change_val(str(request.args.get('option')), str(request.args.get('country')), str(request.args.get('country')))
+        change_val(str(request.args.get('option')), str(request.args.get('country')), str(request.args.get('city')))
 
 
-        return render_template('exp_newtrip.html', path=0, title=til, trips=trips, label=verify(), search_label=request.args.get('city'), numm=main_count, stry=linklabel)
+        return render_template('exp_newtrip.html', path=0, title=til, trips=trips, label=verify(), 
+                search_label=request.args.get('city'), numm=main_count, stry=linklabel)
 
-    return render_template('exp_newtrip.html', path=0, title=til, trips=trips, label=verify(), search_label=til, numm=main_count, stry=linklabel)
+    return render_template('exp_newtrip.html', path=0, title=til, trips=trips, label=verify(), 
+            search_label=til, numm=main_count, stry=linklabel)
 
-@landing_blueprint.route('/testn')
-def tessn():
-    print ret_op1()
-    return 'ok'
+

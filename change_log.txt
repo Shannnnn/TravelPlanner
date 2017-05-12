@@ -1,3 +1,15 @@
+Migrate commands:
+	-->1. python manage.py db init(only on the first run)
+
+(if some changes in the model has been done run the follwing commands)
+2. python manage.py db migrate
+3. python manage.py db upgrade/downgrade
+	----> upgrade to add the changes.
+	----> downgrade to not apply the changes.
+
+
+
+
 May 10 2017 - 8:13 am(Earl Mark E. Barangot)
 	----------- landing_blueprint ---------------
 	*added pagination on trip plans template(for most popular, newwest trips plans, all trips, filtered trip plan)
