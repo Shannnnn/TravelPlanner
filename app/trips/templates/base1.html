@@ -5,14 +5,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="" type="image/gif" sizes="16x16">
+  <link rel="shortcut icon" href="{{ url_for('landing_blueprint.static', filename='images/favicon.ico') }}" type="image/x-icon">
   <title>TravelPlanner || {% block title %} put title here {% endblock %}</title>
-
-  <!--   Core JS Files   -->
-  <link rel="stylesheet" type="text/javascript" href="{{ url_for('.static', filename='js/jquery-1.10.2.js') }}">
-  <link rel="stylesheet" type="text/javascript" href="{{ url_for('.static', filename='js/bootstrap.min.js') }}">
-
-  <!-- Bootstrap core CSS     -->
-  <link rel="stylesheet" href="{{ url_for('.static', filename='css/bootstrap.min.css') }}">
 
   <!-- Bootstrap -->
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
@@ -34,6 +28,9 @@
     <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
+  {% block styles %}
+  {% endblock %}
+
 </head>
 
 <body>
@@ -51,9 +48,9 @@
           <span class="icon-bar"></span>
         </button>
         {% if session.get('current_user') %}
-          <a href="/users/{{ session.current_user.id }}"><button id="brand-logo"><img src="">TravelPlanner</button></a>
+          <a href="/main/"><button id="brand-logo"><img src="">TravelPlanner</button></a>
         {% else %}
-          <a href="/"><button id="brand-logo"><img src="">TravelPlanner</button></a>
+          <a href="/main/"><button id="brand-logo"><img src="">TravelPlanner</button></a>
         {% endif %}
       </div><!-- /.navbar-header -->
 
@@ -118,11 +115,10 @@
     </div>
   </footer>
 
-  <!-- Placed at the end of the document so the pages load faster -->
-  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-  <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  {% block scripts %}
+  {% endblock %}
 
 </body>
 </html>

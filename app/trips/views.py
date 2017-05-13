@@ -2,13 +2,9 @@ import os
 from flask import Flask, render_template, redirect, Blueprint, request, flash, url_for, send_from_directory
 from flask_login import current_user
 from forms import TripForm, ItineraryForm, EditTripForm, EditItineraryForm
-from model import Trips, Itineraries
+from model import Trips, Itineraries, itineraryLocationType
 from app import db
-from flask_admin import Admin
-from flask_admin.contrib.sqla import ModelView
-from flask_admin import BaseView, expose
 from werkzeug import secure_filename
-from PIL import Image
 from app.auth.model import Photos
 
 trip = Flask(__name__)
@@ -83,16 +79,18 @@ def editTrips(tripName):
 @trip_blueprint.route('/<tripName>/additineraries', methods=['GET', 'POST'])
 def additineraries(tripName):
     tripid = Trips.query.filter_by(tripName=tripName).first()
-    error = None
     itineraryForm = ItineraryForm()
+    itineraryForm.itinerary_location_type.choices = [(a.locationTypeID, a.locationType) for a in itineraryLocationType.query]
     if request.method == 'POST':
         if itineraryForm.validate_on_submit():
             itineraryform = Itineraries(itineraryName=itineraryForm.itinerary_name.data,
                              itineraryDateFrom=itineraryForm.itinerary_date_from.data,
                              itineraryDateTo=itineraryForm.itinerary_date_to.data,
                              itineraryDesc=itineraryForm.itinerary_desc.data,
+                             itineraryLocation=itineraryForm.itinerary_location.data,
                              itineraryTimeFrom=itineraryForm.itinerary_time_from.data,
                              itineraryTimeTo=itineraryForm.itinerary_time_to.data,
+                             locationTypeID=itineraryForm.itinerary_location_type.data,
                              tripID=tripid.tripID)
             db.session.add(itineraryform)
             db.session.commit()
@@ -104,7 +102,7 @@ def additineraries(tripName):
     else:
         cas = ph.photoName
 
-    return render_template('addItinerary.html', error=error, itineraries=itineraries, form=itineraryForm, csID=str(current_user.id), csPic=str(cas))
+    return render_template('addItinerary.html', itineraries=itineraries, form=itineraryForm, csID=str(current_user.id), csPic=str(cas))
 
 @trip_blueprint.route('/<tripName>/itineraries', methods=['GET'])
 def itineraries(tripName):
@@ -125,6 +123,8 @@ def editItineraries(tripName, itineraryName):
             itineraryname.itineraryDateFrom = form.itinerary_date_from.data
             itineraryname.itineraryDateTo = form.itinerary_date_to.data
             itineraryname.itineraryDesc = form.itinerary_desc.data
+            itineraryname.itineraryLocation = form.itinerary_location.data
+            itineraryname.locationTypeID = form.itinerary_location_type.data
             itineraryname.itineraryTimeFrom = form.itinerary_time_from.data
             itineraryname.itineraryTimeTo = form.itinerary_time_to.data
             db.session.add(itineraryname)
@@ -136,6 +136,8 @@ def editItineraries(tripName, itineraryName):
         form.itinerary_date_from.data = itineraryname.itineraryDateFrom
         form.itinerary_date_to.data = itineraryname.itineraryDateTo
         form.itinerary_desc.data = itineraryname.itineraryDesc
+        form.itinerary_location_type.data = itineraryname.locationTypeID
+        form.itinerary_location.data = itineraryname.itineraryLocation
         form.itinerary_time_from.data = itineraryname.itineraryTimeFrom
         form.itinerary_time_to.data = itineraryname.itineraryTimeTo
     return render_template('edititineraries.html', form=form, tripname=tripname)

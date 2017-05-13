@@ -2,20 +2,8 @@
 <project version="4">
   <component name="dataSourceStorageLocal">
     <data-source name="PostgreSQL - travelplannerdb@localhost" uuid="58fb8fca-c0e2-4346-a784-8e8fdcd32d70">
-      <database-info product="PostgreSQL" version="9.6.2" jdbc-version="4.0" driver-name="PostgreSQL Native Driver" driver-version="PostgreSQL 9.4 JDBC4 (build 1201)">
-        <identifier-quote-string>&quot;</identifier-quote-string>
-      </database-info>
-      <case-sensitivity plain-identifiers="lower" quoted-identifiers="exact" />
-      <secret-storage>master_key</secret-storage>
-      <user-name>postgres</user-name>
-<<<<<<< HEAD
-      <introspection-schemas>travelplannerdb:pg_catalog,postgres,public</introspection-schemas>
-      <resolve-scope>travelplannerdb:postgres,public</resolve-scope>
-      <unqualified-resolve-schemas>travelplannerdb:postgres,public</unqualified-resolve-schemas>
-=======
-      <introspection-scope>travelplannerdb:pg_catalog,postgres,public</introspection-scope>
-      <resolve-scope>travelplannerdb:postgres,public</resolve-scope>
->>>>>>> 33f5be7d9e47a9056e7bbbdf0fc20e645ec78ec1
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" />
+      <secret-storage>memory</secret-storage>
     </data-source>
   </component>
 </project>

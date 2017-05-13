@@ -1,7 +1,8 @@
 from flask_wtf import Form
-from wtforms import StringField, PasswordField, ValidationError, DateField, IntegerField, FileField
+from wtforms import StringField, PasswordField, ValidationError, DateField, IntegerField, FileField, SelectField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
-from model import Trips
+from model import itineraryLocationType
+from app import db
 
 class TripForm(Form):
     trip_name = StringField('Trip Name', validators=[DataRequired()])
@@ -13,7 +14,9 @@ class ItineraryForm(Form):
     itinerary_name = StringField('Itinerary Name', validators=[DataRequired()])
     itinerary_date_from = DateField('From(mm/dd/yyyy)', format='%m/%d/%Y', validators=[DataRequired()])
     itinerary_date_to = DateField('To(mm/dd/yyyy)', format='%m/%d/%Y', validators=[DataRequired()])
-    itinerary_desc = StringField('Description', validators=[DataRequired()])
+    itinerary_desc = TextAreaField('Description', validators=[DataRequired()])
+    itinerary_location = StringField('Location', validators=[DataRequired()])
+    itinerary_location_type = SelectField('Type', choices=[], coerce=int)
     itinerary_time_from = StringField('From(hh:mm)', validators=[DataRequired()])
     itinerary_time_to = StringField('To(hh:mm)', validators=[DataRequired()])
 
@@ -27,5 +30,7 @@ class EditItineraryForm(Form):
     itinerary_date_from = DateField('From(mm/dd/yyyy)', format='%m/%d/%Y', validators=[DataRequired()])
     itinerary_date_to = DateField('To(mm/dd/yyyy)', format='%m/%d/%Y', validators=[DataRequired()])
     itinerary_desc = StringField('Description', validators=[DataRequired()])
+    itinerary_location = StringField('Location', validators=[DataRequired()])
+    itinerary_location_type = SelectField('Type', choices=[], coerce=int)
     itinerary_time_from = StringField('From(hh:mm)', validators=[DataRequired()])
     itinerary_time_to = StringField('To(hh:mm)', validators=[DataRequired()])
