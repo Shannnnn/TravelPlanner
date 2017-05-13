@@ -88,12 +88,12 @@ var item = ["#res", 'a[name="new_next"]', "#res_1", 'a[name="most_next"]']
 
 function callit(num, text){
   $('#exampleModalLong').html("")
-  Stringrespify = '<div class="modal-dialog" role="document">'+
+  Stringrespify = '<div class="modal-dialog" role="document" style="width: 1000px; height:500px;">'+
     '<div class="modal-content">'+
       '<div class="modal-header">'+
         '<h5 class="modal-title" id="exampleModalLongTitle">'+text+'</h5>'+
       '</div>'+
-      '<div class="modal-body">'+
+      '<div class="modal-body" style="width: 1000px; height: 700px;">'+
         '<img style="height: 100%; width: 100%; object-fit:contain;" src="/main/static//images/misc/'+num+'.jpg"/>'+
       '</div>'+
       '<div class="modal-footer">'+
@@ -128,6 +128,20 @@ function trips_plans(keyword, num){
                 stringRes+=state(data.result1[i], JSON.stringify(data.result2[i]).slice(5,17), JSON.stringify(data.result3[i]).slice(5,17), data.result4[i], data.result5[i]);
             }
             $('#views_ly').append(stringRes);
+        });
+        return false;
+}
+
+function trips_plans_for_main_search(keyword, num){
+      $.getJSON('/main/search_main_/'+keyword, {
+              page : num,
+            }, function(data) {
+              $('#views_res').html("");
+              var stringRes = "";
+              for(i=0; i<data.size; i++){
+                stringRes+=state(data.result1[i], JSON.stringify(data.result2[i]).slice(5,17), JSON.stringify(data.result3[i]).slice(5,17), data.result4[i], data.result5[i]);
+            }
+            $('#views_res').append(stringRes);
         });
         return false;
 }
