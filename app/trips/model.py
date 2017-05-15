@@ -11,10 +11,10 @@ class Trips(db.Model):
     userID = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     viewsNum = db.Column(db.Integer)
     img_thumbnail = db.Column(db.String(70))
-    # status = db.Column(db.Boolean, default=True, nullable=False)
-    # visibility = db.Column(db.Boolean, default=False, nullable=False)
+    status = db.Column(db.Integer)
+    visibility = db.Column(db.Integer)
 
-    def __init__(self, tripName, tripDateFrom, tripDateTo, tripCity, tripCountry, userID, img_thumbnail):
+    def __init__(self, tripName, tripDateFrom, tripDateTo, tripCity, tripCountry, userID, img_thumbnail, status, visibility):
         self.tripName = tripName
         self.tripDateFrom = tripDateFrom
         self.tripDateTo = tripDateTo
@@ -23,6 +23,8 @@ class Trips(db.Model):
         self.userID = userID
         self.viewsNum = 0
         self.img_thumbnail = img_thumbnail
+        self.status = status
+        self.visibility = visibility
 
     def __repr__(self):
         return '<tripName {}>'.format(self.tripName)
@@ -42,7 +44,7 @@ class Itineraries(db.Model):
         self.itineraryName = itineraryName
         self.itineraryDesc = itineraryDesc
         self.itineraryLocation = itineraryLocation
-        self.itineraryDateFrom = itineraryDate
+        self.itineraryDate = itineraryDate
         self.itineraryTimeTo = itineraryTime
         self.tripID = tripID
         self.locationTypeID = locationTypeID

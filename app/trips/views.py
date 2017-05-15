@@ -21,11 +21,10 @@ def allowed_file(filename):
 
 @trip_blueprint.route('/createtrip', methods=['GET', 'POST'])
 def addtrip():
-    global a
     error = None
     tripForm = TripForm()
-    tripForm.trip_country.choices = [(a.countryID, a.countryName) for a in Country.query]
-    tripForm.trip_city.choices = [(a.cityID, a.cityName) for a in City.query]
+    tripForm.trip_country.choices = [(a.countryName, a.countryName) for a in Country.query]
+    tripForm.trip_city.choices = [(a.cityName, a.cityName) for a in City.query]
     if request.method == 'POST':
         if tripForm.validate_on_submit():
             tripform = Trips(tripName=tripForm.trip_name.data,
@@ -34,6 +33,8 @@ def addtrip():
                              userID=current_user.id,
                              tripCountry=tripForm.trip_country.data,
                              tripCity=tripForm.trip_city.data,
+                             status=tripForm.trip_status.data,
+                             visibility=tripForm.trip_visibility.data,
                              img_thumbnail=tripForm.file.data.filename)
             db.session.add(tripform)
             db.session.commit()
@@ -65,12 +66,18 @@ def trips():
 def editTrips(tripName):
     tripname = Trips.query.filter_by(tripName=tripName).first()
     form = EditTripForm()
+    form.trip_country.choices = [(a.countryName, a.countryName) for a in Country.query]
+    form.trip_city.choices = [(a.cityName, a.cityName) for a in City.query]
     trips = Trips.query.all()
     if request.method == 'POST':
         if form.validate_on_submit():
             tripname.tripName = form.trip_name.data
             tripname.tripDateFrom = form.trip_date_from.data
             tripname.tripDateTo = form.trip_date_to.data
+            tripname.tripCity = form.trip_city.data
+            tripname.tripCountry = form.trip_country.data
+            tripname.status = form.trip_status.data
+            tripname.visibility = form.trip_visibility.data
             db.session.add(tripname)
             db.session.commit()
             return redirect(url_for("trip_blueprint.trips"))
@@ -79,6 +86,10 @@ def editTrips(tripName):
         form.trip_name.data = tripname.tripName
         form.trip_date_from.data = tripname.tripDateFrom
         form.trip_date_to.data = tripname.tripDateTo
+        form.trip_city.data = tripname.tripCity
+        form.trip_country.data = tripname.tripCountry
+        form.trip_status.data = tripname.status
+        form.trip_visibility.data = tripname.visibility
     return render_template('edittrip.html', form=form, tripname=tripname)
 
 @trip_blueprint.route('/<tripName>/additineraries', methods=['GET', 'POST'])
