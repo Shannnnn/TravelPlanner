@@ -1,6 +1,5 @@
-<html lang="en">
-<head>
-	{% import "bootstrap/wtf.html" as wtf %}
+<html lang="en"><head>
+    {% import "bootstrap/wtf.html" as wtf %}
 	<meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -23,6 +22,10 @@
     <link rel="stylesheet" href="/resources/demos/style.css">
     <![endif]-->
 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
     <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -34,9 +37,22 @@
     $( function() {
         $( "#datepicker2" ).datepicker();
     });
+    $( function(){
+        $('#timepicker').datetimepicker({
+        datepicker: false,
+        format: "H:i"
+        });
+    });
+    $( function(){
+        $('#timepicker2').datetimepicker({
+        datepicker: false,
+        format: "H:i"
+        });
+    });
     </script>
 </head>
 <body class="float-landing" data-spy="scroll" data-offset="70" data-taget=".navbar-default">
+        <!-- Static navbar -->
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
@@ -50,130 +66,103 @@
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav  smooth-scroll navbar-right">
-                        <li><a href="/admin">Admin Dashboard<span class="badge">{{ users|count }}</span></a></a></li>
-                        <li class="active"><a href="/admin/users">Users</a></li>
-                        <li><a href="/admin/trips">Trip Plans</a></li>
+                        <li><a href="/admin">Admin Dashboard</a></li>
+                        <li><a href="/admin/users">Users</a></li>
+                        <li class="active"><a href="/admin/trips">Trip Plans</a></li>
                         <li><a href="/admin/settings/{{current_user.username}}">Settings</a></li>
                         <li class="nav-button"><a href="/main">Menu</a></li>
                         <li class="nav-button"><a href="/logout">Log out</a></li>
                     </ul>
-                </div>
-            </div>
+                </div><!--/.nav-collapse -->
+            </div><!--/.container-fluid -->
         </nav>
         <section id="features" class="features-section">
-            <div class="content">
             <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-8">
-                        <div class="car">
-                            <div class="header">
-                                <h4 class="title">Edit Profile</h4>
+                  <div class="row">
+                      <div class="col-sm-8 col-sm-offset-2">
+                          <div class="card">
+                              <div class="header">
+                                <h4 class="title">Edit Itinerary</h4>
                             </div>
-                            <form action="" method="POST" name="edit" enctype="multipart/form-data">
+                            <form action="" method="POST" name="edit">
                             {{form.hidden_tag()}}
                             <div class="content">
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                {{wtf.form_field(form.first_name)}}
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                {{wtf.form_field(form.last_name)}}
+                                                {{wtf.form_field(form.itinerary_name)}}
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="row">
                                         <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{wtf.form_field(form.itinerary_location)}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{wtf.form_field(form.itinerary_location_type)}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
                                                 <div class="form-group">
-                                                    {{wtf.form_field(form.birth_date, id="datepicker")}}
+                                                    {{wtf.form_field(form.itinerary_date_from, id="datepicker")}}
                                                 </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
+                                                <div class="form-group">
+                                                    {{wtf.form_field(form.itinerary_date_to, id="datepicker2")}}
+                                                </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                                <div class="form-group">
+                                                    {{wtf.form_field(form.itinerary_time_from, id="timepicker")}}
+                                                </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                                <div class="form-group">
+                                                    {{wtf.form_field(form.itinerary_time_to, id="timepicker2")}}
+                                                </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-10">
                                             <div class="form-group">
-                                                {{wtf.form_field(form.contact_num)}}
+                                                {{wtf.form_field(form.itinerary_desc, style="height: 100px;")}}
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                {{wtf.form_field(form.address)}}
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                {{wtf.form_field(form.city)}}
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                {{wtf.form_field(form.country)}}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                {{wtf.form_field(form.description)}}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                {{wtf.form_field(form.file)}}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <button type="submit" class="btn btn-info btn-fill pull-right">Update Profile</button>
+                                    <button type="submit" class="btn btn-info btn-fill pull-right">Change</button>
                                     <div class="clearfix"></div>
                             </div>
                             </form>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card card-user">
-                            <div class="image">
-                            </div>
-                            <div class="content">
-                                <div class="author">
-                                    <!--<img class="avatar border-gray" src="{{user.gravatar(size=256)}}" alt="..."/>-->
-                                    {% if csPic=='default' %}
-                                        <img class="img-circle img-responsive" src="{{user.gravatar(size=200)}}" alt="..."/>
-                                     {% else %}
-                                        <img class="img-circle img-responsive" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..." style="width:150px;height:150px;">
-                                     {% endif %}
-
-                                      <h4 class="title">{{user.first_name}} {{user.last_name}}<br />
-                                         <small>{{user.username}}</small><br><br>
-                                         <small>"{{user.description}}"</small>
-                                      </h4>
-                                </div>
-                                <p class="description text-center"></p>
-                            </div>
-                            <hr>
-                        </div>
-                    </div>
-                </div>
+                          </div>
+                      </div>
+                  </div>
             </div>
-        </div>
         </section>
-</body>
+    </div>
+</div>
+
+
+
 
     <!--   Core JS Files   -->
-    <script type="text/javascript" src="{{ url_for('.static', filename='js/jquery-1.10.2.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('.static', filename='js/bootstrap.min.js') }}"></script>
+    <link rel="stylesheet" type="text/javascript" href="/static//js/jquery-1.10.2.js">
+    <link rel="stylesheet" type="text/javascript" href="/static//js/bootstrap.min.js">
 
-    <!--  Checkbox, Radio & Switch Plugins -->
-    <script type="text/javascript" src="{{ url_for('.static', filename='js/bootstrap-checkbox-radio-switch.js') }}"></script>
+	<!--  Checkbox, Radio & Switch Plugins -->
+    <link rel="stylesheet" href="/static//js/bootstrap-checkbox-radio-switch.js">
 
     <!--  Google Maps Plugin    -->
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <link rel="stylesheet" type="text/javascript" href="https://maps.googleapis.com/maps/api/js?sensor=false">
 
-</html>
-
+</body></html>

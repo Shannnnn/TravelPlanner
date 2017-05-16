@@ -42,7 +42,7 @@
                             <li><a href="/admin">Admin Dashboard<span class="badge">{{ users|count }}</span></a></a></li>
                             <li><a href="/admin/users">Users</a></li>
                             <li><a href="/admin/trips">Trip Plans</a></li>
-                            <li class="active"><a href="/admin/settings">Settings</a></li>
+                            <li class="active"><a href="/admin/settings/{{current_user.username}}">Settings</a></li>
                             <li class="nav-button"><a href="/main">Menu</a></li>
                             <li class="nav-button"><a href="/logout">Log out</a></li>
                         </ul>
@@ -52,27 +52,33 @@
             <section id="features" class="features-section">
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-sm-8 col-sm-offset-2 text-center">
+                        <div class="col-sm-8 col-sm-offset-2">
                             <div class="card">
-                                <form action="" method="post" name="update">
-                                    <div class="row">
+                                <div class="row">
+                                    <div class="col-md-6">
                                         <div class="row">
-                                            <h2>Change Site Name</h2>
-                                            <input class="form-control" type="textfield" placeholder="Travel Planner" id="sitename"/>
+                                          <label>Username
+                                          <a href="/admin/settings/username/{{current_user.username}}"><span class="fa fa-pencil"></span></a></label>
+                                          <input type="text" class="form-control" placeholder="{{current_user.username}}" readonly/>
                                         </div>
                                         <div class="row">
-                                            <h2>Change Site Email</h2>
-                                            <input class="form-control" type="textfield" placeholder="travelplannerSy@gmail.com" id="siteemail"/>
+                                          <label>Email</label>
+                                          <input type="text" class="form-control" placeholder="{{current_user.email}}" readonly/>
                                         </div>
+                                        <form class="form-signin" method="POST" action="">
+                                            <h3 class="form-signin-heading">Change Password</h3>
+                                            {{ form.hidden_tag() }}
+                                            {{ wtf.form_field(form.currpassword) }}
+                                            {{ wtf.form_field(form.newpassword) }}
+                                            {{ wtf.form_field(form.confirm) }}
+                                            <button class="btn btn-lg btn-primary btn-block" type="submit">Save User</button>
+                                        </form>
+                                      </div>
                                     </div>
-                                    <div class="row">
-                                        <a type="submit" class="btn btn-success pull-right" style="">Update</a>
-                                    </div>
-                                </form>
+                               </div>
                             </div>
                         </div>
                     </div>
-                </div>
             </section>
     </body>
 </html>
