@@ -304,30 +304,8 @@ def editItineraries(tripName, itineraryName):
 @login_required
 @required_roles('User')
 def home():
-    ph = Photos.query.filter_by(id=current_user.profile_pic).first()
     user = db.session.query(User).filter(User.id == current_user.id).one()
-
-    if ph is None:
-        cas = 'default'
-    else:
-        cas = ph.photoName
-
-    received_friend_requests, sent_friend_requests = get_friend_requests(current_user.id)
-    num_received_requests = len(received_friend_requests)
-    num_sent_requests = len(sent_friend_requests)
-    num_total_requests = num_received_requests + num_sent_requests
-
-                        # Use a nested dictionary for session["current_user"] to store more than just user_id
-    session["current_user"] = {
-        "first_name": current_user.first_name,
-        "id": current_user.id,
-        "num_received_requests": num_received_requests,
-        "num_sent_requests": num_sent_requests,
-        "num_total_requests": num_total_requests
-    }
-
-    return render_template('users/dashboard.html', username=current_user.username, csID=str(current_user.id), csPic=str(cas), user=user)
-
+    return redirect(url_for('auth_blueprint.users', id=user.id))
 
 @auth_blueprint.route("/users/<int:id>")
 @login_required
@@ -335,13 +313,14 @@ def home():
 def users(id):
     """Show user profile."""
 
-    user = db.session.query(User).filter(User.id == id).one()
-
-    ph = Photos.query.filter_by(id=user.profile_pic).first()
+    ph = Photos.query.filter_by(id=current_user.profile_pic).first()
     if ph is None:
         cas = 'default'
     else:
         cas = ph.photoName
+
+    user = db.session.query(User).filter(User.id == id).one()
+    trip = Trips.query.filter_by(userID=current_user.id)
 
     total_friends = len(get_friends(user.id).all())
 
@@ -350,34 +329,42 @@ def users(id):
 
     # Check connection status between user_a and user_b
     friends, pending_request = is_friends_or_pending(user_a_id, user_b_id)
+    #pending_request2 = is_friends_or_pending(user_b_id, user_a_id)
+
+    friends = get_friends(session["current_user"]["id"]).all()
 
     return render_template("users/user.html",
                            user=user,
                            total_friends=total_friends,
                            friends=friends,
                            pending_request=pending_request,
-                           csID=str(user.id), csPic=str(cas))
+                           csID=str(current_user.id), csPic=str(cas),
+                           trips=trip)
 
 
-@auth_blueprint.route('/add-friend', methods=["POST"])
+@auth_blueprint.route('/add-friend/<int:id>', methods=["POST"])
 @login_required
 @required_roles('User')
-def add_friend():
+def add_friend(id):
     """Send a friend request to another user."""
 
+    user = db.session.query(User).filter(User.id == id).one()
+
     user_a_id = session["current_user"]["id"]
-    #user_b_id = request.form.get("user_b_id")
-    user_b_id = request.form['button_for_add']
-    print user_b_id
+    user_b_id = user.id
+
     # Check connection status between user_a and user_b
     is_friends, is_pending = is_friends_or_pending(user_a_id, user_b_id)
 
     if user_a_id == user_b_id:
-        return "You cannot add yourself as a friend."
+        flash("You cannot add yourself as a friend.")
+        return redirect(url_for('auth_blueprint.users', id=user.id))
     elif is_friends:
-        return "You are already friends."
+        flash("You are already friends.")
+        return redirect(url_for('auth_blueprint.users', id=user.id))
     elif is_pending:
-        return "Your friend request is pending."
+        flash("Your friend request is pending.")
+        return redirect(url_for('auth_blueprint.users', id=user.id))
     else:
         requested_connection = Connection(user_a_id=user_a_id,
                                           user_b_id=user_b_id,
@@ -385,28 +372,72 @@ def add_friend():
         db.session.add(requested_connection)
         db.session.commit()
         print "User ID %s has sent a friend request to User ID %s" % (user_a_id, user_b_id)
-        return "Request Sent"
+        flash("Request Sent")
+        return redirect(url_for('auth_blueprint.users', id=user.id))
+
+
+@auth_blueprint.route('/accept-friend/<int:id>', methods=["POST"])
+@login_required
+@required_roles('User')
+def accept_friend(id):
+    """Accept a friend request from another user."""
+
+    user = db.session.query(User).filter(User.id == id).one()
+
+    user_a_id = session["current_user"]["id"]
+    user_b_id = user.id
+
+    if user_a_id == user_b_id:
+        flash("You cannot add yourself as a friend.")
+        return redirect(url_for('auth_blueprint.users', id=user.id))
+    else:
+        requested_connection = Connection(user_a_id=user_a_id,
+                                          user_b_id=user_b_id,
+                                          status="Accepted")
+        db.session.add(requested_connection)
+        db.session.commit()
+        print "User ID %s and User ID %s are now friends." % (user_a_id, user_b_id)
+        flash("Request Accepted")
+        return redirect(url_for('auth_blueprint.users', id=user.id))
+
+
+@auth_blueprint.route('/reject-friend/<int:id>', methods=["POST"])
+@login_required
+@required_roles('User')
+def reject_friend(id):
+    """Reject a friend request from another user."""
+
+    user = db.session.query(User).filter(User.id == id).one()
+
+    user_a_id = session["current_user"]["id"]
+    user_b_id = user.id
+
+    if user_a_id == user_b_id:
+        flash("Error.")
+        return redirect(url_for('auth_blueprint.users', id=user.id))
+    else:
+        requested_connection = Connection.query.filter_by(user_a_id=user_a_id,
+                                                          user_b_id=user_b_id,
+                                                          status="Requested").all()
+        db.session.delete(requested_connection)
+        db.session.commit()
+        print "User ID %s and User ID %s are not friends." % (user_a_id, user_b_id)
+        return redirect(url_for('auth_blueprint.users', id=user.id))
 
 
 @auth_blueprint.route('/friends')
-@auth_blueprint.route('/friends/<int:page>', methods=['GET', 'POST'])
 @login_required
 @required_roles('User')
-def show_friends(page=1):
+def show_friends():
     """Show friend requests and list of all friends"""
-    cas = []
-    usID = []
-    users = User.query.order_by(desc(User.id)).paginate(page, POSTS_PER_PAGE, False)
-    print users
-    for user in users.items:
-        ph = Photos.query.filter_by(id=user.profile_pic).first()
-        usID.append(str(user.id))
-        if ph is None:
-            cas.append('default')
-        else:
-            cas.append(str(ph.photoName))
 
-    #users = User.query.order_by(desc(User.id)).paginate(page, POSTS_PER_PAGE, False)
+    ph = Photos.query.filter_by(id=current_user.profile_pic).first()
+    if ph is None:
+        cas = 'default'
+    else:
+        cas = ph.photoName
+
+    users = User.query.order_by(desc(User.id)).paginate(page, POSTS_PER_PAGE, False)
 
     # This returns User objects for current user's friend requests
     received_friend_requests, sent_friend_requests = get_friend_requests(session["current_user"]["id"])
@@ -417,15 +448,15 @@ def show_friends(page=1):
     return render_template("users/friends.html",
                            received_friend_requests=received_friend_requests,
                            sent_friend_requests=sent_friend_requests,
-                           friends=friends,
-                           users=users,
-                           page=page, csPic=cas, usID=usID)
+                           friends=friends, users=users, page=page,
+                           csID=str(current_user.id), csPic=str(cas))
 
 
-@auth_blueprint.route("/friends/search/", methods=["GET"])
+@auth_blueprint.route("/friends/search/", methods=["GET", "POST"])
+@auth_blueprint.route('/friends/search/<int:page>', methods=['GET', 'POST'])
 @login_required
 @required_roles('User')
-def search_users():
+def search_users(page=1):
     """Search for a user and return results."""
 
     ph = Photos.query.filter_by(id=current_user.profile_pic).first()
@@ -434,22 +465,22 @@ def search_users():
     else:
         cas = ph.photoName
 
+    userr = User.query.order_by(desc(User.id)).paginate(page, POSTS_PER_PAGE, False)
+
     # Returns users for current user's friend requests
     received_friend_requests, sent_friend_requests = get_friend_requests(session["current_user"]["id"])
 
     # Returns query for current user's friends (not User objects) so add .all() to the end to get list of User objects
     friends = get_friends(session["current_user"]["id"]).all()
 
-    user_input = request.args.get("q")
-
-    # Search user's query in users table of db and return all search results
-    search_results = search(db.session.query(User), user_input).all()
-
     return render_template("users/browse_friends.html",
                            received_friend_requests=received_friend_requests,
                            sent_friend_requests=sent_friend_requests,
-                           friends=friends,
-                           search_results=search_results, csID=str(current_user.id), csPic=str(cas))
+                           friends=friends, userr=userr, page=page,
+                           csID=str(current_user.id), csPic=str(cas),
+                           users=user_query_1(request.args.get('q')),
+                           photo=determine_pic(user_query_1(request.args.get('q')), 1))
+
 
 @auth_blueprint.route('/userprofile/<username>')
 @login_required
