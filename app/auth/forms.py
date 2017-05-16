@@ -60,6 +60,9 @@ class UsernameSettingsForm(Form):
     def validate_username(self, field):
         if User.query.filter_by(username=field.data).first():
             raise ValidationError('Username already in use.')
+			
+class TrialForm(Form):
+	trial = StringField('Trial')
 
 class SearchForm(Form):
     search = StringField('',validators=[DataRequired()])
