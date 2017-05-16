@@ -8,7 +8,7 @@
 *.so
 *.pyc
 *.pyo
-/config.py
+/config.py/
 
 # Packages #
 ############
