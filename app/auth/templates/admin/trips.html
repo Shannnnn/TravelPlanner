@@ -47,7 +47,7 @@
                         <li><a href="/admin">Admin Dashboard</a></li>
                         <li><a href="/admin/users">Users</a></li>
                         <li class="active"><a href="/admin/trips">Trip Plans</a></li>
-                        <li><a href="/admin/settings">Settings</a></li>
+                        <li><a href="/admin/settings/{{current_user.username}}">Settings</a></li>
                         <li class="nav-button"><a href="/main">Menu</a></li>
                         <li class="nav-button"><a href="/logout">Log out</a></li>
                     </ul>
@@ -55,34 +55,66 @@
             </div>
         </nav>
         <section id="features" class="features-section">
+            <div class="content">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-sm-8 col-sm-offset-2 text-center">
+                    <div class="col-md-8 col-sm-offset-2 text-center">
                         <div class="card">
-                            {% for r in result %}
-                                <div class="col-sm-3 text-center">
-                                    <div class="container" style="display:inline; height:100%; width:100%; border: thin">
-                                        <a href="/admin/trips/edit/{{r.tripName}}" class="panel panel-default bootcards-media" style="">
-                                            <div class="panel-heading"><h3 style="text-align: center">{{r.tripName}}</h3></div>
-                                            <div class="panel-footer">
-                                                <div class="row">From: {{r.tripDateFrom}}</div>
-                                                <div class="row">To: {{r.tripDateTo}}</div>
-                                                <div class="row">
-                                                    <p class="fa fa-eye" aria-hidden="true"></p> {{ r.viewsNum }}
-                                                </div>
+                            <div class="header">
+                                <h4 class="title">Trips</h4>
+                            </div>
+                                <div class="row">
+                                    {% for trip in result %}
+                                    <div class="col-sm-3 text-center">
+                                    <div class="container" style="display:inline; width:100%; lenght:100%">
+                                    <div class="panel panel-default bootcards-media" style="width:100%;">
+                                    <div class="panel-heading" align="center" style="width: 100%;">
+                                        {{ trip.tripName }}
+                                        <a href="/admin/trips/edit/{{trip.tripName}}" class="btn btn-primary" style="display: block; margin: 0 auto;">Edit</a>
+                                    </div>
+                                    <a href="/admin/trips/{{ trip.tripName }}/itineraries">
+                                        <div class="panel-body" style="width: 270px; height: 125px;" align="center">
+                                            <img style="height: 100%; width: 100%; object-fit:contain;" src="https://i.ytimg.com/vi/QGiJFumHUPo/maxresdefault.jpg"/>
+                                        </div>
+                                    </a>
+                                    <div class="panel-footer" align="left" style="display: inline-block; width: 100%;">
+                                        <div class="row">
+                                            &nbsp; From: {{ trip.tripDateFrom }}
+                                        </div>
+                                        <div class="row">
+                                            &nbsp; To: {{ trip.tripDateTo }}
+                                            <br>&nbsp; {{ trip.viewsNum }} views
+                                        </div>
+                                        <div class="panel-footer">
+                                            <div class="row" align="left" style="display: inline-block; width: 120%;">
+                                            <a href="/admin/trips/{{ trip.tripName }}/itineraries" class="btn btn-primary" style="display: block; margin: 0 auto;">View Itineraries</a>
                                             </div>
-                                        </a>
+                                        </div>
                                     </div>
                                 </div>
-                            {% endfor %}
+                            </div>
+                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-    </div>
-</div>
-
+        <div class="container text-center">
+            <nav class="navbar navbar-default navbar-fixed-bottom">
+                <ul class="pagination" style="alignment: center">
+                    <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+                    <li class="active"><a href="#">1</a></li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li><a href="#">4</a></li>
+                    <li><a href="#">5</a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+                </ul>
+            </nav>
+        </div>
 
 
 
