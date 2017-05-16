@@ -3,14 +3,14 @@ from flask import Flask, render_template, redirect, Blueprint, request, flash, u
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user, AnonymousUserMixin
 from werkzeug.security import check_password_hash
 from model import User, Role, Anonymous, Photos, Connection
-from forms import LoginForm, RegisterForm, EditForm, SearchForm, AdminEditForm
+from forms import LoginForm, RegisterForm, EditForm, SearchForm, PasswordSettingsForm, UsernameSettingsForm
 from app import db, app
 from decorators import required_roles, get_friends, get_friend_requests, allowed_file, deleteTrip_user, img_folder, is_friends_or_pending
 from app.landing.views import landing_blueprint
 from werkzeug import secure_filename
 from PIL import Image
-from app.trips.model import Trips
-from app.trips.forms import EditTripForm
+from app.trips.model import Trips, Itineraries
+from app.trips.forms import EditTripForm, ItineraryForm, EditItineraryForm
 import datetime
 import time
 from sqlalchemy_searchable import search
@@ -39,11 +39,52 @@ def addash():
     trips = Trips.query.all()
     return render_template('admin/admindashboard.html', users=users, trips=trips)
 
-@auth_blueprint.route('/admin/settings')
+@auth_blueprint.route('/admin/settings/<username>', methods=['GET', 'POST'])
 @login_required
 @required_roles('Admin')
-def settings():
-    return render_template('admin/settings.html')
+def settings(username):
+    form = PasswordSettingsForm()
+    user = User.query.filter_by(username=username).first()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            if check_password_hash(current_user.password, request.form['currpassword']):
+                current_user.password = generate_password_hash(form.newpassword.data)
+                db.session.add(current_user)
+                db.session.commit()
+                flash('Changes saved!')
+                result = User.query.all()
+                return render_template('admin/users.html', form=form, result=result)
+            else:
+                flash('Incorrect Password!')
+                return render_template('admin/settings.html', form=form, user=user)
+        else:
+            form.newpassword.data = current_user.password
+            return render_template('admin/settings.html', form=form, user=user)
+    return render_template('admin/settings.html', form=form, user=user)
+
+@auth_blueprint.route('/admin/settings/username/<username>', methods=['GET', 'POST'])
+@login_required
+@required_roles('Admin')
+def usernamesettings(username):
+    form = UsernameSettingsForm()
+    form1 = PasswordSettingsForm()
+    user = User.query.filter_by(username=username).first()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            if check_password_hash(current_user.password, request.form['currpassword']):
+                current_user.username = form.username.data
+                db.session.add(current_user)
+                db.session.commit()
+                flash('Changes saved!')
+                result = User.query.all()
+                return render_template('admin/users.html', form=form, result=result)
+            else:
+                flash('Invalid Username!')
+                return render_template('admin/usernamesettings.html', form=form, user=user, form1=form1)
+        else:
+            form.username.data = current_user.username
+            return render_template('admin/usernamesettings.html', form=form, user=user, form1=form1)
+    return render_template('admin/usernamesettings.html', form=form, user=user, form1=form1)
 
 @auth_blueprint.route('/admin/users/sort/admin', methods=['GET', 'POST'])
 @login_required
@@ -98,49 +139,85 @@ def addusers():
 @required_roles('Admin')
 def editusers(username):
     user = User.query.filter_by(username=username).first()
-    form = AdminEditForm()
-    result = User.query.all()
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            user.first_name = form.first_name.data
-            user.last_name = form.last_name.data
-            user.address = form.address.data
-            user.city = form.city.data
-            user.country = form.country.data
-            user.birth_date = form.birth_date.data
-            user.contact_num = form.contact_num.data
-            user.description = form.description.data
-            db.session.add(user)
-            db.session.commit()
-            flash("Your changes have been saved.")
-            return render_template('admin/users.html', result=result)
+    form = EditForm()
+    if form.validate_on_submit():
+        user.first_name = form.first_name.data
+        user.last_name = form.last_name.data
+        user.address = form.address.data
+        user.city = form.city.data
+        user.country = form.country.data
+        user.birth_date = form.birth_date.data
+        user.contact_num = form.contact_num.data
+        user.description = form.description.data
+
+        now_loc = img_folder + str(user.id)
+        if os.path.isdir(now_loc) == False:
+            os.makedirs(now_loc)
+
+        if form.file.data.filename == None or form.file.data.filename == '':
+            user.profile_pic = user.profile_pic
         else:
-            form.first_name.data = user.first_name
-            form.last_name.data = user.last_name
-            form.address.data = user.address
-            form.city.data = user.city
-            form.country.data = user.country
-            form.birth_date.data = user.birth_date
-            form.contact_num.data = user.contact_num
-            form.description.data = user.description
-            return render_template('admin/editusers.html', user=user, form=form)
-    return render_template('admin/editusers.html', user=user, form=form)
+            if form.file.data and allowed_file(form.file.data.filename):
+                filename = secure_filename(form.file.data.filename)
+                form.file.data.save(os.path.join(now_loc + '/', filename))
+
+                uploadFolder = now_loc + '/'
+                nameNow = str(int(time.time())) + '.' + str(os.path.splitext(filename)[1][1:])
+                os.rename(uploadFolder + filename, uploadFolder + nameNow)
+
+            date = datetime.datetime.today().strftime('%m/%d/%y')
+            photo = Photos(photoName=nameNow, photoDate=date, photoLocation=now_loc, userID=user.id)
+            db.session.add(photo)
+            db.session.commit()
+
+            ph_1 = Photos.query.filter_by(userID=user.id).all()
+            for p in ph_1:
+                if p.photoName == str(nameNow):
+                    user.profile_pic = p.id
+
+        db.session.add(user)
+        db.session.commit()
+
+        ph = Photos.query.filter_by(id=user.profile_pic).first()
+        if ph is None:
+            cas = 'default'
+        else:
+            cas = ph.photoName
+
+        flash("Your changes have been saved.")
+        result = User.query.all()
+        return render_template('admin/users.html', result=result, user=user, csID=str(user.id), csPic=str(cas))
+    else:
+        form.first_name.data = user.first_name
+        form.last_name.data = user.last_name
+        form.address.data = user.address
+        form.city.data = user.city
+        form.country.data = user.country
+        form.birth_date.data = user.birth_date
+        form.contact_num.data = user.contact_num
+        form.description.data = user.description
+
+        ph = Photos.query.filter_by(id=user.profile_pic).first()
+        if ph is None:
+            cas = 'default'
+        else:
+            cas = ph.photoName
+        return render_template('admin/editusers.html', user=user, form=form, csID=str(user.id),
+                               csPic=str(cas))
 
 #delete
-@auth_blueprint.route('/admin/users/remove', methods=['GET','POST'])
+@auth_blueprint.route('/admin/users/remove/<username>', methods=['GET','POST'])
 @login_required
 @required_roles('Admin')
-def deleteusers():
-    if request.method == 'POST':
-        if request.form.getlist("username"):
-            user = User.query.filter(User.username.in__(request.form['username'])).first()
-            deleteTrip_user(user.id)
-            if user.profile_pic!='default':
-                os.remove(img_folder+'users/'+str(user.profile_pic))
-            db.session.delete(user)
-            db.session.commit()
-            result = User.query.all()
-            return render_template('admin/users.html', result = result)
+def deleteusers(username):
+    user = User.query.filter_by(username=username).first()
+    deleteTrip_user(user.id)
+    if user.profile_pic!='default':
+        os.remove(img_folder+str(user.profile_pic))
+    db.session.delete(user)
+    db.session.commit()
+    result = User.query.all()
+    return render_template('admin/users.html', result = result)
 
 # TRIPS --> read
 @auth_blueprint.route('/admin/trips')
@@ -149,28 +226,6 @@ def deleteusers():
 def managetrips():
     result = Trips.query.all()
     return render_template('admin/trips.html', result=result)
-
-#update
-@auth_blueprint.route('/admin/trips/edit/<tripName>', methods=['GET','POST'])
-@login_required
-@required_roles('Admin')
-def edittrips(tripName):
-    tripname = Trips.query.filter_by(tripName=tripName).first()
-    form = EditTripForm()
-    trips = Trips.query.all()
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            tripname.tripName = form.trip_name.data
-            tripname.tripDateFrom = form.trip_date_from.data
-            tripname.tripDateTo = form.trip_date_to.data
-            db.session.add(tripname)
-            db.session.commit()
-        return render_template('/admin/trips.html', trips=trips)
-    else:
-        form.trip_name.data = tripname.tripName
-        form.trip_date_from.data = tripname.tripDateFrom
-        form.trip_date_to.data = tripname.tripDateTo
-    return render_template('/admin/edittrips.html', form=form, tripname=tripname)
 
 #delete
 @auth_blueprint.route('/admin/trips/remove/<tripName>', methods=['GET','POST'])
@@ -183,6 +238,65 @@ def removetrips(tripName):
     db.session.commit()
     result = Trips.query.all()
     return render_template('admin/trips.html', result=result)
+
+# update
+@auth_blueprint.route('/admin/trips/edit/<tripName>', methods=['GET','POST'])
+def editTrips(tripName):
+    tripname = Trips.query.filter_by(tripName=tripName).first()
+    form = EditTripForm()
+    trips = Trips.query.all()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            tripname.tripName = form.trip_name.data
+            tripname.tripDateFrom = form.trip_date_from.data
+            tripname.tripDateTo = form.trip_date_to.data
+            db.session.add(tripname)
+            db.session.commit()
+            return redirect(url_for("auth_blueprint.managetrips"))
+        return render_template('/admin/trip.html', trips=trips)
+    else:
+        form.trip_name.data = tripname.tripName
+        form.trip_date_from.data = tripname.tripDateFrom
+        form.trip_date_to.data = tripname.tripDateTo
+    return render_template('/admin/edittrips.html', form=form, tripname=tripname)
+
+@auth_blueprint.route('/admin/trips/<tripName>/itineraries', methods=['GET'])
+def itineraries(tripName):
+    tripid = Trips.query.filter_by(tripName=tripName).first()
+    itinerary = Itineraries.query.filter_by(tripID=tripid.tripID)
+    trip = Trips.query.filter_by(userID=current_user.id, tripName=tripName).first()
+    return render_template('/admin/itineraries.html', trip=trip, itineraries=itinerary)
+
+@auth_blueprint.route('/admin/trips/<tripName>/<itineraryName>/edit', methods=['GET', 'POST'])
+def editItineraries(tripName, itineraryName):
+    tripname = Trips.query.filter_by(tripName=tripName).first()
+    itineraryname = Itineraries.query.filter_by(tripID=tripname.tripID, itineraryName=itineraryName).first()
+    itineraries = Itineraries.query.all()
+    form = EditItineraryForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            itineraryname.itineraryName = form.itinerary_name.data
+            itineraryname.itineraryDateFrom = form.itinerary_date_from.data
+            itineraryname.itineraryDateTo = form.itinerary_date_to.data
+            itineraryname.itineraryDesc = form.itinerary_desc.data
+            itineraryname.itineraryLocation = form.itinerary_location.data
+            itineraryname.locationTypeID = form.itinerary_location_type.data
+            itineraryname.itineraryTimeFrom = form.itinerary_time_from.data
+            itineraryname.itineraryTimeTo = form.itinerary_time_to.data
+            db.session.add(itineraryname)
+            db.session.commit()
+            return redirect(url_for("auth_blueprint.itineraries", tripName=tripName))
+        return render_template('/admin/itineraries.html', trip=tripname, itineraries=itineraries)
+    else:
+        form.itinerary_name.data = itineraryname.itineraryName
+        form.itinerary_date_from.data = itineraryname.itineraryDateFrom
+        form.itinerary_date_to.data = itineraryname.itineraryDateTo
+        form.itinerary_desc.data = itineraryname.itineraryDesc
+        form.itinerary_location_type.data = itineraryname.locationTypeID
+        form.itinerary_location.data = itineraryname.itineraryLocation
+        form.itinerary_time_from.data = itineraryname.itineraryTimeFrom
+        form.itinerary_time_to.data = itineraryname.itineraryTimeTo
+    return render_template('/admin/edititinerary.html', form=form, tripname=tripname)
 # END ADMIN <----------
 
 
