@@ -67,5 +67,12 @@ class TrialForm(Form):
 class SearchForm(Form):
     search = StringField('',validators=[DataRequired()])
 
+class EmailResetForm(Form):
+    email = StringField('Email', validators=[DataRequired(), Email(message=None), Length(min=6, max=40)])
+
+class PasswordResetForm(Form):
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=25)])
+    confirm = PasswordField('Repeat password', validators=[DataRequired(), EqualTo('password', message='Passwords must match.')])
+
 
 

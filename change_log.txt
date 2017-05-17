@@ -1,4 +1,5 @@
 Migrate commands:
+	-->0. please delete first migrations folder for now 
 	-->1. python manage.py db init(only on the first run)
 
 (if some changes in the model has been done run the follwing commands)
