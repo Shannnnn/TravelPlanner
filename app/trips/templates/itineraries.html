@@ -1,6 +1,15 @@
 {% extends 'base1.html' %}
 {% import "bootstrap/wtf.html" as wtf %}
 
+{% block styles %}
+    <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/icon.min.css'>
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/semantic.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.10/semantic.min.js"></script>
+{% endblock %}
+
 {% block content %}
         <div class="content">
             <div class="container-fluid">
@@ -23,22 +32,16 @@
                                     <img style="height: 100%; width: 100%; object-fit:contain;" src="https://i.ytimg.com/vi/QGiJFumHUPo/maxresdefault.jpg"/></div>
                                     <div class="panel-footer" align="center" style="display: inline-block; width: 100%;">
                                         <div class="row">
-                                            &nbsp; Location: {{ itinerary.itineraryLocation }}
+                                              Location: {{ itinerary.itineraryLocation }}
                                         </div>
                                         <div class="row">
-                                            &nbsp; From: {{ itinerary.itineraryDateFrom }}
+                                              Date: {{ itinerary.itineraryDate }}
                                         </div>
                                         <div class="row">
-                                            &nbsp; To: {{ itinerary.itineraryDateTo }}
+                                              Description: {{ itinerary.itineraryDesc }}
                                         </div>
                                         <div class="row">
-                                            &nbsp; Description: {{ itinerary.itineraryDesc }}
-                                        </div>
-                                        <div class="row">
-                                            &nbsp; From: {{ itinerary.itineraryTimeFrom }}
-                                        </div>
-                                        <div class="row">
-                                             &nbsp;To: {{ itinerary.itineraryTimeTo }}
+                                             Time: {{ itinerary.itineraryTime }}
                                         </div>
                                     </div>
                                 </div>

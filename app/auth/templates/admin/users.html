@@ -25,7 +25,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>
-
 </head>
 <body class="float-landing" data-spy="scroll" data-offset="70" data-taget=".navbar-default">
         <nav class="navbar navbar-default navbar-fixed-top">
@@ -44,7 +43,7 @@
                         <li><a href="/admin">Admin Dashboard<span class="badge">{{ users|count }}</span></a></a></li>
                         <li class="active"><a href="/admin/users">Users</a></li>
                         <li><a href="/admin/trips">Trip Plans</a></li>
-                        <li><a href="/admin/settings">Settings</a></li>
+                        <li><a href="/admin/settings/{{current_user.username}}">Settings</a></li>
                         <li class="nav-button"><a href="/main">Menu</a></li>
                         <li class="nav-button"><a href="/logout">Log out</a></li>
                     </ul>
@@ -70,12 +69,10 @@
                             </div>
                             <form action="/admin/users/remove" method="POST" name="deletelist">
                                 <a href="/admin/users/create" class="btn btn-info pull-left">Add User</a>
-                                <a type="submit" class="btn btn-danger pull-right" style="">Delete</a>
                                 <table id="mytable" class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th></th>
-                                            <th style="text-align: center"><input type="checkbox" id="checkall"/></th>
+                                            <th colspan="2" style="text-align: center">Action</th>
                                             <th>ID</th>
                                             <th>Username</th>
                                             <th>Email</th>
@@ -87,11 +84,11 @@
                                     {% for r in result %}
                                     <tbody>
                                         <tr>
-                                            <td><a href="/admin/users/edit/{{r.username}}" class="btn btn-success btn-xs pull-right" style="text-align: center"><span class="glyphicon glyphicon-pencil"></span></a></td>
+                                            <td><a href="/admin/users/edit/{{r.username}}" class="btn btn-success btn-xs" style="text-align: center"><span class="glyphicon glyphicon-pencil"></span></a></td>
                                             {% if r.role_id==1%}
-                                            <td style="text-align: center"><input type="checkbox" class="checkthis" value="{{r.username}}" disabled readonly/></td>
+                                            <td style="text-align: center"><a class="btn btn-danger btn-xs" style="text-align: center" disabled readonly><span class="glyphicon glyphicon-trash"></span></a></td>
                                             {% else %}
-                                            <td style="text-align: center"><input type="checkbox" class="checkthis" id="{{r.username}}" value="{{r.username}}"/></td>
+                                            <td style="text-align: center"><a href="/admin/users/remove/{{r.username}}" class="btn btn-danger btn-xs" style="text-align: center"><span class="glyphicon glyphicon-trash"></span></a></td>
                                             {% endif %}
                                             <td>{{r.id}}</td>
                                             <td>{{r.username}}</td>

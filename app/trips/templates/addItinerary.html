@@ -19,17 +19,8 @@
     $( function() {
         $( "#datepicker" ).datepicker();
     });
-    $( function() {
-        $( "#datepicker2" ).datepicker();
-    });
     $( function(){
         $('#timepicker').datetimepicker({
-        datepicker: false,
-        format: "H:i"
-        });
-    });
-    $( function(){
-        $('#timepicker2').datetimepicker({
         datepicker: false,
         format: "H:i"
         });
@@ -73,24 +64,14 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                                 <div class="form-group">
-                                                    {{wtf.form_field(form.itinerary_date_from, id="datepicker")}}
-                                                </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                                <div class="form-group">
-                                                    {{wtf.form_field(form.itinerary_date_to, id="datepicker2")}}
+                                                    {{wtf.form_field(form.itinerary_date, id="datepicker")}}
                                                 </div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-4">
                                                 <div class="form-group">
-                                                    {{wtf.form_field(form.itinerary_time_from, id="timepicker")}}
-                                                </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                                <div class="form-group">
-                                                    {{wtf.form_field(form.itinerary_time_to, id="timepicker2")}}
+                                                    {{wtf.form_field(form.itinerary_time, id="timepicker")}}
                                                 </div>
                                         </div>
                                     </div>

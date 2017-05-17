@@ -6,19 +6,25 @@ class Trips(db.Model):
     tripName = db.Column(db.String(70))
     tripDateFrom = db.Column(db.Date)
     tripDateTo = db.Column(db.Date)
+    tripCountry = db.Column(db.String(70))
+    tripCity = db.Column(db.String(70))
     userID = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     viewsNum = db.Column(db.Integer)
     img_thumbnail = db.Column(db.String(70))
-    # status = db.Column(db.Boolean, default=True, nullable=False)
-    # visibility = db.Column(db.Boolean, default=False, nullable=False)
+    status = db.Column(db.Integer)
+    visibility = db.Column(db.Integer)
 
-    def __init__(self, tripName, tripDateFrom, tripDateTo, userID, img_thumbnail):
+    def __init__(self, tripName, tripDateFrom, tripDateTo, tripCity, tripCountry, userID, img_thumbnail, status, visibility):
         self.tripName = tripName
         self.tripDateFrom = tripDateFrom
         self.tripDateTo = tripDateTo
+        self.tripCity = tripCity
+        self.tripCountry = tripCountry
         self.userID = userID
         self.viewsNum = 0
         self.img_thumbnail = img_thumbnail
+        self.status = status
+        self.visibility = visibility
 
     def __repr__(self):
         return '<tripName {}>'.format(self.tripName)
@@ -29,21 +35,17 @@ class Itineraries(db.Model):
     itineraryName = db.Column(db.String(70))
     itineraryDesc = db.Column(db.String(1000))
     itineraryLocation = db.Column(db.String(80))
-    itineraryDateFrom = db.Column(db.Date)
-    itineraryDateTo = db.Column(db.Date)
-    itineraryTimeFrom = db.Column(db.Time)
-    itineraryTimeTo = db.Column(db.Time)
+    itineraryDate = db.Column(db.Date)
+    itineraryTime = db.Column(db.Time)
     tripID = db.Column(db.Integer, db.ForeignKey("trips.tripID"), nullable=False)
     locationTypeID = db.Column(db.Integer, db.ForeignKey("itinerarylocationtype.locationTypeID"), nullable=True)
 
-    def __init__(self, itineraryName, itineraryDesc, itineraryLocation, itineraryDateFrom, itineraryDateTo, itineraryTimeFrom, itineraryTimeTo, tripID, locationTypeID):
+    def __init__(self, itineraryName, itineraryDesc, itineraryLocation, itineraryDate, itineraryTime, tripID, locationTypeID):
         self.itineraryName = itineraryName
         self.itineraryDesc = itineraryDesc
         self.itineraryLocation = itineraryLocation
-        self.itineraryDateFrom = itineraryDateFrom
-        self.itineraryDateTo = itineraryDateTo
-        self.itineraryTimeFrom = itineraryTimeFrom
-        self.itineraryTimeTo = itineraryTimeTo
+        self.itineraryDate = itineraryDate
+        self.itineraryTimeTo = itineraryTime
         self.tripID = tripID
         self.locationTypeID = locationTypeID
 
@@ -63,20 +65,31 @@ class itineraryLocationType(db.Model):
     def __repr__(self):
         return '<locationType {}>'.format(self.locationType)
 
-class tripPhotos(db.Model):
-    __tablename__ = "trip_Photos"
 
-    id = db.Column(db.Integer, primary_key=True)
-    photoName = db.Column(db.String(300))
-    photoDate = db.Column(db.Date)
-    photoLocation = db.Column(db.String(300))
-    tripID = db.Column(db.Integer, db.ForeignKey("trips.tripID"), nullable=False)
+class City(db.Model):
+    __tablename__ = "cities"
+    cityID = db.Column(db.Integer, primary_key=True)
+    cityName = db.Column(db.String(80))
+    cityCode = db.Column(db.String(80))
+    countryID = db.Column(db.Integer, db.ForeignKey('countries.countryID'), nullable=False)
 
-    def __init__(self, photoName, photoDate, photoLocation, tripID):
-        self.photoName = photoName
-        self.photoDate = photoDate
-        self.photoLocation = photoLocation
-        self.tripID = tripID
+    def __init__(self, cityName, cityCode, countryID):
+        self.cityName = cityName
+        self.cityName = cityCode
+        self.countryID = countryID
 
     def __repr__(self):
-        return '<photoName {}>'.format(self.photoName)
+        return '<cityName {}>'.format(self.cityCode)
+
+class Country(db.Model):
+    __tablename__ = "countries"
+    countryID = db.Column(db.Integer, primary_key=True)
+    countryName = db.Column(db.String(80))
+    countryCode = db.Column(db.String(80))
+
+    def __init__(self, countryName, countryCode):
+        self.countryName = countryName
+        self.countryCode = countryCode
+
+    def __repr__(self):
+        return '<countryName {}>'.format(self.countryName)

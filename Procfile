@@ -1,0 +1,1 @@
+web: gunicorn travelplanner.wsgi:application --log-file=-

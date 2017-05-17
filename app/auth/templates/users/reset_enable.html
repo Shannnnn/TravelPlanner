@@ -57,7 +57,7 @@ Confirm
 <div class="container">
 
       <form class="form-signin" method="POST" action="{{ url_for('auth_blueprint.reset_now', token=token) }}">
-        <h2 class="form-signin-heading">Please Enter Email</h2>
+        <h2 class="form-signin-heading">Please Provide the Following</h2>
           {{ form.hidden_tag() }}
           {{ wtf.form_field(form.password) }}
           {{ wtf.form_field(form.confirm) }}
