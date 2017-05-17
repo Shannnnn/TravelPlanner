@@ -9,6 +9,8 @@
 *.pyc
 *.pyo
 config.py/
+.settings/
+.idea/
 
 # Packages #
 ############

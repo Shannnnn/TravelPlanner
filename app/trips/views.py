@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, redirect, Blueprint, request, jsonify, url_for, send_from_directory
+from flask import Flask, render_template, redirect, Blueprint, request, url_for, flash
 from flask_login import current_user
 from forms import TripForm, ItineraryForm, EditTripForm, EditItineraryForm
 from model import Trips, Itineraries, itineraryLocationType, Country, City
@@ -42,12 +42,8 @@ def addtrip():
             if tripForm.file.data and allowed_file(tripForm.file.data.filename):
                 filename = secure_filename(tripForm.file.data.filename)
                 tripForm.file.data.save(os.path.join(img_folder+'trips/', filename))
-            #ex = os.path.splitext(filename)[1][1:]
-            #st = img_folder+'trips/'+filename
-            #img = Image.open(open(str(st), 'rb'))
-            #img.save(str(st), format=None, quality=50)
 
-            return redirect(url_for('trip_blueprint.addtrip'))
+            return redirect(url_for('trip_blueprint.trips'))
 
     ph = Photos.query.filter_by(id=current_user.profile_pic).first()
     if ph is None:
