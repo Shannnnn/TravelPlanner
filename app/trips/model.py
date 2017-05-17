@@ -62,3 +62,21 @@ class itineraryLocationType(db.Model):
 
     def __repr__(self):
         return '<locationType {}>'.format(self.locationType)
+
+class tripPhotos(db.Model):
+    __tablename__ = "trip_Photos"
+
+    id = db.Column(db.Integer, primary_key=True)
+    photoName = db.Column(db.String(300))
+    photoDate = db.Column(db.Date)
+    photoLocation = db.Column(db.String(300))
+    tripID = db.Column(db.Integer, db.ForeignKey("trips.tripID"), nullable=False)
+
+    def __init__(self, photoName, photoDate, photoLocation, tripID):
+        self.photoName = photoName
+        self.photoDate = photoDate
+        self.photoLocation = photoLocation
+        self.tripID = tripID
+
+    def __repr__(self):
+        return '<photoName {}>'.format(self.photoName)

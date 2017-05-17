@@ -15,7 +15,7 @@ app.config['MAIL_USERNAME'] = 'travelplannerSy@gmail.com'
 app.config['MAIL_PASSWORD'] = 'viatorem'
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
-
+mail = Mail(app)
 
 
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@127.0.0.1/travelplanner'
@@ -44,6 +44,7 @@ app.register_blueprint(trip_blueprint)
 
 from landing.views import landing_blueprint
 app.register_blueprint(landing_blueprint)
+
 
 db.create_all()
 

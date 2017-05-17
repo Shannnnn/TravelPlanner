@@ -4,9 +4,9 @@ from werkzeug.security import generate_password_hash
 from flask import request
 import hashlib
 from sqlalchemy_searchable import make_searchable
-
 from sqlalchemy_utils.types import TSVectorType
 from sqlalchemy.orm import backref
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 make_searchable()
 
@@ -70,14 +70,6 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return '<username {}>'.format(self.username)
 
-# class Role(db.Model):
-#     __tablename__ = "role"
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String(15), unique=True)
-#     default = db.Column(db.Boolean, default=False, index=True)
-#     permissions = db.Column(db.Integer)
-#     users = db.relationship('User', backref='role', lazy='dynamic')
-
     def gravatar(self, size=100, default='identicon', rating='g'):
         if request.is_secure:
             url = 'https://secure.gravatar.com/avatar'
@@ -86,6 +78,26 @@ class User(db.Model, UserMixin):
         hash = hashlib.md5(self.email.encode('utf-8')).hexdigest()
         return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
             url=url, hash=hash, size=size, default=default, rating=rating)
+
+
+    #reset password functions:
+    #generates a token for a user
+    def get_token(self, expiration=1800):
+        s = Serializer(app.config['SECRET_KEY'], expiration)
+        return s.dumps({'user': self.id}).decode('utf-8')
+
+    #verifies the token and returns the user associated with it
+    @staticmethod
+    def verify_token(token):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return None
+        id = data.get('user')
+        if id:
+            return User.query.get(id)
+        return None
 
 class Anonymous(AnonymousUserMixin):
     def __init__(self):

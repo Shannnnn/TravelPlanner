@@ -29,7 +29,7 @@ function state(tripname, from, to, views, image){
 }
 
 function sendMail(){
-      $.getJSON('/main/sendRepsonse', {
+      $.getJSON('/main/sendResponse', {
               name : $('input[name="resID"]').val(),
               email : $('input[name="resEMAIL"]').val(),
               body : $('textarea[name="resMSG"]').val()

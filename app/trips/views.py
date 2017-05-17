@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, redirect, Blueprint, request, flash, url_for, send_from_directory
 from flask_login import current_user
 from forms import TripForm, ItineraryForm, EditTripForm, EditItineraryForm
-from model import Trips, Itineraries, itineraryLocationType
+from model import Trips, Itineraries, itineraryLocationType, tripPhotos
 from app import db
 from werkzeug import secure_filename
 from app.auth.model import Photos
@@ -36,10 +36,6 @@ def addtrip():
             if tripForm.file.data and allowed_file(tripForm.file.data.filename):
                 filename = secure_filename(tripForm.file.data.filename)
                 tripForm.file.data.save(os.path.join(img_folder+'trips/', filename))
-            #ex = os.path.splitext(filename)[1][1:]
-            #st = img_folder+'trips/'+filename
-            #img = Image.open(open(str(st), 'rb'))
-            #img.save(str(st), format=None, quality=50)
 
             return redirect(url_for('trip_blueprint.addtrip'))
 

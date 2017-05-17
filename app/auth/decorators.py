@@ -5,6 +5,7 @@ from flask_login import current_user
 from model import Role, Connection, User, db
 from app.trips.model import Trips
 
+#this will determine if the user is authenticated to go to a certain route
 def required_roles(*roles):
    def wrapper(f):
       @wraps(f)
@@ -68,12 +69,17 @@ def get_friends(id):
 
     return friends
 
+#the current directory for user profile pic
 img_folder = 'app/auth/static/images/users/'
+#img_folder = 'app/uploads/static/images/users/'
 
+
+#determines the only allowed file extensions for images
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in set(['png', 'jpg', 'PNG', 'JPG'])
 
+#
 def deleteTrip_user(userID):
     trips = Trips.query.filter_by(userID=userID).all()
     for trip in trips:

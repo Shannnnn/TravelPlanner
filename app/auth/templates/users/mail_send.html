@@ -47,33 +47,18 @@ Login
                         <li><a href="/main/#pricing">Trip Plans</a></li>
                         <li><a href="/main/#team">Team</a></li>
                         <li><a href="/main/#contact">About</a></li>
-                        <li class="nav-button"><a href="#">Sign In</a></li>
+                        <li class="nav-button"><a href="/login">Sign In</a></li>
                         <li class="nav-button"><a href="/register">Sign Up</a></li>
                     </ul>
                 </div><!--/.nav-collapse -->
             </div><!--/.container-fluid -->
         </nav><br><br><br>
 
-<div class="container">
+<div class="container text-center">
+  <h2>      A verification message was sent to your email.</h2>
+  <h2>Please check your email and from there reset your password</h2>
 
-      <form class="form-signin" method="POST" action="{{ url_for('auth_blueprint.login') }}">
-        <h2 class="form-signin-heading">Sign In</h2>
-          {{ form.hidden_tag() }}
-          {{ wtf.form_field(form.username) }}
-          {{ wtf.form_field(form.password) }}
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" name="remember_me" value="remember-me"> Remember me
-          </label>
-        </div>
-        <button class="btn btn-lg btn-primary btn-block" type="submit" name="submit" >Sign in</button>
-        <div>
-          <h3>Don't have an account?<a href="{{ url_for('auth_blueprint.register') }}">Sign Up</a></h3>
-          <h5>Forgot Password?<a href="{{ url_for('auth_blueprint.reset') }}">Click here!</a></h5>
-        </div>
-      </form>
-
-    </div> <!-- /container -->
+</div> <!-- /container -->
 {% endblock %}
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
