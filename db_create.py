@@ -1,31 +1,22 @@
 from app import db
-# db.create_all()
-#
-from flask import jsonify
-from app.trips.model import itineraryLocationType, Itineraries, Trips
-from app.trips.forms import ItineraryForm
+db.create_all()
 
-# name = itineraryLocationType('Restaurant', 'name')
-# name2 = itineraryLocationType('Hotel', 'icon2')
+from app.trips.model import City, Country
+
+# cnt1 = Country('Philippines', '1122')
+# cnt2 = Country('United States of America', '3344')
 #
-# db.session.add(name)
-# db.session.add(name2)
+# db.session.add(cnt1)
+# db.session.add(cnt2)
 # db.session.commit()
-#
-# locationTypes = db.session.query(itineraryLocationType.locationType)
-# all = locationTypes.all()
-# print all
 
-# l = list()
-# m = list()
-#
-# locationTypeID = db.session.query(itineraryLocationType.locationTypeID)
-# locationType = db.session.query(itineraryLocationType.locationType)
-# for i in locationTypeID:
-#     l.append(i)
-# for j in locationType:
-#     m.append(j)
-#
-# valuee = zip(l, m)
-#
-# print valuee
+ct1 = City('1111', 'Iligan City', '1')
+ct2 = City('2222', 'Ozamis City', '1')
+ct3 = City('3333', 'New York City', '2')
+ct4 = City('4444', 'Oklahoma City', '2')
+
+db.session.add(ct1)
+db.session.add(ct2)
+db.session.add(ct3)
+db.session.add(ct4)
+db.session.commit()

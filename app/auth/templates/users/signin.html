@@ -19,17 +19,6 @@ Login
 {% endblock %}
 
 {% block content %}
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <script>
-      var messages =  {{ messages | safe }};
-      for (var i=0; i<messages.length; i++) {
-        alert(messages[i]);
-      }
-    </script>
-  {% endif %}
-{% endwith %}
-
 <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">

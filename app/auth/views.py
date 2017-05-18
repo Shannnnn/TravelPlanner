@@ -637,7 +637,6 @@ def register():
                 "num_total_requests": 0
             }
 
-            flash('Log In')
             return redirect(url_for('auth_blueprint.login'))
         return render_template('users/registration.html', form=form)
 

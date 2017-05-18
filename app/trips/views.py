@@ -1,6 +1,6 @@
 import os
 from flask import Flask, render_template, redirect, Blueprint, request, url_for, flash
-from flask_login import current_user
+from flask_login import current_user, login_required
 from forms import TripForm, ItineraryForm, EditTripForm, EditItineraryForm
 from model import Trips, Itineraries, itineraryLocationType, Country, City
 from app import db
@@ -20,6 +20,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in available_extension
 
 @trip_blueprint.route('/createtrip', methods=['GET', 'POST'])
+@login_required
 def addtrip():
     error = None
     tripForm = TripForm()
@@ -33,7 +34,7 @@ def addtrip():
                              userID=current_user.id,
                              tripCountry=tripForm.trip_country.data,
                              tripCity=tripForm.trip_city.data,
-                             status=tripForm.trip_status.data,
+                             status=0,
                              visibility=tripForm.trip_visibility.data,
                              img_thumbnail=tripForm.file.data.filename)
             db.session.add(tripform)
@@ -54,11 +55,13 @@ def addtrip():
     return render_template('addtrip.html', form=tripForm, error=error, csID=str(current_user.id), csPic=str(cas))
 
 @trip_blueprint.route('/', methods=['GET'])
+@login_required
 def trips():
     trip = Trips.query.filter_by(userID=current_user.id)
     return render_template('/trip.html', trips=trip, current_user=current_user)
 
 @trip_blueprint.route('/<tripName>/edit', methods=['GET', 'POST'])
+@login_required
 def editTrips(tripName):
     tripname = Trips.query.filter_by(tripName=tripName).first()
     form = EditTripForm()
@@ -72,7 +75,6 @@ def editTrips(tripName):
             tripname.tripDateTo = form.trip_date_to.data
             tripname.tripCity = form.trip_city.data
             tripname.tripCountry = form.trip_country.data
-            tripname.status = form.trip_status.data
             tripname.visibility = form.trip_visibility.data
             db.session.add(tripname)
             db.session.commit()
@@ -84,11 +86,11 @@ def editTrips(tripName):
         form.trip_date_to.data = tripname.tripDateTo
         form.trip_city.data = tripname.tripCity
         form.trip_country.data = tripname.tripCountry
-        form.trip_status.data = tripname.status
         form.trip_visibility.data = tripname.visibility
     return render_template('edittrip.html', form=form, tripname=tripname)
 
 @trip_blueprint.route('/<tripName>/additineraries', methods=['GET', 'POST'])
+@login_required
 def additineraries(tripName):
     tripid = Trips.query.filter_by(tripName=tripName).first()
     itineraryForm = ItineraryForm()
@@ -115,6 +117,7 @@ def additineraries(tripName):
     return render_template('addItinerary.html', itineraries=itineraries, form=itineraryForm, csID=str(current_user.id), csPic=str(cas))
 
 @trip_blueprint.route('/<tripName>/itineraries', methods=['GET'])
+@login_required
 def itineraries(tripName):
     tripid = Trips.query.filter_by(tripName=tripName).first()
     itinerary = Itineraries.query.filter_by(tripID=tripid.tripID)
@@ -122,6 +125,7 @@ def itineraries(tripName):
     return render_template('itineraries.html', trip=trip, itineraries=itinerary)
 
 @trip_blueprint.route('/<tripName>/<itineraryName>/edit', methods=['GET', 'POST'])
+@login_required
 def editItineraries(tripName, itineraryName):
     tripname = Trips.query.filter_by(tripName=tripName).first()
     itineraryname = Itineraries.query.filter_by(tripID=tripname.tripID, itineraryName=itineraryName).first()

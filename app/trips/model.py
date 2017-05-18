@@ -70,7 +70,7 @@ class City(db.Model):
     __tablename__ = "cities"
     cityID = db.Column(db.Integer, primary_key=True)
     cityName = db.Column(db.String(80))
-    cityCode = db.Column(db.String(80))
+    cityCode = db.Column(db.Integer)
     countryID = db.Column(db.Integer, db.ForeignKey('countries.countryID'), nullable=False)
 
     def __init__(self, cityName, cityCode, countryID):
@@ -85,7 +85,7 @@ class Country(db.Model):
     __tablename__ = "countries"
     countryID = db.Column(db.Integer, primary_key=True)
     countryName = db.Column(db.String(80))
-    countryCode = db.Column(db.String(80))
+    countryCode = db.Column(db.Integer)
 
     def __init__(self, countryName, countryCode):
         self.countryName = countryName
