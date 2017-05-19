@@ -39,11 +39,12 @@
                     </div>
                     <div id="navbar" class="navbar-collapse collapse">
                         <ul class="nav navbar-nav  smooth-scroll navbar-right">
-                            <li><a href="/admin">Admin Dashboard<span class="badge">{{ users|count }}</span></a></a></li>
+                            <li><a href="/admin">Admin Dashboard<span class="badge">{{ users|count }}</span></a></li>
                             <li><a href="/admin/users">Users</a></li>
                             <li><a href="/admin/trips">Trip Plans</a></li>
+                            <li><a href="/admin/trips/location">Location</a></li>
                             <li class="active"><a href="/admin/settings/{{current_user.username}}">Settings</a></li>
-                            <li class="nav-button"><a href="/main">Menu</a></li>
+                            <li class="nav-button"><a href="/main">View Site</a></li>
                             <li class="nav-button"><a href="/logout">Log out</a></li>
                         </ul>
                     </div>
@@ -58,7 +59,6 @@
                                     <div class="col-md-6">
                                         <div class="row">
                                           <label>Username
-                                          <a href="/admin/settings/username/{{current_user.username}}"><span class="fa fa-pencil"></span></a></label>
                                           <input type="text" class="form-control" placeholder="{{current_user.username}}" readonly/>
                                         </div>
                                         <div class="row">

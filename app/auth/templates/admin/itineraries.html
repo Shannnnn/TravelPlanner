@@ -42,8 +42,9 @@
                         <li><a href="/admin">Admin Dashboard</a></li>
                         <li><a href="/admin/users">Users</a></li>
                         <li class="active"><a href="/admin/trips">Trip Plans</a></li>
+                        <li><a href="/admin/trips/location">Location</a></li>
                         <li><a href="/admin/settings/{{current_user.username}}">Settings</a></li>
-                        <li class="nav-button"><a href="/main">Menu</a></li>
+                        <li class="nav-button"><a href="/main">View Site</a></li>
                         <li class="nav-button"><a href="/logout">Log out</a></li>
                     </ul>
                 </div><!--/.nav-collapse -->
@@ -69,7 +70,6 @@
                                                         <div class="panel panel-default bootcards-media" style="width:100%;">
                                                         <div class="panel-heading" align="center" style="width: 100%;">
                                                             {{ itinerary.itineraryName }}
-                                                            <a href="/trips/{{ trip.tripName }}/{{ itinerary.itineraryName }}/edit" class="btn btn-primary" style="display: block; margin: 0 auto;">Edit</a>
                                                         </div>
                                                         <div class="panel-body" style="width: 100%; height: 100%;" align="center">
                                                         <img style="height: 100%; width: 100%; object-fit:contain;" src="https://i.ytimg.com/vi/QGiJFumHUPo/maxresdefault.jpg"/></div>
@@ -78,19 +78,17 @@
                                                                 &nbsp; Location: {{ itinerary.itineraryLocation }}
                                                             </div>
                                                             <div class="row">
-                                                                &nbsp; From: {{ itinerary.itineraryDateFrom }}
-                                                            </div>
-                                                            <div class="row">
-                                                                &nbsp; To: {{ itinerary.itineraryDateTo }}
+                                                                &nbsp; Date: {{ itinerary.itineraryDate }}
                                                             </div>
                                                             <div class="row">
                                                                 &nbsp; Description: {{ itinerary.itineraryDesc }}
                                                             </div>
                                                             <div class="row">
-                                                                &nbsp; From: {{ itinerary.itineraryTimeFrom }}
+                                                                &nbsp; Time: {{ itinerary.itineraryTime }}
                                                             </div>
-                                                            <div class="row">
-                                                                 &nbsp;To: {{ itinerary.itineraryTimeTo }}
+                                                            <div class="row" align="center" style="display: inline-block; width: 120%;">
+                                                                <a href="/trips/{{ trip.tripName }}/{{ itinerary.itineraryName }}/edit" class="btn btn-success" style="display: inline-block; width: 40%;"><span class="fa fa-pencil"></span></a>
+                                                                <a class="btn btn-danger" href="" style="display: inline-block; width: 40%;"><span class="fa fa-trash"></span></a>
                                                             </div>
                                                         </div>
                                                     </div>

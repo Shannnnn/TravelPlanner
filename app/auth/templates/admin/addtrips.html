@@ -1,0 +1,192 @@
+<html lang="en">
+<head>
+    {% import "bootstrap/wtf.html" as wtf %}
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>{{ title }}</title>
+
+    <!-- Common plugins -->
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/simple-line-icons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/pace.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/landing-style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/help.css') }}">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+    $( function() {
+        $( "#datepicker1" ).datepicker();
+    });
+    $( function() {
+        $( "#datepicker2" ).datepicker();
+    });
+    </script>
+</head>
+<body class="float-landing" data-spy="scroll" data-offset="70" data-taget=".navbar-default">
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/main">TravelPlanner</a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav  smooth-scroll navbar-right">
+                        <li><a href="/admin">Admin Dashboard</a></li>
+                        <li><a href="/admin/users">Users</a></li>
+                        <li class="active"><a href="/admin/trips">Trip Plans</a></li>
+                        <li><a href="/admin/trips/location">Location</a></li>
+                        <li><a href="/admin/settings/{{current_user.username}}">Settings</a></li>
+                        <li class="nav-button"><a href="/main">View Site</a></li>
+                        <li class="nav-button"><a href="/logout">Log out</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <section id="features" class="features-section">
+            <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title">Add Trip</h4>
+                            </div>
+                            <form action="" method="POST" name="edit" enctype="multipart/form-data">
+                            {{form.hidden_tag()}}
+                            <div class="content">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{wtf.form_field(form.trip_name)}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{wtf.form_field(form.trip_country, id="trip_country")}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{wtf.form_field(form.trip_city, id="trip_city")}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                                <div class="form-group">
+                                                    {{wtf.form_field(form.trip_date_from, id="datepicker1")}}
+                                                </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                                <div class="form-group">
+                                                    {{wtf.form_field(form.trip_date_to, id="datepicker2")}}
+                                                </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{wtf.form_field(form.trip_status)}}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {{wtf.form_field(form.trip_visibility)}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {{wtf.form_field(form.file)}}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-info btn-fill pull-right">Add</button>
+                                    <div class="clearfix"></div>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card card-user">
+                            <div class="image">
+                            </div>
+                            <div class="content">
+                                <div class="author">
+                                     <a href="#">
+                                    <!--<img class="avatar border-gray" src="{{current_user.gravatar(size=256)}}" alt="..."/>-->
+                                     {% if csPic=='default' %}
+                                        <img class="avatar border-gray" src="{{current_user.gravatar(size=256)}}" alt="..."/>
+                                     {% else %}
+                                        <img class="avatar border-gray" src="{{ url_for('auth_blueprint.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..."/>
+                                     {% endif %}
+
+                                      <h4 class="title">{{current_user.first_name}} {{current_user.last_name}}<br>
+                                         <small>{{current_user.username}}</small><br><br>
+                                         <small>"{{current_user.description}}"</small>
+                                      </h4>
+                                    </a>
+                                </div>
+                                <p class="description text-center"></p>
+                            </div>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </section>
+        <div class="container text-center">
+            <nav class="navbar navbar-default navbar-fixed-bottom">
+                <ul class="pagination" style="alignment: center">
+                    <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+                    <li class="active"><a href="#">1</a></li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li><a href="#">4</a></li>
+                    <li><a href="#">5</a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+                </ul>
+            </nav>
+        </div>
+
+
+
+    <!--Common plugins-->
+        <script type="text/javascript" src="{{ url_for('.static', filename='js/jquery.min.js') }}"></script>
+
+        <script type="text/javascript" src="{{ url_for('.static', filename='js/bootstrap.min.js') }}"></script>
+
+        <script type="text/javascript" src="{{ url_for('.static', filename='js/help.js') }}"></script>
+
+        <script type="text/javascript" src="{{ url_for('.static', filename='js/sweetalert.min.js') }}"></script>
+
+        <script type="text/javascript" src="{{ url_for('.static', filename='js/pace.min.js') }}"></script>
+
+        <script type="text/javascript" src="{{ url_for('.static', filename='js/landing.custom.js') }}"></script>
+
+        <script type="text/javascript" src="{{ url_for('.static', filename='js/maintainscroll.jquery.min.js') }}"></script>
+</body>
+</html>

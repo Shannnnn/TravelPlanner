@@ -69,8 +69,9 @@
                         <li><a href="/admin">Admin Dashboard</a></li>
                         <li><a href="/admin/users">Users</a></li>
                         <li class="active"><a href="/admin/trips">Trip Plans</a></li>
+                        <li><a href="/admin/trips/location">Location</a></li>
                         <li><a href="/admin/settings/{{current_user.username}}">Settings</a></li>
-                        <li class="nav-button"><a href="/main">Menu</a></li>
+                        <li class="nav-button"><a href="/main">View Site</a></li>
                         <li class="nav-button"><a href="/logout">Log out</a></li>
                     </ul>
                 </div><!--/.nav-collapse -->
@@ -111,24 +112,14 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                                 <div class="form-group">
-                                                    {{wtf.form_field(form.itinerary_date_from, id="datepicker")}}
-                                                </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                                <div class="form-group">
-                                                    {{wtf.form_field(form.itinerary_date_to, id="datepicker2")}}
+                                                    {{wtf.form_field(form.itinerary_date, id="datepicker")}}
                                                 </div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-4">
                                                 <div class="form-group">
-                                                    {{wtf.form_field(form.itinerary_time_from, id="timepicker")}}
-                                                </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                                <div class="form-group">
-                                                    {{wtf.form_field(form.itinerary_time_to, id="timepicker2")}}
+                                                    {{wtf.form_field(form.itinerary_time, id="timepicker")}}
                                                 </div>
                                         </div>
                                     </div>
