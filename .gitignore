@@ -10,8 +10,9 @@
 *.pyo
 config.py/
 db_create.py/
-.settings/
+settings/
 .idea/
+migrations/
 
 # Packages #
 ############
@@ -41,3 +42,8 @@ db_create.py/
 .Trashes
 ehthumbs.db
 Thumbs.db
+/config.py
+!/config.py
+!/db_create.py
+/migrations/
+!/migrations/

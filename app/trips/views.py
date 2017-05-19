@@ -39,11 +39,9 @@ def addtrip():
                              img_thumbnail=tripForm.file.data.filename)
             db.session.add(tripform)
             db.session.commit()
-
             if tripForm.file.data and allowed_file(tripForm.file.data.filename):
                 filename = secure_filename(tripForm.file.data.filename)
                 tripForm.file.data.save(os.path.join(img_folder+'trips/', filename))
-
             return redirect(url_for('trip_blueprint.trips'))
 
     ph = Photos.query.filter_by(id=current_user.profile_pic).first()
