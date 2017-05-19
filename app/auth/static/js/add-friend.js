@@ -11,7 +11,7 @@ function sendFriendRequest(evt) {
         "user_b_id": $("#user-info").data("userid")
     };
 
-    $.post("/add-friend",
+    $.post("/add-friend/{{user_b_id}}",
            formInput,
            showSentRequest
            );

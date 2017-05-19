@@ -2,6 +2,11 @@
 
 {% block title %}Friends{% endblock %}
 
+{% block javascript %}
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/accept-friend.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/reject-friend.js') }}"></script>
+{% endblock %}
+
 {% block content %}
 
   <div class="container" id="main-section">
@@ -16,20 +21,20 @@
         <li role="presentation" class="dropdown">
           <a href="#" id="tab-drop" class="dropdown-toggle" data-toggle="dropdown" aria-controls="tab-drop-contents" aria-expanded="false">
             Friend Requests
-            <span class="badge">{{ session.current_user.num_total_requests }}</span>
+            {% if session.current_user.num_total_requests == 0 %} {% else %} <span class="badge">{{ session.current_user.num_total_requests }}</span> {% endif %}
             <span class="caret"></span>
           </a>
           <ul class="dropdown-menu" aria-labelledby="tab-drop" id="tab-drop-contents">
             <li>
               <a href="#received-friend-requests" id="received-friend-requests-tab" role="tab" data-toggle="tab" aria-controls="received-friend-requests">
                 Received
-                <span class="badge">{{ session.current_user.num_received_requests }}</span>
+                {% if session.current_user.num_received_requests == 0 %} {% else %} <span class="badge">{{ session.current_user.num_received_requests }}</span> {% endif %}
               </a>
             </li>
             <li>
               <a href="#sent-friend-requests" id="sent-friend-requests-tab" role="tab" data-toggle="tab" aria-controls="sent-friend-requests">
                 Sent
-                <span class="badge">{{ session.current_user.num_sent_requests }}</span>
+                {% if session.current_user.num_sent_requests == 0 %} {% else %} <span class="badge">{{ session.current_user.num_sent_requests }}</span> {% endif %}
               </a>
             </li>
           </ul>
@@ -83,11 +88,11 @@
                                       {% if csPic=='default' %}
                                         <img class="avatar border-gray" src="{{current_user.gravatar(size=90)}}" alt="Image for {{ user.first_name }}"/>
                                      {% else %}
-                                        <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+usID[loop.index-1]+'/'+csPic[loop.index-1]) }}" alt="Image for {{ user.first_name }}"/>
+                                        <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="Image for {{ user.first_name }}" style="width:150px;height:150px;">
                                      {% endif %}
                                     </div><!-- /.media-left -->
                                     <div class="media-body">
-                                      <h3 class="media-heading">{{ user.first_name }} {{ user.last_name }} {{search_results}}</h3>
+                                      <h3 class="media-heading">{{ user.first_name }} {{ user.last_name }}</h3>
                                       <p>
                                         <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Location: {{user.address}}, {{ user.city }}
                                       </p>
@@ -98,7 +103,7 @@
                             </div><!-- /.col -->
                             {% endif %}
                             </td>
-                        {% if loop.index%4==0 %}
+                        {% if loop.index%2==0 %}
                             </tr>
                             <tr>
                             {% endif %}
@@ -112,8 +117,8 @@
         <!-- Received Friend Requests tab content -->
         <div role="tabpanel" class="tab-pane fade" id="received-friend-requests" aria-labelledby="received-friend-requests-tab">
           <h2>Received Friend Requests</h2>
-          <div class="row">
-            {% if received_friend_requests %}
+          <div class="row" id="user-info" data-userid="{{ received_friend_requests.id }}">
+             {% if received_friend_requests %}
               {% for received_friend_request in received_friend_requests %}
                 <div class="col-xs-6 col-sm-2" id="user-profile-pic-sm">
                   <a href="/users/{{ received_friend_request.id }}">
@@ -125,8 +130,12 @@
                     {{ received_friend_request.first_name }} {{ received_friend_request.last_name }}
                   </a>
                   <br><br>
-                  <button type="button" class="btn btn-success" id="accepted-btn">Accept</button>
-                  <button type="button" class="btn btn-danger" id="deleted-btn">Reject</button>
+                  <form id="accept-friend-form" action="/accept-friend/{{received_friend_request.id}}" method="POST">
+                    <button type="submit" class="btn btn-success" id="accepted-btn">Accept</button>
+                  </form>
+                  <form id="reject-friend-form" action="/reject-friend/{{received_friend_request.id}}" method="POST">
+                    <button type="submit" class="btn btn-danger" id="deleted-btn">Reject</button>
+                  </form>
                 </div><!-- /.col -->
               {% endfor %}
             {% else %}
@@ -143,7 +152,7 @@
           <div class="row">
             {% if sent_friend_requests %}
               {% for sent_friend_request in sent_friend_requests %}
-                <div class="col-xs-6 col-sm-2" id="user-profile-pic-sm"> 
+                <div class="col-xs-6 col-sm-2" id="user-profile-pic-sm">
                   <a href="users/{{ sent_friend_request.id }}">
                    <img class="img-circle img-responsive" src="/static/img/profile-avatar.png">
                     {{ sent_friend_request.first_name }} {{ sent_friend_request.last_name }}
@@ -171,7 +180,7 @@
               <!-- Search engine for users -->
               <form class="navbar-form navbar-left" role="search" action="/friends/search">
                 <div class="input-group">
-                  <input class="form-control" id="searchbox" type="search" name="q" aria-label="Find Friend" placeholder="Find friend by name">
+                  <input class="form-control" id="search" type="search" name="q" aria-label="Find Friend" placeholder="Find friend by name">
                   <span class="input-group-btn">
                     <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
                   </span>
