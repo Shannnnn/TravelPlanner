@@ -22,9 +22,9 @@ app.config['MAIL_USE_SSL'] = False
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@127.0.0.1:3306/travelplannerdb'
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@127.0.0.1/travelplanner'
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:@127.0.0.1:3306/travelplannerdb'
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:imawesome@127.0.0.1:5432/travelplannerdb'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:imawesome@127.0.0.1:5432/travelplannerdb'
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:databaseadmin@127.0.0.1:5432/travelplannerdb'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://tkakffdbqitxpz:d06692592a1ccafca6ec426d1c8f13a5339cfb7792c6f757dc8dc6a3e0c8379d@ec2-23-21-235-142.compute-1.amazonaws.com:5432/df163mhfv9kda9'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://tkakffdbqitxpz:d06692592a1ccafca6ec426d1c8f13a5339cfb7792c6f757dc8dc6a3e0c8379d@ec2-23-21-235-142.compute-1.amazonaws.com:5432/df163mhfv9kda9'
 
 
 migrate = Migrate(app, db)

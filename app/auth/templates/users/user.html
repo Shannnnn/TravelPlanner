@@ -42,6 +42,13 @@
               </form>
             {% elif pending_request %}
               <button class="btn btn-primary disabled" id="requested-btn"><span class="fa fa-clock-o" aria-hidden="true"></span> Request Pending</button>
+            {% elif pending_request2 %}
+              <form id="accept-friend-form" action="/accept-friend/{{user.id}}" method="POST">
+                <button type="submit" class="btn btn-success" id="accepted-btn">Accept</button>
+              </form>
+              <form id="reject-friend-form" action="/reject-friend/{{user.id}}" method="POST">
+                <button type="submit" class="btn btn-danger" id="deleted-btn">Reject</button>
+              </form>
             {% else %}
               <form id="add-friend-form" action="/add-friend/{{user.id}}" method="POST">
                 <button type="submit" class="btn btn-primary" id="add-friend-btn"><span class="fa fa-user-plus" aria-hidden="true"></span> Add Friend</button>

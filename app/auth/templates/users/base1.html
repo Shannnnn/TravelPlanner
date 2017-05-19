@@ -46,7 +46,7 @@
         {% if session.get('current_user') %}
           <a href="/main"><button id="brand-logo"><img src="">TravelPlanner</button></a>
         {% else %}
-          <a href="/"><button><img src="">TravelPlanner</button></a>
+          <a href="/main"><button><img src="brand-logo">TravelPlanner</button></a>
         {% endif %}
       </div><!-- /.navbar-header -->
 
@@ -68,7 +68,6 @@
               </a>
               <ul class="dropdown-menu">
                 <li><a href="/userprofile/{{current_user.username }}/edit">Edit Profile</a></li>
-                <li><a href="/friends">My Friends {% if session.current_user.num_total_requests == 0 %} {% else %} <span class="badge">{{ session.current_user.num_total_requests }}</span> {% endif %}</a></li>
                 <li role="separator" class="divider"></li>
                 <li><a href="#">Help</a></li>
                 <li role="separator" class="divider"></li>
