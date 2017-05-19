@@ -411,6 +411,9 @@ def users(id):
 
     # Check connection status between user_a and user_b
     friends, pending_request = is_friends_or_pending(user_a_id, user_b_id)
+    pending_request2 = db.session.query(Connection).filter(Connection.user_a_id == user_b_id,
+                                                           Connection.user_b_id == user_a_id,
+                                                           Connection.status == "Requested").first()
 
     friends = get_friends(session["current_user"]["id"]).all()
 
@@ -420,8 +423,12 @@ def users(id):
                            friends=friends,
                            pending_request=pending_request,
 <<<<<<< HEAD
+<<<<<<< HEAD
                            csID=str(user.id), csPic=str(get_profile(current_user.profile_pic)))
 =======
+=======
+                           pending_request2=pending_request2,
+>>>>>>> Friend feature is working
                            csID=str(current_user.id), csPic=str(cas),
                            trips=trip)
 >>>>>>> Working on the friend feature
@@ -476,11 +483,14 @@ def accept_friend(id):
         flash("You cannot add yourself as a friend.")
         return redirect(url_for('auth_blueprint.users', id=user.id))
     else:
-        received_friend_requests = get_friend_requests(current_user.id)
-        num_received_requests = len(received_friend_requests) - 1
         requested_connection = Connection(user_a_id=user_a_id,
                                           user_b_id=user_b_id,
                                           status="Accepted")
+
+        Connection.query.filter_by(user_a_id=user_b_id,
+                                   user_b_id=user_a_id,
+                                   status="Requested").delete()
+
         db.session.add(requested_connection)
         db.session.commit()
         print "User ID %s and User ID %s are now friends." % (user_a_id, user_b_id)
@@ -503,12 +513,9 @@ def reject_friend(id):
         flash("Error.")
         return redirect(url_for('auth_blueprint.users', id=user.id))
     else:
-        received_friend_requests = get_friend_requests(current_user.id)
-        num_received_requests = len(received_friend_requests) - 1
-        Connection.query.filter_by(user_a_id=user_a_id,
-                                   user_b_id=user_b_id,
+        Connection.query.filter_by(user_a_id=user_b_id,
+                                   user_b_id=user_a_id,
                                    status="Requested").delete()
-
         db.session.commit()
         print "User ID %s and User ID %s are not friends." % (user_a_id, user_b_id)
         return redirect(url_for('auth_blueprint.users', id=user.id))
