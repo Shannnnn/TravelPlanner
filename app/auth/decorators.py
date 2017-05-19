@@ -4,6 +4,7 @@ from flask import abort, flash
 from flask_login import current_user
 from model import Role, Connection, User, db
 from app.trips.model import Trips
+from sqlalchemy import func
 
 #this will determine if the user is authenticated to go to a certain route
 def required_roles(*roles):
@@ -69,7 +70,13 @@ def get_friends(id):
 
     return friends
 
+<<<<<<< HEAD
 #the current directory for user profile pic
+=======
+def user_query_1(var):
+    return db.session.query(User).filter(func.concat(User.username, ' ', User.first_name, ' ', User.last_name).like('%'+var+'%')).all()
+
+>>>>>>> Adding user settings and fixed unfriend and reject requests
 img_folder = 'app/auth/static/images/users/'
 #img_folder = 'app/uploads/static/images/users/'
 

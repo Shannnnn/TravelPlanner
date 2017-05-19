@@ -5,7 +5,6 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="" type="image/gif" sizes="16x16">
-  <link rel="shortcut icon" href="{{ url_for('landing_blueprint.static', filename='images/favicon.ico') }}" type="image/x-icon">
   <title>TravelPlanner || {% block title %} put title here {% endblock %}</title>
   {% with messages = get_flashed_messages() %}
   {% if messages %}
@@ -18,13 +17,13 @@
 {% endwith %}
 
   <!-- Bootstrap -->
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('.static', filename='css/bootstrap.min.css') }}">
 
   <!-- Custom styles -->
   <link rel="stylesheet" href="{{ url_for('.static', filename='css/styles.css') }}">
 
   <!-- Font Awesome icons -->
-  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('.static', filename='css/font-awesome.min.css') }}">
 
   <!-- Google Fonts -->
   <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
@@ -54,9 +53,9 @@
           <span class="icon-bar"></span>
         </button>
         {% if session.get('current_user') %}
-          <a href="/main/"><button id="brand-logo"><img src="">TravelPlanner</button></a>
+          <a href="/main"><button id="brand-logo"><img src="">TravelPlanner</button></a>
         {% else %}
-          <a href="/main/"><button id="brand-logo"><img src="">TravelPlanner</button></a>
+          <a href="/"><button><img src="">TravelPlanner</button></a>
         {% endif %}
       </div><!-- /.navbar-header -->
 
@@ -65,20 +64,9 @@
         {% if session.get('current_user') %}
           <ul class="nav navbar-nav">
             <li><a href="/home">Dashboard</a></li>
-            <li><a href="/userprofile/<username>">Profile</a></li>
-            <li><a href="/friends">Friends <span class="badge">{{ session.current_user.num_total_requests }}</span></a></li>
+            <li><a href="/friends">Friends {% if session.current_user.num_total_requests == 0 %} {% else %} <span class="badge">{{ session.current_user.num_total_requests }}</span> {% endif %}</a></li>
             <li><a href="/trips">Trips</a></li>
           </ul>
-
-          <!-- Searchbox feature for trips -->
-          <form class="navbar-form navbar-left" role="search" action="">
-            <div class="input-group">
-              <input class="form-control" id="searchbox" type="search" name="q" aria-label="Find Trips or Itinerary" placeholder="Find by name or place">
-              <span class="input-group-btn">
-                <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
-              </span>
-            </div>
-          </form>
 
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
@@ -88,12 +76,12 @@
                 <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
-                <li><a href="/users/{{ session.current_user.id }}">My Profile</a></li>
-                <li><a href="/friends">My Friends <span class="badge">{{ session.current_user.num_total_requests }}</span></a></li>
+                <li><a href="/userprofile/{{current_user.username }}/edit">Edit Profile</a></li>
+                <li><a href="/friends">My Friends {% if session.current_user.num_total_requests == 0 %} {% else %} <span class="badge">{{ session.current_user.num_total_requests }}</span> {% endif %}</a></li>
                 <li role="separator" class="divider"></li>
                 <li><a href="#">Help</a></li>
                 <li role="separator" class="divider"></li>
-                <li><a href="#">Settings</a></li>
+                <li><a href="/settings/{{current_user.username}}">Settings</a></li>
                 <li><a href="/logout">Log out</a></li>
               </ul>
             </li>
@@ -123,12 +111,9 @@
 
   <!-- Placed at the end of the document so the pages load faster -->
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/jquery.min.js') }}"></script>
   <!-- Include all compiled plugins (below), or include individual files as needed -->
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-
-  {% block javascript %}
-  {% endblock %}
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/bootstrap.min.js') }}"></script>
 
 </body>
 </html>

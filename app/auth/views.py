@@ -5,16 +5,21 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from model import User, Role, Anonymous, Photos, Connection
 from forms import LoginForm, RegisterForm, EditForm, SearchForm, PasswordSettingsForm, UsernameSettingsForm, EmailResetForm, PasswordResetForm
 from app import db, app
-from decorators import required_roles, get_friends, get_friend_requests, allowed_file, deleteTrip_user, img_folder, is_friends_or_pending
+from decorators import required_roles, get_friends, get_friend_requests, allowed_file, deleteTrip_user, img_folder, is_friends_or_pending, user_query_1
 from app.landing.views import landing_blueprint
 from werkzeug import secure_filename
 from PIL import Image
 from app.trips.model import Trips, Itineraries
 from app.trips.forms import EditTripForm, ItineraryForm, EditItineraryForm
+from app.landing.views import determine_pic
 import datetime
 import time
+<<<<<<< HEAD
 from sqlalchemy import func, desc
 from app.landing.decorators import send_email
+=======
+from sqlalchemy import desc
+>>>>>>> Adding user settings and fixed unfriend and reject requests
 
 auth = Flask(__name__)
 auth_blueprint = Blueprint('auth_blueprint', __name__, template_folder='templates', static_folder='static', static_url_path='/static/')
@@ -25,6 +30,7 @@ login_manager.login_view = 'auth_blueprint.login'
 login_manager.anonymous_user = Anonymous
 
 POSTS_PER_PAGE = 9
+page = 1
 
 #to get the user profile pictures easily
 def get_profile(profileString):
@@ -336,6 +342,31 @@ def home():
     return redirect(url_for('auth_blueprint.users', id=user.id))
 >>>>>>> Working on the friend feature
 
+
+@auth_blueprint.route('/settings/<username>', methods=['GET', 'POST'])
+@login_required
+@required_roles('User')
+def user_settings(username):
+    form = PasswordSettingsForm()
+    user = User.query.filter_by(username=username).first()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            if check_password_hash(current_user.password, request.form['currpassword']):
+                current_user.password = generate_password_hash(form.newpassword.data)
+                db.session.add(current_user)
+                db.session.commit()
+                flash('Changes saved!')
+                result = User.query.all()
+                return render_template('users/settings.html', form=form, result=result)
+            else:
+                flash('Incorrect Password!')
+                return render_template('users/settings.html', form=form, user=user)
+        else:
+            form.newpassword.data = current_user.password
+            return render_template('users/settings.html', form=form, user=user)
+    return render_template('users/settings.html', form=form, user=user)
+
+
 @auth_blueprint.route("/users/<int:id>")
 @login_required
 @required_roles('User')
@@ -343,9 +374,26 @@ def users(id):
     """Show user profile."""
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     user = db.session.query(User).filter(User.id == id).one()
 
 =======
+=======
+    # Get current user's friend requests and number of requests to display in badges
+    received_friend_requests, sent_friend_requests = get_friend_requests(current_user.id)
+    num_received_requests = len(received_friend_requests)
+    num_sent_requests = len(sent_friend_requests)
+    num_total_requests = num_received_requests + num_sent_requests
+
+    # Use a nested dictionary for session["current_user"] to store more than just user_id
+    session["current_user"] = {
+        "first_name": current_user.first_name,
+        "id": current_user.id,
+        "num_received_requests": num_received_requests, "num_sent_requests": num_sent_requests,
+        "num_total_requests": num_total_requests
+    }
+
+>>>>>>> Adding user settings and fixed unfriend and reject requests
     ph = Photos.query.filter_by(id=current_user.profile_pic).first()
     if ph is None:
         cas = 'default'
@@ -363,7 +411,6 @@ def users(id):
 
     # Check connection status between user_a and user_b
     friends, pending_request = is_friends_or_pending(user_a_id, user_b_id)
-    #pending_request2 = is_friends_or_pending(user_b_id, user_a_id)
 
     friends = get_friends(session["current_user"]["id"]).all()
 
@@ -429,6 +476,8 @@ def accept_friend(id):
         flash("You cannot add yourself as a friend.")
         return redirect(url_for('auth_blueprint.users', id=user.id))
     else:
+        received_friend_requests = get_friend_requests(current_user.id)
+        num_received_requests = len(received_friend_requests) - 1
         requested_connection = Connection(user_a_id=user_a_id,
                                           user_b_id=user_b_id,
                                           status="Accepted")
@@ -454,10 +503,36 @@ def reject_friend(id):
         flash("Error.")
         return redirect(url_for('auth_blueprint.users', id=user.id))
     else:
-        requested_connection = Connection.query.filter_by(user_a_id=user_a_id,
-                                                          user_b_id=user_b_id,
-                                                          status="Requested").all()
-        db.session.delete(requested_connection)
+        received_friend_requests = get_friend_requests(current_user.id)
+        num_received_requests = len(received_friend_requests) - 1
+        Connection.query.filter_by(user_a_id=user_a_id,
+                                   user_b_id=user_b_id,
+                                   status="Requested").delete()
+
+        db.session.commit()
+        print "User ID %s and User ID %s are not friends." % (user_a_id, user_b_id)
+        return redirect(url_for('auth_blueprint.users', id=user.id))
+
+
+@auth_blueprint.route('/unfriend/<int:id>', methods=["POST"])
+@login_required
+@required_roles('User')
+def unfriend(id):
+    """Unfriend another user."""
+
+    user = db.session.query(User).filter(User.id == id).one()
+
+    user_a_id = session["current_user"]["id"]
+    user_b_id = user.id
+
+    if user_a_id == user_b_id:
+        flash("Cannot unfriend yourself.")
+        return redirect(url_for('auth_blueprint.users', id=user.id))
+    else:
+        Connection.query.filter_by(user_a_id=user_a_id,
+                                   user_b_id=user_b_id,
+                                   status="Accepted").delete()
+
         db.session.commit()
         print "User ID %s and User ID %s are not friends." % (user_a_id, user_b_id)
         return redirect(url_for('auth_blueprint.users', id=user.id))
@@ -690,6 +765,11 @@ def login():
                     if user is not None and check_password_hash(user.password, request.form['password']):
                         login_user(user)
                         flash('You are now logged in!')
+                    if user.first_login == True:
+                        user.first_login = False
+                        db.session.add(user)
+                        db.session.commit()
+                        return redirect(url_for('auth_blueprint.edit', username=request.form['username']))
 
                     # Get current user's friend requests and number of requests to display in badges
                     received_friend_requests, sent_friend_requests = get_friend_requests(current_user.id)
@@ -697,21 +777,13 @@ def login():
                     num_sent_requests = len(sent_friend_requests)
                     num_total_requests = num_received_requests + num_sent_requests
 
-                        # Use a nested dictionary for session["current_user"] to store more than just user_id
+                    # Use a nested dictionary for session["current_user"] to store more than just user_id
                     session["current_user"] = {
                         "first_name": current_user.first_name,
                         "id": current_user.id,
-                        "num_received_requests": num_received_requests,
-                        "num_sent_requests": num_sent_requests,
+                        "num_received_requests": num_received_requests,                            "num_sent_requests": num_sent_requests,
                         "num_total_requests": num_total_requests
                     }
-                    if user.first_login == True:
-                        user.first_login = False
-                        db.session.add(user)
-                        db.session.commit()
-                        return redirect(url_for('auth_blueprint.edit', username=request.form['username']))
-
-                    
 
                     return redirect(url_for('auth_blueprint.home', name=request.form['username']))
                 elif user.role_id == 1:

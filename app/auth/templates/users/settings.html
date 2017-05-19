@@ -1,0 +1,65 @@
+{% extends 'users/base1.html' %}
+
+{% block title %}Settings{% endblock %}
+
+{% block javascript %}
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/add-friend.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+  {% import "bootstrap/wtf.html" as wtf %}
+    <div class="container">
+      <div class="row">
+        <h3>Personal Settings</h3>
+        <div class="col-md-3">
+            <ul class="nav nav-pills nav-stacked">
+            <li class="active"><a data-toggle="tab" href="#account">Account</a></li>
+            <li><a data-toggle="tab" href="#email">Email</a></li>
+            <li><a href="#">Menu 2</a></li>
+            <li><a href="#">Menu 3</a></li>
+            </ul>
+        </div>
+
+        <div class="col-md-6">
+            <div class ="tab-content">
+                <div id="account" class="tab-pane fade in active">
+                    <div class="content">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4>Change Password</h4>
+                                <form class="form-signin" method="POST" action="">
+                                    {{ form.hidden_tag() }}
+                                    {{ wtf.form_field(form.currpassword) }}
+                                    {{ wtf.form_field(form.newpassword) }}
+                                    {{ wtf.form_field(form.confirm) }}
+                                    <button class="btn btn-lg btn-primary btn-block" type="submit">Update Password</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class ="tab-content">
+                <div id="email" class="tab-pane fade in active">
+                    <div class="content">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4>Email</h4>
+                                <h3>Current Email: {{current_user.email}}</h3>
+
+                                <form class="form-signin" method="POST" action="">
+                                    <button class="btn btn-lg btn-primary btn-block" type="submit">Add Email</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+      </div>
+    </div>
+{% endblock %}
