@@ -56,25 +56,30 @@
                         <div class="col-sm-8 col-sm-offset-2">
                             <div class="card">
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="row">
-                                          <label>Username
-                                          <input type="text" class="form-control" placeholder="{{current_user.username}}" readonly/>
+                                            <label>Username</label>
+                                            <input type="text" class="form-control" placeholder="{{current_user.username}}" readonly/>
                                         </div>
                                         <div class="row">
-                                          <label>Email</label>
-                                          <input type="text" class="form-control" placeholder="{{current_user.email}}" readonly/>
+                                            <label>Email</label>
+                                            <input type="text" class="form-control" placeholder="{{current_user.email}}" readonly/>
                                         </div>
+                                        <div class="row active">
+                                            <label>Password</label>
+                                        </div>
+                                    </div>
+                                    <div id="#password" class="col-md-8">
                                         <form class="form-signin" method="POST" action="">
                                             <h3 class="form-signin-heading">Change Password</h3>
                                             {{ form.hidden_tag() }}
                                             {{ wtf.form_field(form.currpassword) }}
                                             {{ wtf.form_field(form.newpassword) }}
                                             {{ wtf.form_field(form.confirm) }}
-                                            <button class="btn btn-lg btn-primary btn-block" type="submit">Save User</button>
+                                            <button class="btn btn-lg btn-primary btn-block" type="submit">Update Password</button>
                                         </form>
-                                      </div>
                                     </div>
+                                </div>
                                </div>
                             </div>
                         </div>

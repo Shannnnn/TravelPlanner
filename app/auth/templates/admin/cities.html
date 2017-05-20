@@ -57,29 +57,31 @@
                     <div class="col-sm-8 col-sm-offset-2 text-center">
                         <div class="card">
                             <form action="" method="POST" name="list">
-                                <a href="/admin/trips/location/new" class="btn btn-info pull-left">Add Location</a>
+                                <h3>{{ country.countryName }}</h3>
+                                <a href="/admin/trips/{{ countryID }}/city/add" class="btn btn-info pull-left">Add City</a>
                                 <table id="mytable" class="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th colspan="2">Action</th>
-                                            <th>Country</th>
-                                            <th>Code</th>
-                                            <th style="text-align: center">Cities</th>
+                                            <th colspan="2" style="text-align: center">Action</th>
+                                            <th>ID</th>
+                                            <th>City</th>
+                                            <th>Zip Code</th>
                                         </tr>
                                     </thead>
-                                    {% for country in country %}
+                                    {% for city in city %}
                                     <tbody>
                                         <tr>
-                                            <td><a href="/admin/trips/location/edit/{{ country.countryID }}" class="btn btn-success btn-xs" style="text-align: center"><span class="glyphicon glyphicon-pencil"></span></a></td>
-                                            <td><a href="" class="btn btn-danger btn-xs" style="text-align: center"><span class="glyphicon glyphicon-trash"></span></a></td>
-                                            <td>{{country.countryName}}</td>
-                                            <td>{{country.countryCode}}</td>
-                                            <td style="text-align: center"><a href="/admin/trips/{{ country.countryID }}/city" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus"></span></a></td>
+                                            <td style="text-align: center"><a href="/admin/trips/{{ countryID }}/city/{{ city.cityID }}/edit" class="btn btn-success btn-xs" style="text-align: center"><span class="glyphicon glyphicon-pencil"></span></a></td>
+                                            <td style="text-align: center"><a href="/admin/trips/{{ countryID }}/city/{{ city.cityID }}/remove" class="btn btn-danger btn-xs" style="text-align: center"><span class="glyphicon glyphicon-trash"></span></a></td>
+                                            <td>{{city.cityID}}</td>
+                                            <td>{{city.cityName}}</td>
+                                            <td>{{city.cityCode}}</td>
                                         </tr>
                                     </tbody>
                                     {% endfor %}
                                 </table>
                             </form>
+                            <a href="/admin/trips/locations" class="btn btn-info pull-right">Return to Locations</a>
                         </div>
                     </div>
                 </div>

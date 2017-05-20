@@ -62,96 +62,95 @@
             <div class="content">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-sm-8 col-sm-offset-2 text-center">
                         <div class="card">
-                            <div class="header">
-                                <h4 class="title">Add Trip</h4>
-                            </div>
-                            <form action="" method="POST" name="edit" enctype="multipart/form-data">
-                            {{form.hidden_tag()}}
-                            <div class="content">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                {{wtf.form_field(form.trip_name)}}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                {{wtf.form_field(form.trip_country, id="trip_country")}}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                {{wtf.form_field(form.trip_city, id="trip_city")}}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                                <div class="form-group">
-                                                    {{wtf.form_field(form.trip_date_from, id="datepicker1")}}
-                                                </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                                <div class="form-group">
-                                                    {{wtf.form_field(form.trip_date_to, id="datepicker2")}}
-                                                </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                {{wtf.form_field(form.trip_status)}}
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                {{wtf.form_field(form.trip_visibility)}}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                {{wtf.form_field(form.file)}}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <button type="submit" class="btn btn-info btn-fill pull-right">Add</button>
-                                    <div class="clearfix"></div>
-                            </div>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card card-user">
-                            <div class="image">
-                            </div>
-                            <div class="content">
-                                <div class="author">
-                                     <a href="#">
-                                    <!--<img class="avatar border-gray" src="{{current_user.gravatar(size=256)}}" alt="..."/>-->
-                                     {% if csPic=='default' %}
-                                        <img class="avatar border-gray" src="{{current_user.gravatar(size=256)}}" alt="..."/>
-                                     {% else %}
-                                        <img class="avatar border-gray" src="{{ url_for('auth_blueprint.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..."/>
-                                     {% endif %}
-
-                                      <h4 class="title">{{current_user.first_name}} {{current_user.last_name}}<br>
-                                         <small>{{current_user.username}}</small><br><br>
-                                         <small>"{{current_user.description}}"</small>
-                                      </h4>
-                                    </a>
+                            <div class="col-md-6">
+                                <div class="header">
+                                    <h4 class="title">Add Trip</h4>
                                 </div>
-                                <p class="description text-center"></p>
+                                <form action="" method="POST" name="edit" enctype="multipart/form-data">
+                                {{form.hidden_tag()}}
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    {{wtf.form_field(form.trip_name)}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    {{wtf.form_field(form.trip_country, id="trip_country")}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    {{wtf.form_field(form.trip_city, id="trip_city")}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        {{wtf.form_field(form.trip_date_from, id="datepicker1")}}
+                                                    </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        {{wtf.form_field(form.trip_date_to, id="datepicker2")}}
+                                                    </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    {{wtf.form_field(form.trip_status)}}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    {{wtf.form_field(form.trip_visibility)}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    {{wtf.form_field(form.file)}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-info btn-fill pull-right">Add</button>
+                                        <div class="clearfix"></div>
+                                </form>
                             </div>
-                            <hr>
+                            <div class="col-md-6">
+                                <div class="card card-user">
+                                    <div class="image">
+                                    </div>
+                                    <div class="content">
+                                        <div class="author">
+                                             <a href="#">
+                                            <!--<img class="avatar border-gray" src="{{current_user.gravatar(size=256)}}" alt="..."/>-->
+                                             {% if csPic=='default' %}
+                                                <img class="avatar border-gray" src="{{current_user.gravatar(size=256)}}" alt="..."/>
+                                             {% else %}
+                                                <img class="avatar border-gray" src="{{ url_for('auth_blueprint.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..."/>
+                                             {% endif %}
+
+                                              <h4 class="title">{{current_user.first_name}} {{current_user.last_name}}<br>
+                                                 <small>{{current_user.username}}</small><br><br>
+                                                 <small>"{{current_user.description}}"</small>
+                                              </h4>
+                                            </a>
+                                        </div>
+                                        <p class="description text-center"></p>
+                                    </div>
+                                    <hr>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -36,3 +36,11 @@ class EditItineraryForm(Form):
     itinerary_location = StringField('Location', validators=[DataRequired()])
     itinerary_location_type = SelectField('Type', choices=[], coerce=int)
     itinerary_time = StringField('Time(hh:mm)', validators=[DataRequired()])
+
+class CountryForm(Form):
+    countryname= StringField('Country', validators=[DataRequired()])
+    countrycode = StringField('Code', validators=[DataRequired()])
+
+class CityForm(Form):
+    cityname = StringField('City', validators=[DataRequired()])
+    citycode = StringField('Code', validators=[DataRequired()])
