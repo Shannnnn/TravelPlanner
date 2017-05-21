@@ -65,19 +65,22 @@
                             <div class="header">
                                 <h4 class="title">Trips</h4>
                             </div>
-                                <div class="row">
-                                    {% for trip in result %}
+                            <br>
+                                <div class="row" id="key_trip">
+                                    {% for trip in result.items %}
+                                    
+                                    <div>
                                     <div class="col-sm-3 text-center">
                                     <div class="container" style="display:inline; width:100%; lenght:100%">
                                     <div class="panel panel-default bootcards-media" style="width:100%;">
                                     <div class="panel-heading" align="center" style="width: 100%;">
                                         {{ trip.tripName }}
                                     </div>
-                                    <a href="/admin/trips/{{ trip.tripName }}/itineraries">
-                                        <div class="panel-body" style="width: 270px; height: 125px;" align="center">
+                                        <a href="/admin/trips/{{ trip.tripName }}/itineraries">
+                                        <div class="panel-body" style="width: 200px; height: 125px;" align="center">
                                             <img style="height: 100%; width: 100%; object-fit:contain;" src="https://i.ytimg.com/vi/QGiJFumHUPo/maxresdefault.jpg"/>
                                         </div>
-                                    </a>
+                                        </a>
                                     <div class="panel-footer" align="left" style="display: inline-block; width: 100%;">
                                         <div class="row">
                                             &nbsp; From: {{ trip.tripDateFrom }}
@@ -97,6 +100,8 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                        
                                     {% endfor %}
                                 </div>
                             </div>
@@ -109,11 +114,9 @@
             <nav class="navbar navbar-default navbar-fixed-bottom">
                 <ul class="pagination" style="alignment: center">
                     <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
-                    <li class="active"><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">5</a></li>
+                    {% for i in range(0,numm) %}
+                    <li><a href="javascript:void(0)" onclick="trip_tabbing({{ loop.index }})">{{ loop.index }}</a></li>
+                    {% endfor %}
                     <li><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
                 </ul>
             </nav>
