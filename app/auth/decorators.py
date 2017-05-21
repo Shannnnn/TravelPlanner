@@ -2,24 +2,39 @@ import os
 from functools import wraps
 from flask import abort, flash
 from flask_login import current_user
-from model import Role, Connection, User, db
+from model import Role, Connection, User, db, Photos
 from app.trips.model import Trips
+from sqlalchemy import func
 
+<<<<<<< HEAD
+<<<<<<< HEAD
 #this will determine if the user is authenticated to go to a certain route
+=======
+
+# this will determine if the user is authenticated to go to a certain route
+>>>>>>> Changes in Friends
+=======
+
+# this will determine if the user is authenticated to go to a certain route
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 def required_roles(*roles):
-   def wrapper(f):
-      @wraps(f)
-      def wrapped(*args, **kwargs):
-         if get_role() not in roles:
-            abort(403)
-            flash('Authentication error, please check your details and try again','error')
-         return f(*args, **kwargs)
-      return wrapped
-   return wrapper
- 
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            if get_role() not in roles:
+                abort(403)
+                flash('Authentication error, please check your details and try again', 'error')
+            return f(*args, **kwargs)
+
+        return wrapped
+
+    return wrapper
+
+
 def get_role():
     role = Role.query.filter_by(id=current_user.role_id).first()
     return role.name
+
 
 def is_friends_or_pending(user_a_id, user_b_id):
     """
@@ -34,6 +49,24 @@ def is_friends_or_pending(user_a_id, user_b_id):
 
     is_pending = db.session.query(Connection).filter(Connection.user_a_id == user_a_id,
                                                      Connection.user_b_id == user_b_id,
+                                                     Connection.status == "Requested").first()
+
+    return is_friends, is_pending
+
+
+def is_friends_or_pending2(user_a_id, user_b_id):
+    """
+    Checks the friend status between user_a and user_b.
+    Checks if user_a and user_b are friends.
+    Checks if there is a pending friend request from user_b to user_a.
+    """
+
+    is_friends = db.session.query(Connection).filter(Connection.user_a_id == user_b_id,
+                                                     Connection.user_b_id == user_a_id,
+                                                     Connection.status == "Accepted").first()
+
+    is_pending = db.session.query(Connection).filter(Connection.user_a_id == user_b_id,
+                                                     Connection.user_b_id == user_a_id,
                                                      Connection.status == "Requested").first()
 
     return is_friends, is_pending
@@ -69,20 +102,84 @@ def get_friends(id):
 
     return friends
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
 #the current directory for user profile pic
+=======
+def user_query_1(var):
+    return db.session.query(User).filter(func.concat(User.username, ' ', User.first_name, ' ', User.last_name).like('%'+var+'%')).all()
+
+>>>>>>> Adding user settings and fixed unfriend and reject requests
+=======
+
+# the current directory for user profile pic
+>>>>>>> Changes in Friends
+=======
+
+# the current directory for user profile pic
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 img_folder = 'app/auth/static/images/users/'
 #img_folder = 'app/uploads/static/images/users/'
 
 
+<<<<<<< HEAD
 #determines the only allowed file extensions for images
+=======
+# img_folder = 'app/uploads/static/images/users/'
+
+
+<<<<<<< HEAD
+# determines the only allowed file extensions for images
+>>>>>>> Changes in Friends
+=======
+
+# img_folder = 'app/uploads/static/images/users/'
+
+
+# determines the only allowed file extensions for images
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in set(['png', 'jpg', 'PNG', 'JPG'])
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+>>>>>>> Changes in Friends
+=======
+
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 #
 def deleteTrip_user(userID):
     trips = Trips.query.filter_by(userID=userID).all()
     for trip in trips:
-        os.remove('app/trips/static/images/trips/'+trip.img_thumbnail)
+        os.remove('app/trips/static/images/trips/' + trip.img_thumbnail)
         db.session.delete(trip)
     db.session.commit()
+
+
+def user_query(var):
+    return db.session.query(User).filter(
+        func.concat(User.username, ' ', User.first_name, ' ', User.last_name).like('%' + var + '%')).all()
+
+
+def determine_pic(users, counter):
+    user_photos = []
+    if counter == 0:
+        user_photos.append(return_res_for_pic(users))
+    else:
+        for r in users:
+            user_photos.append(return_res_for_pic(r))
+    return user_photos
+
+
+def return_res_for_pic(user):
+    photo = ""
+    ph = Photos.query.filter_by(id=user.profile_pic).first()
+    if ph is None:
+        photo = "default"
+    else:
+        photo = str(ph.photoName)
+    return photo
