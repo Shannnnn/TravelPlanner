@@ -3,14 +3,6 @@ from app import db, app
 from werkzeug.security import generate_password_hash
 from flask import request
 import hashlib
-<<<<<<< HEAD
-<<<<<<< HEAD
-from sqlalchemy_searchable import make_searchable
-from sqlalchemy_utils.types import TSVectorType
-=======
->>>>>>> Changes in Friends
-=======
->>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 from sqlalchemy.orm import backref
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
@@ -55,15 +47,7 @@ class User(db.Model, UserMixin):
         self.contact_num = 0
         self.description = ""
         self.gender = ""
-<<<<<<< HEAD
-<<<<<<< HEAD
-        self.profile_pic =  None
-=======
         self.profile_pic = None
->>>>>>> Changes in Friends
-=======
-        self.profile_pic = None
->>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 
     def isAuthenticated(self):
         return True
@@ -93,32 +77,13 @@ class User(db.Model, UserMixin):
         return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
             url=url, hash=hash, size=size, default=default, rating=rating)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-    #reset password functions:
-    #generates a token for a user
-=======
     # reset password functions:
     # generates a token for a user
->>>>>>> Changes in Friends
-=======
-    # reset password functions:
-    # generates a token for a user
->>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
     def get_token(self, expiration=1800):
         s = Serializer(app.config['SECRET_KEY'], expiration)
         return s.dumps({'user': self.id}).decode('utf-8')
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    #verifies the token and returns the user associated with it
-=======
     # verifies the token and returns the user associated with it
->>>>>>> Changes in Friends
-=======
-    # verifies the token and returns the user associated with it
->>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
     @staticmethod
     def verify_token(token):
         s = Serializer(app.config['SECRET_KEY'])
@@ -131,14 +96,6 @@ class User(db.Model, UserMixin):
             return User.query.get(id)
         return None
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
->>>>>>> Changes in Friends
-=======
-
->>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 class Anonymous(AnonymousUserMixin):
     def __init__(self):
         self.username = 'Guest'

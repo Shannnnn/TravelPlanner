@@ -6,17 +6,7 @@ from model import Role, Connection, User, db, Photos
 from app.trips.model import Trips
 from sqlalchemy import func
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-#this will determine if the user is authenticated to go to a certain route
-=======
-
 # this will determine if the user is authenticated to go to a certain route
->>>>>>> Changes in Friends
-=======
-
-# this will determine if the user is authenticated to go to a certain route
->>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 def required_roles(*roles):
     def wrapper(f):
         @wraps(f)
@@ -102,56 +92,17 @@ def get_friends(id):
 
     return friends
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-#the current directory for user profile pic
-=======
-def user_query_1(var):
-    return db.session.query(User).filter(func.concat(User.username, ' ', User.first_name, ' ', User.last_name).like('%'+var+'%')).all()
-
->>>>>>> Adding user settings and fixed unfriend and reject requests
-=======
 
 # the current directory for user profile pic
->>>>>>> Changes in Friends
-=======
-
-# the current directory for user profile pic
->>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 img_folder = 'app/auth/static/images/users/'
 #img_folder = 'app/uploads/static/images/users/'
 
 
-<<<<<<< HEAD
-#determines the only allowed file extensions for images
-=======
-# img_folder = 'app/uploads/static/images/users/'
-
-
-<<<<<<< HEAD
 # determines the only allowed file extensions for images
->>>>>>> Changes in Friends
-=======
-
-# img_folder = 'app/uploads/static/images/users/'
-
-
-# determines the only allowed file extensions for images
->>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in set(['png', 'jpg', 'PNG', 'JPG'])
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-
->>>>>>> Changes in Friends
-=======
-
->>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
-#
 def deleteTrip_user(userID):
     trips = Trips.query.filter_by(userID=userID).all()
     for trip in trips:
