@@ -5,6 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="" type="image/gif" sizes="16x16">
+  <link rel="shortcut icon" href="{{ url_for('landing_blueprint.static', filename='images/favicon.ico') }}" type="image/x-icon">
   <title>TravelPlanner || {% block title %} put title here {% endblock %}</title>
   {% with messages = get_flashed_messages() %}
   {% if messages %}
@@ -53,9 +54,9 @@
           <span class="icon-bar"></span>
         </button>
         {% if session.get('current_user') %}
-          <a href="/main"><button id="brand-logo"><img src="">TravelPlanner</button></a>
+          <a href="/main/"><button id="brand-logo"><img src="">TravelPlanner</button></a>
         {% else %}
-          <a href="/main"><button><img src="brand-logo">TravelPlanner</button></a>
+          <a href="/main/"><button id="brand-logo"><img src="">TravelPlanner</button></a>
         {% endif %}
       </div><!-- /.navbar-header -->
 

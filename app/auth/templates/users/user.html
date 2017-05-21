@@ -7,6 +7,47 @@
   <script type="text/javascript" src="{{ url_for('.static', filename='js/unfriend-friend.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('.static', filename='js/accept-friend.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('.static', filename='js/reject-friend.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/sweetalert.min.js') }}"></script>
+  <script type="text/javascript">
+
+  function modify_profile(pid){
+      $.getJSON('/set_profile', {
+              id : pid,
+            }, function(data) {
+
+            if(data.response=='ok'){
+              alert('Profile Picture changed!');
+              $('#imggg').html("");
+              $('#imggg').append('<img class="img-circle img-responsive" src="/static//images/users/'+data.userid+'/'+data.filename+'" alt="..." style="width:150px;height:150px;">');
+            }
+            else
+              alert('An error occured!');
+
+        });
+        return false;
+}
+    function photo_change(id, filename, pid){
+      $('#exampleModalLong').html("")
+      Stringrespify = '<div class="modal-dialog" role="document" style="width: 1000px; height:500px;">'+
+        '<div class="modal-content">'+
+          '<div class="modal-header">'+
+            '<h5 class="modal-title" id="exampleModalLongTitle">'+filename+'</h5>'+
+          '</div>'+
+          '<div class="modal-body" style="width: 1000px; height: 700px;">'+
+            '<img style="height: 100%; width: 100%; object-fit:contain;" src="/static//images/users/'+id+'/'+filename+'"/>'+
+          '</div>'+
+          '<div class="modal-footer">'+
+            '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>'+
+            '<button type="button" class="btn btn-secondary" onclick="modify_profile('+pid+')">Set as Profile picture</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>';
+
+      $('#exampleModalLong').append(Stringrespify)
+      $('#exampleModalLong').modal('show');
+    }
+
+  </script>
 {% endblock %}
 
 {% block content %}
@@ -14,11 +55,11 @@
     <div class="container">
       <div class="row">
         <div class="col-xs-12 col-md-2">
-                {% if csPic=='default' %}
-                <img class="img-circle img-responsive" src="{{current_user.gravatar(size=150)}}" alt="..." style="width:150px;height:150px;">
-                {% else %}
-                <img class="img-circle img-responsive" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..." style="width:150px;height:150px;">
-                {% endif %}
+          {% if csPic=='default' %}
+              <img class="img-circle img-responsive" src="{{current_user.gravatar(size=150)}}" alt="..." style="width:150px;height:150px;">
+          {% else %}
+              <img class="img-circle img-responsive" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..." style="width:150px;height:150px;">
+          {% endif %}
         </div>
         <div class="col-xs-12 col-md-6">
             <h1>{{ user.first_name }} {{ user.last_name }}</h1>
@@ -65,8 +106,11 @@
       <h3>{{user.username}}'s Profile</h3>
       <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#info">General Information</a></li>
+        <li><a data-toggle="tab" href="#photos">Photos</a></li>
+        {% if session.current_user.id != user.id %}
         <li><a data-toggle="tab" href="#trips">Trips</a></li>
         <li><a data-toggle="tab" href="#friends">Friends</a></li>
+        {% endif %}
       </ul>
       <br>
         <div class="col-md-6">
@@ -111,6 +155,18 @@
                 </div>
             </div>
 
+            <div id="photos" class="tab-pane fade">
+                    <h4>Photos</h4>
+                <div class="content">
+                    <div class="container text-center">
+                      {% for p in photos %}
+                        <a href="javascript:void(0)" onclick="photo_change('{{ csID }}', '{{ p.photoName }}', '{{ p.id }}');">
+                        <img class="img-thumbnail" src="{{ url_for('.static', filename='images/users/'+csID+'/'+p.photoName) }}" alt="..." style="width: 200px; height:200px;"></a>
+                      {% endfor %}
+                    </div>
+                </div>
+            </div>
+
             <div id="friends" class="tab-pane fade">
                 <div class="content">
                     <div class="row">
@@ -123,7 +179,7 @@
                                 {% if csPic =='default' %}
                                         <img class="avatar border-gray" src="{{user.gravatar(size=90)}}" alt="..."/>
                                     {% else %}
-                                        <img class="avatar border-gray" src="{{ url_for('auth_blueprint.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..." style="width:150px;height:150px;"/>
+                                        <img class="avatar border-gray" src="{{ url_for('auth_blueprint.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..." style="width:90px;height:90px;"/>
                                     {% endif %}
                             </div><!-- /.media-left (end here do not erase)-->
                             <div class="media-body">
@@ -131,9 +187,6 @@
                               <p>
                                 <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Location: {{friend.address}}, {{ friend.city }}
                               </p>
-                              <form id="unfriend-friend-form" action="/unfriend/{{user.id}}" method="POST">
-                                <button type="submit" class="btn btn-primary" id="unfriend-btn"><span class="fa fa-users" aria-hidden="true"></span> Unfriend</button>
-                              </form>
                             </div><!-- /.media-body -->
                           </div><!-- /.media -->
                         </a>
@@ -141,7 +194,7 @@
                       {% endfor %}
                     {% else %}
                       <div class="col-xs-12">
-                        <p>You haven't added any friends. Find friends and connect with them!</p>
+                        <p>{{user.first_name}} haven't added any friends.</p>
                       </div>
                     {% endif %}
                     </div>
@@ -194,3 +247,4 @@
   </div><!-- /.container -->
  </div>
 {% endblock %}
+

@@ -19,6 +19,7 @@ app.config['MAIL_USE_SSL'] = False
 mail = Mail(app)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 app.config['SQLALCHEMY_DATABASE_URI'] = dbstring
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://tkakffdbqitxpz:d06692592a1ccafca6ec426d1c8f13a5339cfb7792c6f757dc8dc6a3e0c8379d@ec2-23-21-235-142.compute-1.amazonaws.com:5432/df163mhfv9kda9'
 =======
@@ -34,6 +35,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:imawesome@127.0.0
 
 >>>>>>> Friend feature is working
 
+=======
+app.config['SQLALCHEMY_DATABASE_URI'] = dbstring
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://tkakffdbqitxpz:d06692592a1ccafca6ec426d1c8f13a5339cfb7792c6f757dc8dc6a3e0c8379d@ec2-23-21-235-142.compute-1.amazonaws.com:5432/df163mhfv9kda9'
+
+>>>>>>> Changes in Friends
 migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)

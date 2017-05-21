@@ -58,9 +58,9 @@
                 <div class="media">
                     <div class="media-left">
                       {% if csPic=='default' %}
-                      <img class="avatar border-gray" src="{{current_user.gravatar(size=90)}}" alt="Image for {{ friend.first_name }}"/>
+                          <img class="avatar border-gray" src="{{current_user.gravatar(size=90)}}" alt="Image for {{ friend.first_name }}"/>
                       {% else %}
-                      <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="Image for {{ friend.first_name }}" style="width:100px;height:100px;">
+                          <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+usID[loop.index-1]+'/'+csPic[loop.index-1]) }}" alt="Image for {{ friend.first_name }}" style="width:90px;height:90px;"/>
                       {% endif %}
                     </div><!-- /.media-left -->
                     <div class="media-body">
@@ -93,9 +93,9 @@
                 <div class="col-xs-6 col-sm-2" id="user-profile-pic-sm">
                   <a href="/users/{{ received_friend_request.id }}">
                     {% if csPic=='default' %}
-                      <img class="img-circle img-responsive" src="{{current_user.gravatar(size=90)}}" alt="Image for {{ received_friend_request.first_name }}"/>
+                        <img class="avatar border-gray" src="{{current_user.gravatar(size=90)}}" alt="Image for {{ received_friend_requests.first_name }}"/>
                     {% else %}
-                      <img class="img-circle img-responsive" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="Image for {{ received_friend_request.first_name }}" style="width:100px;height:100px;">
+                        <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+usID[loop.index-1]+'/'+csPic[loop.index-1]) }}" alt="Image for {{ received_friend_requests.first_name }}" style="width:90px;height:90px;"/>
                     {% endif %}
                     {{ received_friend_request.first_name }} {{ received_friend_request.last_name }}
                   </a>
@@ -124,7 +124,11 @@
               {% for sent_friend_request in sent_friend_requests %}
                 <div class="col-xs-6 col-sm-2" id="user-profile-pic-sm">
                   <a href="users/{{ sent_friend_request.id }}">
-                   <img class="img-circle img-responsive" src="/static/img/profile-avatar.png">
+                   {% if csPic=='default' %}
+                       <img class="avatar border-gray" src="{{current_user.gravatar(size=90)}}" alt="Image for {{ sent_friend_request.first_name }}"/>
+                   {% else %}
+                       <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+usID[loop.index-1]+'/'+csPic[loop.index-1]) }}" alt="Image for {{ sent_friend_request.first_name }}" style="width:90px;height:90px;"/>
+                   {% endif %}
                     {{ sent_friend_request.first_name }} {{ sent_friend_request.last_name }}
                   </a>
                   <br><br>
@@ -175,10 +179,10 @@
                                 <a href="/users/{{ user.id }}" class="list-group-item" style="width:230px;height:120px;">
                                   <div class="media">
                                     <div class="media-left">
-                                      {% if csPic=='default' %}
+                                     {% if csPic=='default' %}
                                         <img class="avatar border-gray" src="{{current_user.gravatar(size=90)}}" alt="Image for {{ user.first_name }}"/>
                                      {% else %}
-                                        <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="Image for {{ user.first_name }}" style="width:100px;height:100px;">
+                                        <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+usID[loop.index-1]+'/'+csPic[loop.index-1]) }}" alt="Image for {{ user.first_name }}" style="width:90px;height:90px;"/>
                                      {% endif %}
                                     </div><!-- /.media-left -->
                                     <div class="media-body">

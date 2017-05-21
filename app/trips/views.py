@@ -50,7 +50,11 @@ def addtrip():
 
                 #this is the compressor part, this will optimize the image
                 #and will decrease its file size but not losing that much quality
+<<<<<<< HEAD
                 img = Image.open(open(str(uploadFolder+nameNow), 'rb')) 
+=======
+                img = Image.open(open(str(uploadFolder+nameNow), 'rb'))
+>>>>>>> Changes in Friends
                 img.save(str(uploadFolder+nameNow), quality=90, optimize=True)
 
             tripform = Trips(tripName=tripForm.trip_name.data,
