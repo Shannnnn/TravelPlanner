@@ -82,8 +82,9 @@
                                             <th>Role</th>
                                         </tr>
                                     </thead>
-                                    {% for r in result %}
-                                    <tbody>
+                                    
+                                    <tbody id="userTab">
+                                        {% for r in result.items %}
                                         <tr>
                                             <td><a href="/admin/users/edit/{{r.username}}" class="btn btn-success btn-xs" style="text-align: center"><span class="glyphicon glyphicon-pencil"></span></a></td>
                                             {% if r.role_id==1%}
@@ -104,11 +105,12 @@
                                             <td>Member</td>
                                             {% endif %}
                                         </tr>
+                                        {% endfor %}
                                     </tbody>
                                     <script>
 
                                     </script>
-                                    {% endfor %}
+                                    
                                 </table>
                             </form>
                         </div>
@@ -120,11 +122,9 @@
             <nav class="navbar navbar-default navbar-fixed-bottom">
                 <ul class="pagination" style="alignment: center">
                     <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
-                    <li class="active"><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">5</a></li>
+                    {% for i in range(0,numm) %}
+                    <li><a href="javascript:void(0)" onclick="user_tabbing('{{ stry }}', {{ loop.index }})">{{ loop.index }}</a></li>
+                    {% endfor %}
                     <li><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
                 </ul>
             </nav>
@@ -144,6 +144,13 @@
         <script type="text/javascript" src="{{ url_for('.static', filename='js/landing.custom.js') }}"></script>
 
         <script type="text/javascript" src="{{ url_for('.static', filename='js/maintainscroll.jquery.min.js') }}"></script>
+
+        <script>
+
+            
+
+        
+        </script>
 
 </body>
 </html>
