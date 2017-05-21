@@ -1,8 +1,12 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import os#main
 =======
 import os  # main
 >>>>>>> Changes in Friends
+=======
+import os  # main
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 from flask import Flask, render_template, redirect, Blueprint, request, flash, url_for, session, jsonify
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user, AnonymousUserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -19,6 +23,7 @@ import datetime
 import time
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 from sqlalchemy import func, desc
 from app.landing.decorators import send_email
 =======
@@ -28,6 +33,10 @@ from sqlalchemy import desc
 from sqlalchemy import func, desc
 from app.landing.decorators import send_email
 >>>>>>> Changes in Friends
+=======
+from sqlalchemy import func, desc
+from app.landing.decorators import send_email
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 
 auth = Flask(__name__)
 auth_blueprint = Blueprint('auth_blueprint', __name__, template_folder='templates', static_folder='static',
@@ -49,6 +58,7 @@ def get_profile(profileString):
     return ph.photoName
 
 
+<<<<<<< HEAD
 #to get the user profile pictures easily
 def get_profile(profileString):
     ph = Photos.query.filter_by(id=profileString).first()
@@ -56,6 +66,8 @@ def get_profile(profileString):
         return 'default'
     return ph.photoName
 
+=======
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -356,8 +368,11 @@ def home():
     user = db.session.query(User).filter(User.id == current_user.id).one()
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> Changes in Friends
+=======
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 
     received_friend_requests, sent_friend_requests = get_friend_requests(current_user.id)
     num_received_requests = len(received_friend_requests)
@@ -365,10 +380,14 @@ def home():
     num_total_requests = num_received_requests + num_sent_requests
 
 <<<<<<< HEAD
+<<<<<<< HEAD
                         # Use a nested dictionary for session["current_user"] to store more than just user_id
 =======
     # Use a nested dictionary for session["current_user"] to store more than just user_id
 >>>>>>> Changes in Friends
+=======
+    # Use a nested dictionary for session["current_user"] to store more than just user_id
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
     session["current_user"] = {
         "first_name": current_user.first_name,
         "id": current_user.id,
@@ -376,6 +395,7 @@ def home():
         "num_sent_requests": num_sent_requests,
         "num_total_requests": num_total_requests
     }
+<<<<<<< HEAD
 <<<<<<< HEAD
 
     return render_template('users/dashboard.html', username=current_user.username, csID=str(current_user.id), csPic=str(get_profile(current_user.profile_pic)), user=user)
@@ -387,6 +407,11 @@ def home():
 >>>>>>> Working on the friend feature
 
 
+=======
+    return redirect(url_for('auth_blueprint.users', id=user.id))
+
+
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 @auth_blueprint.route('/settings/<username>', methods=['GET', 'POST'])
 @login_required
 @required_roles('User')
@@ -419,6 +444,7 @@ def users(id):
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     user = db.session.query(User).filter(User.id == id).one()
 
 =======
@@ -429,6 +455,14 @@ def users(id):
     num_sent_requests = len(sent_friend_requests)
     num_total_requests = num_received_requests + num_sent_requests
 
+=======
+    # Get current user's friend requests and number of requests to display in badges
+    received_friend_requests, sent_friend_requests = get_friend_requests(current_user.id)
+    num_received_requests = len(received_friend_requests)
+    num_sent_requests = len(sent_friend_requests)
+    num_total_requests = num_received_requests + num_sent_requests
+
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
     # Use a nested dictionary for session["current_user"] to store more than just user_id
     session["current_user"] = {
         "first_name": current_user.first_name,
@@ -437,6 +471,7 @@ def users(id):
         "num_total_requests": num_total_requests
     }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> Adding user settings and fixed unfriend and reject requests
     ph = Photos.query.filter_by(id=current_user.profile_pic).first()
@@ -448,6 +483,8 @@ def users(id):
 
 =======
 >>>>>>> Changes in Friends
+=======
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
     user = db.session.query(User).filter(User.id == id).one()
     trips = Trips.query.filter_by(userID=current_user.id)
 
@@ -470,6 +507,7 @@ def users(id):
                            pending_request=pending_request,
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
                            csID=str(user.id), csPic=str(get_profile(current_user.profile_pic)))
 =======
 =======
@@ -483,6 +521,11 @@ def users(id):
                            csID=str(user.id), csPic=str(get_profile(user.profile_pic)),
                            trips=trips, photos=photos)
 >>>>>>> Changes in Friends
+=======
+                           pending_request2=pending_request2,
+                           csID=str(user.id), csPic=str(get_profile(user.profile_pic)),
+                           trips=trips, photos=photos)
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 
 
 @auth_blueprint.route('/add-friend/<int:id>', methods=["POST"])
@@ -620,6 +663,7 @@ def show_friends(page=1):
     for user in users.items:
         cas.append(str(get_profile(user.profile_pic)))
         usID.append(str(user.id))
+<<<<<<< HEAD
 =======
 >>>>>>> Working on the friend feature
 
@@ -638,6 +682,8 @@ def show_friends(page=1):
     for user in users.items:
         cas.append(str(get_profile(user.profile_pic)))
         usID.append(str(user.id))
+=======
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 
     # This returns User objects for current user's friend requests
     received_friend_requests, sent_friend_requests = get_friend_requests(session["current_user"]["id"])
@@ -670,6 +716,14 @@ def search_users(page=1):
         cas.append(str(get_profile(user.profile_pic)))
         usID.append(str(user.id))
 
+    cas = []
+    usID = []
+    userr = User.query.order_by(desc(User.id)).paginate(page, POSTS_PER_PAGE, False)
+    print userr
+    for user in userr.items:
+        cas.append(str(get_profile(user.profile_pic)))
+        usID.append(str(user.id))
+
     ph = Photos.query.filter_by(id=current_user.profile_pic).first()
     if ph is None:
         cas = 'default'
@@ -692,16 +746,22 @@ def search_users(page=1):
                            received_friend_requests=received_friend_requests,
                            sent_friend_requests=sent_friend_requests,
 <<<<<<< HEAD
+<<<<<<< HEAD
                            friends=friends,
                            search_results=search_results, csID=str(current_user.id), csPic=str(get_profile(current_user.profile_pic)))
 =======
+=======
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
                            friends=friends, userr=userr, page=page,
                            users=user_query(request.args.get('q')),
                            csID=str(current_user.id), csPic=str(cas),
                            csPic2=cas, usID=usID,
                            photo=determine_pic(user_query(request.args.get('q')), 1))
 
+<<<<<<< HEAD
 >>>>>>> Working on the friend feature
+=======
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 
 @auth_blueprint.route('/userprofile/<username>')
 @login_required
@@ -709,12 +769,18 @@ def search_users(page=1):
 def user_profile(username):
     user = User.query.filter_by(username=username).first()
 <<<<<<< HEAD
+<<<<<<< HEAD
     return render_template('users/userprofile.html', user=user, csID=str(current_user.id), csPic=str(get_profile(current_user.profile_pic)))
 =======
     return render_template('users/userprofile.html', user=user, csID=str(current_user.id),
                            csPic=str(get_profile(current_user.profile_pic)))
 
 >>>>>>> Changes in Friends
+=======
+    return render_template('users/userprofile.html', user=user, csID=str(current_user.id),
+                           csPic=str(get_profile(current_user.profile_pic)))
+
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 
 @auth_blueprint.route('/userprofile/<username>/edit', methods=['GET', 'POST'])
 @login_required
@@ -733,6 +799,7 @@ def edit(username):
         current_user.description = form.description.data
         current_user.gender = form.gender.data
 
+<<<<<<< HEAD
 <<<<<<< HEAD
         #location for the image that will be saved
         now_loc = img_folder+str(current_user.id)
@@ -798,6 +865,39 @@ def edit(username):
                 img.save(str(uploadFolder + nameNow), quality=90, optimize=True)
 
 >>>>>>> Changes in Friends
+=======
+        # location for the image that will be saved
+        now_loc = img_folder + str(current_user.id)
+        # if directory is not yet created this function will create it
+        if os.path.isdir(now_loc) == False:
+            os.makedirs(now_loc)
+
+        # if the file field is ever empty or still none
+        if form.file.data.filename == None or form.file.data.filename == '':
+            current_user.profile_pic = current_user.profile_pic
+        else:
+            # image saving process
+            # checks if the image that was chosen is in the allowed extensions
+            if form.file.data and allowed_file(form.file.data.filename):
+                # securing the filename
+                filename = secure_filename(form.file.data.filename)
+                # initially saving the image
+                form.file.data.save(os.path.join(now_loc + '/', filename))
+
+                uploadFolder = now_loc + '/'
+
+                # the renaming process of the image
+                nameNow = str(int(time.time())) + '.' + str(os.path.splitext(filename)[1][1:])
+
+                # saving the changes
+                os.rename(uploadFolder + filename, uploadFolder + nameNow)
+
+                # this is the compressor part, this will optimize the image
+                # and will decrease its file size but not losing that much quality
+                img = Image.open(open(str(uploadFolder + nameNow), 'rb'))
+                img.save(str(uploadFolder + nameNow), quality=90, optimize=True)
+
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
             # this is where the new filename will be saved to the db
             date = datetime.datetime.today().strftime('%m/%d/%y')
             photo = Photos(photoName=nameNow, photoDate=date, photoLocation=now_loc, userID=current_user.id)
@@ -814,11 +914,16 @@ def edit(username):
 
         flash("Your changes have been saved.")
 <<<<<<< HEAD
+<<<<<<< HEAD
         return render_template('users/userprofile.html', user=user, csID=str(current_user.id), csPic=str(get_profile(current_user.profile_pic)))
 =======
         return render_template('users/userprofile.html', user=user, csID=str(current_user.id),
                                csPic=str(get_profile(current_user.profile_pic)))
 >>>>>>> Changes in Friends
+=======
+        return render_template('users/userprofile.html', user=user, csID=str(current_user.id),
+                               csPic=str(get_profile(current_user.profile_pic)))
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
     else:
         form.first_name.data = current_user.first_name
         form.last_name.data = current_user.last_name
@@ -830,6 +935,7 @@ def edit(username):
         form.description.data = current_user.description
         form.gender.data = current_user.gender
 <<<<<<< HEAD
+<<<<<<< HEAD
 
         return render_template('users/edit_profile.html', user=user, form=form, csID=str(current_user.id), csPic=str(get_profile(current_user.profile_pic)))
 =======
@@ -838,6 +944,12 @@ def edit(username):
                                csPic=str(get_profile(current_user.profile_pic)))
 
 >>>>>>> Changes in Friends
+=======
+
+        return render_template('users/edit_profile.html', user=user, form=form, csID=str(current_user.id),
+                               csPic=str(get_profile(current_user.profile_pic)))
+
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 
 @auth_blueprint.route('/user/photos')
 @login_required
@@ -847,12 +959,18 @@ def select_photo():
     photos = Photos.query.filter_by(userID=current_user.id).all()
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     return render_template('users/photos.html', username=current_user.username, csID=str(current_user.id), csPic=str(get_profile(current_user.profile_pic)), user=user, photos=photos)
 =======
     return render_template('users/photos.html', username=current_user.username, csID=str(current_user.id),
                            csPic=str(get_profile(current_user.profile_pic)), user=user, photos=photos)
 
 >>>>>>> Changes in Friends
+=======
+    return render_template('users/photos.html', username=current_user.username, csID=str(current_user.id),
+                           csPic=str(get_profile(current_user.profile_pic)), user=user, photos=photos)
+
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 
 @auth_blueprint.route('/set_profile')
 @login_required
@@ -864,7 +982,47 @@ def modify_prophoto():
 
     return jsonify(response='ok', userid=current_user.id, filename=get_profile(current_user.profile_pic))
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+
+
+# for reset password
+@auth_blueprint.route('/reset_request', methods=['GET', 'POST'])
+def reset():
+    token = request.args.get('token', None)
+    form = EmailResetForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        user = User.query.filter_by(email=email).first()
+        if user:
+            # gets token
+            token = user.get_token()
+            body = 'Click this link to reset your password:' + '\n' + '127.0.0.1:5000/reset/' + token
+            # sends an email containg the route with token value to the user who wants to reset his/her password
+            send_email('Password Reset', app.config['MAIL_USERNAME'], [str(email)], body)
+            flash("Request Sent!")
+            return render_template('users/mail_send.html')
+    return render_template('users/reset.html', form=form)
+
+
+@auth_blueprint.route('/reset/<token>', methods=['GET', 'POST'])
+def reset_now(token):
+    # verifies the token if its still not expired yet and then gets the user associated with the token
+    user_exist = User.verify_token(token)
+    form = PasswordResetForm()
+    if token and user_exist:
+        is_verified_token = True
+        if form.validate_on_submit():
+            # reseting password process
+            user_exist.password = generate_password_hash(form.password.data)
+            user_exist.is_active = True
+            db.session.add(user_exist)
+            db.session.commit()
+            flash("password updated successfully")
+            return render_template('users/password_changed.html')
+    return render_template('users/reset_enable.html', form=form, token=token)
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 
 
 # for reset password

@@ -5,6 +5,7 @@ from flask_login import current_user
 
 #this will determine how many trips can be displayed each page of the template
 <<<<<<< HEAD
+<<<<<<< HEAD
 POSTS_PER_PAGE = 12 
 maxNum = 1
 maxPage = 3
@@ -21,6 +22,8 @@ num_of_page = max_for_new/POSTS_PER_PAGE
 #determines what to put on the header of all templates
 def determine(id_): 
 =======
+=======
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
 POSTS_PER_PAGE = 12
 maxNum = 1
 maxPage = 3
@@ -36,7 +39,10 @@ num_of_page = max_for_new/POSTS_PER_PAGE
 
 #determines what to put on the header of all templates
 def determine(id_):
+<<<<<<< HEAD
 >>>>>>> Changes in Friends
+=======
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
     if(id_==1):
         return "/admin"
     return "/home"
@@ -52,10 +58,14 @@ def verify():
 
 #this will send the email on a different host while still running in our main host
 <<<<<<< HEAD
+<<<<<<< HEAD
 def send_async_email(app, msg): 
 =======
 def send_async_email(app, msg):
 >>>>>>> Changes in Friends
+=======
+def send_async_email(app, msg):
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
     #this will append the process to the existing process
     with app.app_context():
         mail.send(msg)
@@ -63,6 +73,7 @@ def send_async_email(app, msg):
  #the mail sending process
 def send_email(subject, sender, recipients, text_body):
     #instance of the Message Class
+<<<<<<< HEAD
 <<<<<<< HEAD
     msg = Message(subject, sender=sender, recipients=recipients) 
     #the message body that will be viewed by the recipient/s
@@ -72,6 +83,11 @@ def send_email(subject, sender, recipients, text_body):
     #the message body that will be viewed by the recipient/s
     msg.body = text_body
 >>>>>>> Changes in Friends
+=======
+    msg = Message(subject, sender=sender, recipients=recipients)
+    #the message body that will be viewed by the recipient/s
+    msg.body = text_body
+>>>>>>> 5646da4ad61e5e49a8df9ad05e690f2a488faca5
     #Thread shall be implemented in order for the server not to terminate our main host
     thr = Thread(target=send_async_email, args=[app, msg])
     #Thread running
