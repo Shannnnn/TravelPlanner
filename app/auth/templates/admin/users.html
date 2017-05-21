@@ -81,8 +81,9 @@
                                             <th>Role</th>
                                         </tr>
                                     </thead>
-                                    {% for r in result %}
+                                    
                                     <tbody>
+                                        {% for r in result %}
                                         <tr>
                                             <td><a href="/admin/users/edit/{{r.username}}" class="btn btn-success btn-xs" style="text-align: center"><span class="glyphicon glyphicon-pencil"></span></a></td>
                                             {% if r.role_id==1%}
@@ -103,11 +104,12 @@
                                             <td>Member</td>
                                             {% endif %}
                                         </tr>
+                                        {% endfor %}
                                     </tbody>
                                     <script>
 
                                     </script>
-                                    {% endfor %}
+                                    
                                 </table>
                             </form>
                         </div>

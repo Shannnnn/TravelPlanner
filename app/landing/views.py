@@ -30,7 +30,7 @@ def change_val(var1, var2, var3):
 
 #returns the value of op1 for server run
 def ret_op1():
-    return op1
+    return ret_op1
 
 #this is basically all titles what will bbe displayed in the trip-plans template
 def til_(n): 
@@ -74,21 +74,28 @@ def determine_pic(users, counter):
 
 #this function will return a query result from the given var
 def trip_query_0(var):
-    return Trips.query.filter(func.concat(Trips.tripName, ' ', Trips.tripDateFrom, ' ', 
-        Trips.tripDateTo).ilike('%'+var+'%'))
+    #return Trips.query.filter(func.concat(Trips.tripName, ' ', Trips.tripDateFrom, ' ', 
+    #    Trips.tripDateTo).ilike('%'+var+'%'))
+    return Trips.query.filter(and_(func.concat(Trips.tripName, ' ', Trips.tripDateFrom, ' ',Trips.tripDateTo).
+        ilike('%'+var+'%'), and_(Trips.status==1, Trips.visibility==0)))
 
 #this function is intended for Newest Trips Plans but still lacking some conditions, this conditions shall be implemented soon
 def trip_query_1(num, PER_PAGE):
-    return Trips.query.order_by(desc(Trips.tripID)).paginate(num, PER_PAGE, False)
+    #return Trips.query.order_by(desc(Trips.tripID)).paginate(num, PER_PAGE, False)
+    return Trips.query.filter(and_(Trips.status==1, Trips.visibility==0)).paginate(num, PER_PAGE, False)
 
 #this function is intended for Most Viewed Trips Plans
 def trip_query_2(num, PER_PAGE):
-    return Trips.query.filter(Trips.viewsNum>maxNum).paginate(num, PER_PAGE, False)  
+    #return Trips.query.filter(Trips.viewsNum>maxNum).paginate(num, PER_PAGE, False) 
+    return Trips.query.filter(and_((Trips.viewsNum>maxNum), and_(Trips.status==1, Trips.visibility==0))).paginate(num, PER_PAGE, False) 
 
 #this function is used by the filter search integrated to some templates
 def trip_query_3(var, var2):
-    return Trips.query.filter(or_((func.concat(Trips.tripName, ' ', Trips.tripDateFrom, ' ', 
-           Trips.tripDateTo).ilike('%'+var+'%')), Trips.tripID.in_(var2))).distinct()
+    #return Trips.query.filter(or_((func.concat(Trips.tripName, ' ', Trips.tripDateFrom, ' ', 
+    #       Trips.tripDateTo).ilike('%'+var+'%')), Trips.tripID.in_(var2))).distinct()
+
+    return Trips.query.filter(and_(or_((func.concat(Trips.tripName, ' ', Trips.tripDateFrom, ' ', Trips.tripDateTo).
+            ilike('%'+var+'%')), Trips.tripID.in_(var2)), and_(Trips.status==1, Trips.visibility==0))).distinct()
 
 def trip_query_4(num, var):
     tripIDS=[]
@@ -112,7 +119,8 @@ def trip_query_mod_1(n, page_):
         #this will be returned if ever the category that has been selected is Newest Trips
         return trip_query_1(page_, POSTS_PER_PAGE)
     #if n above is not satisfied, then the category that has been selected was All Trips
-    return Trips.query.order_by(Trips.tripID).paginate(page_, POSTS_PER_PAGE, False)
+    #return Trips.query.order_by(Trips.tripID).paginate(page_, POSTS_PER_PAGE, False)
+    return Trips.query.filter(and_(Trips.status==1, Trips.visibility==0)).paginate(page_, POSTS_PER_PAGE, False)
 
 
 #this will handle the dynamic pagination of filter search result
@@ -138,17 +146,17 @@ def trip_query_for_fil(n, page_, base_string1, base_string2):
 def index():
     trip_index = trip_query_1(1, 4)
     trip_index_most = trip_query_2(1, 4)
-    return render_template('index.html', title='TravelPlanner-Home', trips=trip_index, trips_m=trip_index_most, label=verify())
+    return render_template('index.html', title='TravelPlanner-Home', trips=trip_index, trips_m=trip_index_most, label=verify(), collide=True)
 
 @landing_blueprint.route('/about')
 @landing_blueprint.route('/about/')
 def about():
-    return render_template('about.html', title='About', label=verify())
+    return render_template('about.html', title='About', label=verify(), collide=True)
 
 @landing_blueprint.route('/response')
 @landing_blueprint.route('/response/')
 def sendUs():
-    return render_template('response.html', title='Response', label=verify())
+    return render_template('response.html', title='Response', label=verify(), collide=True)
 
 #this is the route for the searchbar on top of the page
 @landing_blueprint.route('/siteSearch', methods=['GET','POST'])
@@ -157,13 +165,13 @@ def siteSearch():
     #trip_query_4 returns tuple value containing 2 values each will be assign to trips an maincount respectively
     trips, main_count = trip_query_4(1, request.args.get('search_1'))
     return render_template('search.html', title='Search Result', label=verify(), 
-            trips=trips, stry=request.args.get('search_1'), numm=main_count)
+            trips=trips, stry=request.args.get('search_1'), numm=main_count, collide=False, path=0)
 
 #the dynamic pagination for /siteSearch result
 @landing_blueprint.route('/search_main_/<keyword>')
 def paginate_search(keyword):
     #assigning multiple list instance to each variable
-    tripnameL, fromL, toL, tripViews, image = ([] for i in range(5))
+    tripnameL, fromL, toL, tripViews, userid, image = ([] for i in range(6))
     #fetching the value sent by the ajax call
     page_string = request.args.get('page')
 
@@ -176,35 +184,39 @@ def paginate_search(keyword):
         fromL.append(trip.tripDateFrom)
         toL.append(trip.tripDateTo)
         tripViews.append(trip.viewsNum)
+        userid.append(str(trip.userID))
         image.append(trip.img_thumbnail)
   
     #sends jsonify objects to the corresponding ajax funciton
-    return jsonify(result1=tripnameL, result2=fromL, result3=toL, result4=tripViews, result5=image, size=len(tripnameL))
+    return jsonify(result1=tripnameL, result2=fromL, result3=toL, result4=tripViews, result5=image, result6=userid, size=len(tripnameL))
 
 
 #this route is for the viewing of all iteneraries in one trip
 @landing_blueprint.route('/view/<Tripname>', methods=['GET','POST'])
 def mock(Tripname):
     trips = Trips.query.filter_by(tripName=Tripname).first()
-    #this will increment the given views num of a trip
-    trips.viewsNum = trips.viewsNum + 1
+    if trips:
+        if trips.status==1 and trips.visibility==0:
+            #this will increment the given views num of a trip
+            trips.viewsNum = trips.viewsNum + 1
 
-    user =User.query.filter_by(id=trips.userID).first() 
+            user =User.query.filter_by(id=trips.userID).first() 
 
-    itern = Itineraries.query.filter_by(tripID=trips.tripID).all()
+            itern = Itineraries.query.filter_by(tripID=trips.tripID).all()
 
-    #this will be used for suggestion tab in the template
-    all_trips = Trips.query.filter_by(userID=user.id).limit(4)
+            #this will be used for suggestion tab in the template
+            all_trips = Trips.query.filter_by(userID=user.id).limit(4)
 
-    db.session.add(trips)
-    db.session.commit()
-    return render_template('view_trip.html', title=trips.tripName, trips=trips, label=verify(), 
-            ite=itern, user=user, ph_1=determine_pic(user,0), suggestedTrips=all_trips)
+            db.session.add(trips)
+            db.session.commit()
+            return render_template('view_trip.html', title=trips.tripName, trips=trips, label=verify(), 
+                    ite=itern, user=user, ph_1=determine_pic(user,0), suggestedTrips=all_trips, collide=True)
+    return render_template('notPermitted.html', label=verify(), title='Not Permitted', collide=True)
 
 #this pagination route is used for the trips that are previed at the landing page
 @landing_blueprint.route('/paginate/<int:index>')
 def paginate(index):
-    tripnameL, fromL, toL, tripViews, image = ([] for i in range(5))
+    tripnameL, fromL, toL, tripViews, userid, image = ([] for i in range(6))
     determiner = True
     page_string = request.args.get('page')
 
@@ -224,9 +236,10 @@ def paginate(index):
         fromL.append(trip.tripDateFrom)
         toL.append(trip.tripDateTo)
         tripViews.append(trip.viewsNum)
+        userid.append(str(trip.userID))
         image.append(trip.img_thumbnail)
   
-    return jsonify(result1=tripnameL, result2=fromL, result3=toL, result4=tripViews, result5=image, size=len(tripnameL), determiner=determiner)
+    return jsonify(result1=tripnameL, result2=fromL, result3=toL, result4=tripViews, result5=image, result6=userid, size=len(tripnameL), determiner=determiner)
 
 #this route is used for sending mails to the default username for app.config
 @landing_blueprint.route('/sendResponse')
@@ -240,7 +253,7 @@ def sendMail():
 #this is a customized pagination route for viewwing trips by category and its search functions
 @landing_blueprint.route('/exp/<string:linklabel>')
 def paginate_1(linklabel):
-    tripnameL, fromL, toL, tripViews, image = ([] for i in range(5))
+    tripnameL, fromL, toL, tripViews, userid, image = ([] for i in range(6))
     page_string = request.args.get('page')
 
     lbl = ['most-popular','newest-trip-plans','all trips made in this site']
@@ -268,9 +281,10 @@ def paginate_1(linklabel):
         fromL.append(trip.tripDateFrom)
         toL.append(trip.tripDateTo)
         tripViews.append(trip.viewsNum)
+        userid.append(str(trip.userID))
         image.append(trip.img_thumbnail)
   
-    return jsonify(result1=tripnameL, result2=fromL, result3=toL, result4=tripViews, result5=image, size=len(tripnameL))
+    return jsonify(result1=tripnameL, result2=fromL, result3=toL, result4=tripViews, result5=image, result6=userid, size=len(tripnameL))
 
 #for viewing trips by category
 @landing_blueprint.route('/planned-trips/')
@@ -306,6 +320,13 @@ def exp_(linklabel='all trips made in this site'):
                 search_label=request.args.get('city'), numm=main_count, stry=linklabel)
 
     return render_template('exp_newtrip.html', path=0, title=til, trips=trips, label=verify(), 
-            search_label=til, numm=main_count, stry=linklabel)
+            search_label=til, numm=main_count, stry=linklabel, collide=False)
 
-
+@landing_blueprint.route('/mockk')
+def mokkThis():
+    trip = Trips.query.filter_by(tripID=1).first()
+    trip.status=1
+    trip.visibility=0
+    db.session.add(trip)
+    db.session.commit()
+    return 'ok'

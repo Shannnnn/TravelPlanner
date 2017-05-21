@@ -13,7 +13,7 @@ trip_blueprint = Blueprint('trip_blueprint', __name__, template_folder='template
                            static_folder='static',
                            static_url_path='/static/')
 
-img_folder = 'app/trips/static/images/'
+img_folder = 'app/trips/static/images/users'
 available_extension = set(['png', 'jpg', 'PNG', 'JPG'])
 
 def allowed_file(filename):
@@ -28,6 +28,27 @@ def addtrip():
     tripForm.trip_city.choices = [(a.cityName, a.cityName) for a in City.query]
     if request.method == 'POST':
         if tripForm.validate_on_submit():
+            now_loc = img_folder+str(current_user.id)
+            #if directory is not yet created this function will create it
+            if os.path.isdir(now_loc)==False:
+                os.makedirs(now_loc)
+
+            if tripForm.file.data and allowed_file(tripForm.file.data.filename):
+                filename = secure_filename(tripForm.file.data.filename)
+                tripForm.file.data.save(os.path.join(now_loc+'/', filename))
+                uploadFolder = now_loc+'/'
+
+                #the renaming process of the image
+                nameNow = str(int(time.time()))+'.'+str(os.path.splitext(filename)[1][1:])
+
+                #saving the changes
+                os.rename(uploadFolder+filename, uploadFolder+nameNow)
+
+                #this is the compressor part, this will optimize the image
+                #and will decrease its file size but not losing that much quality
+                img = Image.open(open(str(uploadFolder+nameNow), 'rb')) 
+                img.save(str(uploadFolder+nameNow), quality=90, optimize=True)
+
             tripform = Trips(tripName=tripForm.trip_name.data,
                              tripDateFrom=tripForm.trip_date_from.data,
                              tripDateTo=tripForm.trip_date_to.data,
@@ -36,7 +57,7 @@ def addtrip():
                              tripCity=tripForm.trip_city.data,
                              status=tripForm.trip_status.data,
                              visibility=tripForm.trip_visibility.data,
-                             img_thumbnail=tripForm.file.data.filename)
+                             img_thumbnail=nameNow)
             db.session.add(tripform)
             db.session.commit()
 

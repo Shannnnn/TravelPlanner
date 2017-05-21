@@ -32,6 +32,48 @@
             </div>
         </section>
         <br>
+
+        <div class="row">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="input-group" id="adv-search">
+                                    <input type="text" class="form-control" name="searchbar" placeholder="Search for snippets">
+                                    <div class="input-group-btn">
+                                        <div class="btn-group" role="group">
+                                            <div class="dropdown dropdown-lg">
+                                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
+                                                <div class="dropdown-menu dropdown-menu-right" role="menu">
+                                                    <form class="form-horizontal" role="form" name="form1" action="/main/planned-trips/filtered_result" method="get">
+                                                      <div class="form-group">
+                                                        <label for="filter">Filter by</label>
+                                                        <select class="form-control" id="filterOptions" name="option" required>
+                                                            <option value="all trips made in this site" selected>All Trips</option>
+                                                            <option value="most-popular">Most popular</option>
+                                                            <option value="newest-trip-plans">Newest</option>
+                                                        </select>
+                                                      </div>
+                                                      <div class="form-group">
+                                                        <label for="contain">Country</label>
+                                                        <input class="form-control" type="text" name="country" required>
+                                                      </div>
+                                                      <div class="form-group">
+                                                        <label for="contain">City</label>
+                                                        <input class="form-control" type="text" name="city" required>
+                                                      </div>
+                                                      <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="btn btn-primary" onclick="return_Result();"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+                     </div>
+                </div>
+
     <section>
 	<div class="container">
 	<div class="row">
@@ -53,7 +95,7 @@
                                 <div class="panel panel-default bootcards-media" style="width:100%;"> 
                                     <div class="panel-heading" align="left" style="width: 100%;">{{ trip.tripName }}</div>
                                     <div class="panel-body" style="width: 270px; height: 125px;" align="center">
-                                    <img style="height: 110%; width: 110%; object-fit:contain;" src="{{ url_for('trip_blueprint.static', filename='images/trips/'+trip.img_thumbnail ) }} "/></div>
+                                    <img style="height: 110%; width: 110%; object-fit:contain;" src="{{ url_for('trip_blueprint.static', filename='images/trips/'+trip.userID|string+'/'+trip.img_thumbnail ) }} "/></div>
                                     <div class="panel-footer" align="left" style="display: inline-block; width: 100%;">
                                         <div class="row">
                                             &nbsp; From: {{ trip.tripDateFrom }} 
@@ -68,6 +110,15 @@
                         </div>
                         </a>
         {% endfor %}
+        </div>
+        <div class="text-center">
+        <ul class="pagination pagination-lg">
+            <li><a href="javascript:void(0)" onclick="trips_plans_for_main_search('{{ stry }}', 1)">&laquo;</a></li>
+            {% for i in range(0,numm) %}
+            <li><a href="javascript:void(0)" onclick="trips_plans_for_main_search('{{ stry }}', {{ loop.index }})">{{ loop.index }}</a></li>
+            {% endfor %}
+            <li><a href="javascript:void(0)" onclick="trips_plans_for_main_search('{{ stry }}', {{ numm }})">&raquo;</a></li>
+        </ul>
         </div>
     </div>
 

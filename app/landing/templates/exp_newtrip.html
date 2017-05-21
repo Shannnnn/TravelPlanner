@@ -1,14 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
 
-
-        <section id="pricing" class="pricing-section">
+        <section id="intro" class="intro-section" style="background-image: url('{{ url_for('.static', filename='images/misc/blur0.jpg') }}'); background-repeat: no-repeat; background-size: contain; background-position: center; background-size: 1500px 660px;">
             <div class="container">
                 <div class="row">
-                    <div class="text-center">
-                        <h2>Search our database</h2>
+                    <div class="col-md-8 col-md-offset-2 text-center">
+                        <h1><span style="color: #ffffff;">Search the site</span></h1>
+                        <h4 style="color: #D3D3D3;">
+                            Find more Trips and the users who made them.
+                        </h4>
                     </div>
                 </div>
+            </div>
+        </section>
+        <br>
+        <section id="pricing" class="pricing-section">
+            <div class="container">
 
                 <div class="row">
                     <div class="container">
@@ -75,34 +82,7 @@
                                 <div class="panel panel-default bootcards-media" style="width:100%;"> 
                                     <div class="panel-heading" align="left" style="width: 100%;" id="able_1">{{ trip.tripName }}</div>
                                     <div class="panel-body" style="width: 270px; height: 125px;" align="center">
-                                    <img style="height: 110%; width: 110%; object-fit:contain;" src="{{ url_for('trip_blueprint.static', filename='images/trips/'+trip.img_thumbnail ) }} "/></div>
-                                    <div class="panel-footer" align="left" style="display: inline-block; width: 100%;">
-                                        <div class="row">
-                                            &nbsp; From: {{ trip.tripDateFrom }} 
-                                        </div>
-                                        <div class="row">
-                                            &nbsp; To: {{ trip.tripDateTo }}
-                                            &nbsp; <p class="fa fa-eye" aria-hidden="true"></p> {{ trip.viewsNum }} 
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        </a>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    {% elif path==1 %}
-                        <div class="container" id="views_ly">
-                        {% for trip in trips %}
-                        <div id="able" value="{{ trip.tripName }}" data-filter="{{ trip.tripName }}" style="border:0px; margin:0; padding: 0; border-collapse: collapse;" >
-                        <a href="/main/view/{{ trip.tripName }}" target="_blank"  value="{{ trip.tripName }}">
-                        <div class="col-sm-3 text-center">
-                            <div class="container" style="display:inline; width:100%;">
-                                <div class="panel panel-default bootcards-media" style="width:100%;"> 
-                                    <div class="panel-heading" align="left" style="width: 100%;" id="able_1">{{ trip.tripName }}</div>
-                                    <div class="panel-body" style="width: 270px; height: 125px;" align="center">
-                                    <img style="height: 110%; width: 110%; object-fit:contain;" src="{{ url_for('trip_blueprint.static', filename='images/trips/'+trip.img_thumbnail ) }} "/></div>
+                                    <img style="height: 110%; width: 110%; object-fit:contain;" src="{{ url_for('trip_blueprint.static', filename='images/trips/'+trip.userID|string+'/'+trip.img_thumbnail ) }} "/></div>
                                     <div class="panel-footer" align="left" style="display: inline-block; width: 100%;">
                                         <div class="row">
                                             &nbsp; From: {{ trip.tripDateFrom }} 

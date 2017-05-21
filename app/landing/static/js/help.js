@@ -4,7 +4,7 @@ function return_Result(){
 }
 
 //Newest Trips and Most popular
-function state(tripname, from, to, views, image){
+function state(tripname, from, to, views, image, userid){
       return   '<div id="able" value="'+tripname+'" data-filter="'+tripname+'">'+
       '<a href="/main/view/'+tripname+'" target="_blank">'+
       '<div class="col-sm-3 text-center">'+
@@ -12,7 +12,7 @@ function state(tripname, from, to, views, image){
                                 '<div class="panel panel-default bootcards-media" style="width:100%;">'+ 
                                     '<div class="panel-heading" align="left" style="width: 100%;">'+tripname+'</div>'+
                                     '<div class="panel-body" style="width: 270px; height: 125px;" align="center">'+
-                                    '<img style="height: 110%; width: 110%; object-fit:contain;" src="/trips/static//images/trips/'+image+'"/></div>'+
+                                    '<img style="height: 110%; width: 110%; object-fit:contain;" src="/trips/static//images/trips/'+userid+'/'+image+'"/></div>'+
                                     '<div class="panel-footer" align="left" style="display: inline-block; width: 100%;">'+
                                       '<div class="row">'+
                                             '&nbsp; From:'+from+
@@ -76,7 +76,7 @@ var item = ["#res", 'a[name="new_next"]', "#res_1", 'a[name="most_next"]']
               }
 
             for(i=0; i<data.size; i++){
-                stringRes+=state(data.result1[i], JSON.stringify(data.result2[i]).slice(5,17), JSON.stringify(data.result3[i]).slice(5,17), data.result4[i], data.result5[i]);
+                stringRes+=state(data.result1[i], JSON.stringify(data.result2[i]).slice(5,17), JSON.stringify(data.result3[i]).slice(5,17), data.result4[i], data.result5[i], data.result6[i]);
             }
             $(item[ch]).append(stringRes);
         });
@@ -125,7 +125,7 @@ function trips_plans(keyword, num){
               $('#views_ly').html("");
               var stringRes = "";
               for(i=0; i<data.size; i++){
-                stringRes+=state(data.result1[i], JSON.stringify(data.result2[i]).slice(5,17), JSON.stringify(data.result3[i]).slice(5,17), data.result4[i], data.result5[i]);
+                stringRes+=state(data.result1[i], JSON.stringify(data.result2[i]).slice(5,17), JSON.stringify(data.result3[i]).slice(5,17), data.result4[i], data.result5[i], data.result6[i]);
             }
             $('#views_ly').append(stringRes);
         });
@@ -139,7 +139,7 @@ function trips_plans_for_main_search(keyword, num){
               $('#views_res').html("");
               var stringRes = "";
               for(i=0; i<data.size; i++){
-                stringRes+=state(data.result1[i], JSON.stringify(data.result2[i]).slice(5,17), JSON.stringify(data.result3[i]).slice(5,17), data.result4[i], data.result5[i]);
+                stringRes+=state(data.result1[i], JSON.stringify(data.result2[i]).slice(5,17), JSON.stringify(data.result3[i]).slice(5,17), data.result4[i], data.result5[i], data.result6[i]);
             }
             $('#views_res').append(stringRes);
         });

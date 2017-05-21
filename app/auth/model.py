@@ -29,6 +29,7 @@ class User(db.Model, UserMixin):
     contact_num = db.Column(db.BIGINT)
     description = db.Column(db.String(300))
     profile_pic = db.Column(db.Integer, nullable=True)
+    gender = db.Column(db.String(30))
 
     # search_vector = db.Column(TSVectorType('first_name', 'last_name', 'username', 'email'))
 
@@ -49,6 +50,7 @@ class User(db.Model, UserMixin):
         self.birth_date = None
         self.contact_num = 0
         self.description = ""
+        self.gender = ""
         self.profile_pic =  None
 
     def isAuthenticated(self):

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<br><br><br><br>
+<div class="container text-center">
+	<img src="{{ url_for('.static', filename='images/misc/notauto.png')}}">
+<h2>Either you are not authorized to view this content or this content does not exist</h2>
+<h5>Please go back to the main page <a href="{{ url_for('landing_blueprint.index') }}">Click here!</a></h5>
+</div> <!-- /container -->
+<br><br><br><br>
+{% endblock %}  

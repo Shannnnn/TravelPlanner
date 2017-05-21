@@ -50,7 +50,6 @@
             }, function(data) {
             
             if(data.response=='ok'){
-              alert('Profile Picture changed!');
               $('#imggg').html("");
               $('#imggg').append('<img class="img-circle img-responsive" src="/static//images/users/'+data.userid+'/'+data.filename+'" alt="..." style="width:150px;height:150px;">');
             }
