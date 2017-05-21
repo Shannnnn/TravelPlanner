@@ -8,11 +8,9 @@
 *.so
 *.pyc
 *.pyo
-config.py/
 migrations/
 .idea/
-db_create.py
-config.py
+/config.py
 
 # Packages #
 ############
@@ -68,3 +66,4 @@ Thumbs.db
 !/app/landing/static/images/
 !/app/trips/static/fonts/
 !/app/auth/static/js/
+
