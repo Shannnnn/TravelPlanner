@@ -70,22 +70,20 @@ class City(db.Model):
     __tablename__ = "cities"
     cityID = db.Column(db.Integer, primary_key=True)
     cityName = db.Column(db.String(80))
-    cityCode = db.Column(db.Integer)
-    countryID = db.Column(db.Integer, db.ForeignKey('countries.countryID'), nullable=False)
+    cityCode = db.Column(db.String(80))
 
-    def __init__(self, cityName, cityCode, countryID):
+    def __init__(self, cityName, cityCode):
         self.cityName = cityName
-        self.cityName = cityCode
-        self.countryID = countryID
+        self.cityCode = cityCode
 
     def __repr__(self):
-        return '<cityName {}>'.format(self.cityCode)
+        return '<cityName {}>'.format(self.cityName)
 
 class Country(db.Model):
     __tablename__ = "countries"
     countryID = db.Column(db.Integer, primary_key=True)
     countryName = db.Column(db.String(80))
-    countryCode = db.Column(db.Integer)
+    countryCode = db.Column(db.String(80))
 
     def __init__(self, countryName, countryCode):
         self.countryName = countryName
