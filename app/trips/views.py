@@ -44,8 +44,12 @@ def addtrip():
                 filename = secure_filename(tripForm.file.data.filename)
                 tripForm.file.data.save(os.path.join(img_folder+'trips/', filename))
 <<<<<<< HEAD
+<<<<<<< HEAD
 
             return redirect(url_for('trip_blueprint.addtrip'))
+=======
+            return redirect(url_for('trip_blueprint.trips'))
+>>>>>>> Trips
 =======
             return redirect(url_for('trip_blueprint.trips'))
 >>>>>>> Trips
