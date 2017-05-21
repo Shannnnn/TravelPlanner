@@ -1,6 +1,6 @@
 import os
 from flask import Flask, render_template, redirect, Blueprint, request, flash, url_for, session, jsonify
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user, AnonymousUserMixin
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from model import User, Role, Anonymous, Photos, Connection
 from forms import LoginForm, RegisterForm, EditForm, SearchForm, PasswordSettingsForm, UsernameSettingsForm, EmailResetForm, PasswordResetForm
@@ -645,7 +645,6 @@ def register():
                 "num_total_requests": 0
             }
 
-            flash('Log In')
             return redirect(url_for('auth_blueprint.login'))
         return render_template('users/registration.html', form=form)
 
