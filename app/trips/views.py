@@ -43,16 +43,8 @@ def addtrip():
             if tripForm.file.data and allowed_file(tripForm.file.data.filename):
                 filename = secure_filename(tripForm.file.data.filename)
                 tripForm.file.data.save(os.path.join(img_folder+'trips/', filename))
-<<<<<<< HEAD
-<<<<<<< HEAD
+            return redirect(url_for('trip_blueprint.trips'))
 
-            return redirect(url_for('trip_blueprint.addtrip'))
-=======
-            return redirect(url_for('trip_blueprint.trips'))
->>>>>>> Trips
-=======
-            return redirect(url_for('trip_blueprint.trips'))
->>>>>>> Trips
 
     ph = Photos.query.filter_by(id=current_user.profile_pic).first()
     if ph is None:
