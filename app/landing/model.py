@@ -1,5 +1,6 @@
-from flask_login import UserMixin, AnonymousUserMixin
+from flask_login import AnonymousUserMixin
 
+#this class was created for the purpose of handling unregisterd user in the landing page and its associated templates
 class Anonymous(AnonymousUserMixin):
     def __init__(self):
         self.username = 'Guest'
