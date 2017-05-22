@@ -25,13 +25,18 @@
                                             <img style="height: 100%; width: 100%; object-fit:contain;" src="https://i.ytimg.com/vi/QGiJFumHUPo/maxresdefault.jpg"/>
                                         </div>
                                     </a>
-                                    <div class="panel-footer" align="left" style="display: inline-block; width: 100%;">
+                                    <div class="panel-footer" align="center" style="display: inline-block; width: 100%;">
                                         <div class="row">
                                             &nbsp; From: {{ trip.tripDateFrom }}
                                         </div>
                                         <div class="row">
                                             &nbsp; To: {{ trip.tripDateTo }}
-                                            <br>&nbsp; {{ trip.viewsNum }} views
+                                        </div>
+                                        <div class="row">
+                                            &nbsp; Location: {{ trip.tripCity }}, {{ trip.tripCountry }}
+                                        </div>
+                                        <div class="row">
+                                            &nbsp; {{ trip.viewsNum }} views
                                         </div>
                                         <div class="panel-footer">
                                             <div class="row" align="left" style="display: inline-block; width: 120%;">
