@@ -7,13 +7,16 @@ from model import Trips, Itineraries, itineraryLocationType, Country, City
 from app import db
 from werkzeug import secure_filename
 from app.auth.model import Photos
+import datetime
+import time
+from PIL import Image
 
 trip = Flask(__name__)
 trip_blueprint = Blueprint('trip_blueprint', __name__, template_folder='templates', url_prefix='/trips',
                            static_folder='static',
                            static_url_path='/static/')
 
-img_folder = 'app/trips/static/images/users'
+img_folder = 'app/trips/static/images/users/'
 available_extension = set(['png', 'jpg', 'PNG', 'JPG'])
 
 def allowed_file(filename):
@@ -61,9 +64,6 @@ def addtrip():
                              img_thumbnail=nameNow)
             db.session.add(tripform)
             db.session.commit()
-            if tripForm.file.data and allowed_file(tripForm.file.data.filename):
-                filename = secure_filename(tripForm.file.data.filename)
-                tripForm.file.data.save(os.path.join(img_folder+'trips/', filename))
             return redirect(url_for('trip_blueprint.trips'))
 
 
