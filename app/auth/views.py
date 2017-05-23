@@ -52,7 +52,9 @@ def load_user(user_id):
 def addash():
     users = User.query.all()
     trips = Trips.query.all()
-    return render_template('admin/admindashboard.html', users=users, trips=trips)
+    countries = Country.query.all()
+    cities = City.query.all()
+    return render_template('admin/admindashboard.html', users=users, trips=trips, countries=countries, cities=cities)
 
 @auth_blueprint.route('/admin/settings/<username>', methods=['GET', 'POST'])
 @login_required
@@ -145,7 +147,7 @@ def addusers():
             user = User(username=form.username.data,
                                email=form.email.data,
                                password=form.password.data,
-                               role_id = "3")
+                               role_id = '3')
             db.session.add(user)
             db.session.commit()
             result = User.query.order_by(User.id)
@@ -265,7 +267,7 @@ def managetrips():
     result = Trips.query.order_by(Trips.tripID).paginate(1, TRIPS_PER_PAGE, False)
     return render_template('admin/trips.html', result=result, numm=pageFormula(len(Trips.query.all()), TRIPS_PER_PAGE))
 
-@auth_blueprint.route('/admin/trips/add')
+@auth_blueprint.route('/admin/trips/add', methods=['GET','POST'])
 @login_required
 @required_roles('Admin')
 def addtrip():
