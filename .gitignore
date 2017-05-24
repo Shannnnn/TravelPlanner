@@ -10,7 +10,7 @@
 *.pyo
 migrations/
 .idea/
-/config.py
+config.py
 
 # Packages #
 ############
