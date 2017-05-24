@@ -10,20 +10,18 @@
   <title>TravelPlanner || {% block title %} put title here {% endblock %}</title>
 
   <!-- Bootstrap -->
-  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('.static', filename='css/bootstrap.min.css') }}">
 
   <!-- Custom styles -->
   <link rel="stylesheet" href="{{ url_for('.static', filename='css/styles.css') }}">
 
   <!-- Font Awesome icons -->
-  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('.static', filename='css/font-awesome.min.css') }}">
 
   <!-- Google Fonts -->
   <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Oleo+Script' rel='stylesheet' type='text/css'>
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
-  {% block styles %}
-  {% endblock %}
 
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -31,7 +29,6 @@
     <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
-
 </head>
 
 <body>
@@ -60,20 +57,9 @@
         {% if session.get('current_user') %}
           <ul class="nav navbar-nav">
             <li><a href="/home">Dashboard</a></li>
-            <li><a href="/userprofile/<username>">Profile</a></li>
-            <li><a href="/friends">Friends <span class="badge">{{ session.current_user.num_total_requests }}</span></a></li>
+            <li><a href="/friends">Friends {% if session.current_user.num_total_requests == 0 %} {% else %} <span class="badge">{{ session.current_user.num_total_requests }}</span> {% endif %}</a></li>
             <li><a href="/trips">Trips</a></li>
           </ul>
-
-          <!-- Searchbox feature for trips -->
-          <form class="navbar-form navbar-left" role="search" action="">
-            <div class="input-group">
-              <input class="form-control" id="searchbox" type="search" name="q" aria-label="Find Trips or Itinerary" placeholder="Find by name or place">
-              <span class="input-group-btn">
-                <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
-              </span>
-            </div>
-          </form>
 
           <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
@@ -83,12 +69,11 @@
                 <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
-                <li><a href="/users/{{ session.current_user.id }}">My Profile</a></li>
-                <li><a href="/friends">My Friends <span class="badge">{{ session.current_user.num_total_requests }}</span></a></li>
+                <li><a href="/userprofile/{{current_user.username }}/edit">Edit Profile</a></li>
                 <li role="separator" class="divider"></li>
                 <li><a href="#">Help</a></li>
                 <li role="separator" class="divider"></li>
-                <li><a href="#">Settings</a></li>
+                <li><a href="/settings/{{current_user.username}}">Settings</a></li>
                 <li><a href="/logout">Log out</a></li>
               </ul>
             </li>

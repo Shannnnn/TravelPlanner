@@ -2,33 +2,100 @@
 
 {% block title %}User: {{ user.username }}{% endblock %}
 
+{% block javascript %}
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/add-friend.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/unfriend-friend.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/accept-friend.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/reject-friend.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/sweetalert.min.js') }}"></script>
+  <script type="text/javascript">
+
+  function modify_profile(pid){
+      $.getJSON('/set_profile', {
+              id : pid,
+            }, function(data) {
+
+            if(data.response=='ok'){
+              alert('Profile Picture changed!');
+              $('#imggg').html("");
+              $('#imggg').append('<img class="img-circle img-responsive" src="/static//images/users/'+data.userid+'/'+data.filename+'" alt="..." style="width:150px;height:150px;">');
+            }
+            else
+              alert('An error occured!');
+
+        });
+        return false;
+}
+    function photo_change(id, filename, pid){
+      $('#exampleModalLong').html("")
+      Stringrespify = '<div class="modal-dialog" role="document" style="width: 1000px; height:500px;">'+
+        '<div class="modal-content">'+
+          '<div class="modal-header">'+
+            '<h5 class="modal-title" id="exampleModalLongTitle">'+filename+'</h5>'+
+          '</div>'+
+          '<div class="modal-body" style="width: 1000px; height: 700px;">'+
+            '<img style="height: 100%; width: 100%; object-fit:contain;" src="/static//images/users/'+id+'/'+filename+'"/>'+
+          '</div>'+
+          '<div class="modal-footer">'+
+            '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>'+
+            '<button type="button" class="btn btn-secondary" onclick="modify_profile('+pid+')">Set as Profile picture</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>';
+
+      $('#exampleModalLong').append(Stringrespify)
+      $('#exampleModalLong').modal('show');
+    }
+
+  </script>
+{% endblock %}
+
 {% block content %}
   <div class="jumbotron top-header" id="user-info" data-userid="{{ user.id }}">
     <div class="container">
       <div class="row">
         <div class="col-xs-12 col-md-2">
-                {% if csPic=='default' %}
-                <img class="img-circle img-responsive" src="{{current_user.gravatar(size=150)}}" alt="..." style="width:150px;height:150px;">
-                {% else %}
-                <img class="img-circle img-responsive" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..." style="width:150px;height:150px;">
-                {% endif %}
-                <h4 class="title">{{user.username}}<br />
-                </h4>
+          {% if csPic=='default' %}
+              <img class="img-circle img-responsive" src="{{current_user.gravatar(size=150)}}" alt="..." style="width:150px;height:150px;">
+          {% else %}
+              <img class="img-circle img-responsive" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..." style="width:150px;height:150px;">
+          {% endif %}
         </div>
         <div class="col-xs-12 col-md-6">
-          <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+            <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+          <p>
+            <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> {{ user.city }}, {{user.country}}
+          </p>
+          <table class="user-stats">
+            <tr>
+              <th class="stats-label">Friends</th>
+            </tr>
+            <tr>
+              <td class="stats-value">{{ total_friends }}</td>
+            </tr>
+          </table>
         </div><!-- /.col -->
         <div class="col-xs-12 col-md-4" id="action-box" >
           {% if session.current_user.id != user.id %}
             {% if friends %}
-              <button class="btn btn-primary disabled" id="accepted-btn"><span class="fa fa-users" aria-hidden="true"></span> Friends</button>
+              <form id="unfriend-friend-form" action="/unfriend/{{user.id}}" method="POST">
+                <button type="submit" class="btn btn-primary" id="unfriend-btn"><span class="fa fa-users" aria-hidden="true"></span> Unfriend</button>
+              </form>
             {% elif pending_request %}
               <button class="btn btn-primary disabled" id="requested-btn"><span class="fa fa-clock-o" aria-hidden="true"></span> Request Pending</button>
+            {% elif pending_request2 %}
+              <form id="accept-friend-form" action="/accept-friend/{{user.id}}" method="POST">
+                <button type="submit" class="btn btn-success" id="accepted-btn">Accept</button>
+              </form>
+              <form id="reject-friend-form" action="/reject-friend/{{user.id}}" method="POST">
+                <button type="submit" class="btn btn-danger" id="deleted-btn">Reject</button>
+              </form>
             {% else %}
-              <form id="add-friend-form" action="/add-friend" method="post">
+              <form id="add-friend-form" action="/add-friend/{{user.id}}" method="POST">
                 <button type="submit" class="btn btn-primary" id="add-friend-btn"><span class="fa fa-user-plus" aria-hidden="true"></span> Add Friend</button>
               </form>
             {% endif %}
+          {% endif %}
         </div><!-- /.col -->
       </div><!-- /.row -->
     </div><!-- /.container -->
@@ -36,39 +103,47 @@
 
   <div class="container" id="main-section">
     <div class="row">
+      <h3>{{user.username}}'s Profile</h3>
+      <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#info">General Information</a></li>
+        <li><a data-toggle="tab" href="#photos">Photos</a></li>
+        {% if session.current_user.id != user.id %}
+        <li><a data-toggle="tab" href="#trips">Trips</a></li>
+        <li><a data-toggle="tab" href="#friends">Friends</a></li>
+        {% endif %}
+      </ul>
+      <br>
         <div class="col-md-6">
-            <div class="card ">
-                <div class="header">
-                    <h4 class="title">{{user.first_name}}'s Info</h4>
-                </div>
+            <div class ="tab-content">
+                <div id="info" class="tab-pane fade in active">
+                    <h4>General Information</h4>
                 <div class="content">
-                    <div class="table-full-width">
-                        <table class="user-stats">
-                            <tr>
-                              <th class="stats-label">Trips</th>
-                              <td class="stats-value">{{ total_trips }}</td>
-                            </tr>
-                            <tr></tr>
-                            <tr>
-                              <th class="stats-label">Friends</th>
-                              <td class="stats-value">{{ total_friends }}</td>
-                            </tr>
-                        </table>
-                    </div>
                     <div class="table-full-width">
                         <table class="table">
                             <tbody>
                             <tr>
+                               <th>Date of Birth</th>
+                               <td>{{user.birth_date}}</td>
+                            </tr>
+                            <tr>
                                <th>Address</th>
-                               <td>{{user.address}}</td>
+                               <td>{{user.address}}, {{user.city}} City, {{user.country}}</td>
                             </tr>
                             <tr>
-                               <th>City</th>
-                               <td>{{user.city}}</td>
+                               <th>About Me</th>
+                               <td>{{user.description}}</td>
                             </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h4>Contact Details</h4>
+                    <div class="table-full-width">
+                        <table class="table">
+                            <tbody>
                             <tr>
-                               <th>Country</th>
-                               <td>{{user.country}}</td>
+                               <th>Email Address</th>
+                               <td>{{user.email}}</td>
                             </tr>
                             <tr>
                                <th>Contact Number</th>
@@ -79,139 +154,97 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-      <div class="col-xs-12 col-md-4">
-        <div class="panel panel-default">
-          <!-- Default panel contents -->
-          <div class="panel-heading">
-            <h3>Recent Trip</h3>
-          </div>
-
-          <!-- List group -->
-          {% if recent_trip %}
-            <div class="list-group">
-              {% for visit in recent_trips %}
-                <a href="/trips/{{ visit.trips.trip_id }}" class="list-group-item">
-                  <div class="media">
-                    <div class="media-left">
-                      <img class="media-object" src="" alt="Image for {{ trips.trip_name }}">
-                    </div>
-                    <div class="media-body">
-                      <h4 class="media-heading"></h4>
-                      <p>
-                        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>
-                        <br>
-                        <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
-                      </p>
-                    </div>
-                  </div>
-                </a>
-              {% endfor %}
-                <a href="#" class="list-group-item">See rest of the trips.</a>
-            </div>
-          {% else %}
-            <ul class="list-group">
-              <li class="list-group-item">No trips yet.</li>
-            </ul>
-          {% endif %}
-        {% endif %}
-        </div><!-- /.panel -->
-      </div><!-- /.col -->
-    </div><!-- /.row -->
-  </div><!-- /.container -->
-
-  {% if session.current_user.id == user.id %}
-  <div class="container" id="main-section">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card ">
-                <div class="header">
-                    <h4 class="title">Welcome to TravelPlanner, {{current_user.username}}</h4>
-                </div>
+            <div id="photos" class="tab-pane fade">
+                    <h4>Photos</h4>
                 <div class="content">
-                    <div class="table-full-width">
-                        <table class="user-stats">
-                            <tr>
-                              <th class="stats-label">Friends</th>
-                              <td class="stats-value">{{ total_friends }}</td>
-                            </tr>
-                        </table>
+                    <div class="container text-center">
+                      {% for p in photos %}
+                        <a href="javascript:void(0)" onclick="photo_change('{{ csID }}', '{{ p.photoName }}', '{{ p.id }}');">
+                        <img class="img-thumbnail" src="{{ url_for('.static', filename='images/users/'+csID+'/'+p.photoName) }}" alt="..." style="width: 200px; height:200px;"></a>
+                      {% endfor %}
                     </div>
-                    <div class="table-full-width">
-                        <table class="table">
-                            <tbody>
-                            <tr>
-                                <td>
-                                    <a href="/userprofile/{{username}}/edit" style="text-align:center">Complete Your Profile</a>
-                                    <p>Complete your profile and write a short bio about yourself.</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <a href="#">Learn how to create a trip.</a>
-                                    <p>Get ready to search for the perfect place and prepare for a memorable trip.</p>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                </div>
+            </div>
+
+            <div id="friends" class="tab-pane fade">
+                <div class="content">
+                    <div class="row">
+                    {% if friends %}
+                      {% for friend in friends %}
+                        <div class="col-xs-6 col-sm-8" id="user-profile-pic-sm">
+                          <a href="/users/{{ friend.id }}" class="list-group-item">
+                          <div class="media">
+                            <!-- <div class="media-left">
+                                {% if csPic =='default' %}
+                                        <img class="avatar border-gray" src="{{user.gravatar(size=90)}}" alt="..."/>
+                                    {% else %}
+                                        <img class="avatar border-gray" src="{{ url_for('auth_blueprint.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..." style="width:90px;height:90px;"/>
+                                    {% endif %}
+                            </div><!-- /.media-left (end here do not erase)-->
+                            <div class="media-body">
+                              <h3 class="media-heading">{{ friend.first_name }} {{ friend.last_name }}</h3>
+                              <p>
+                                <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Location: {{friend.address}}, {{ friend.city }}
+                              </p>
+                            </div><!-- /.media-body -->
+                          </div><!-- /.media -->
+                        </a>
+                        </div><!-- /.col -->
+                      {% endfor %}
+                    {% else %}
+                      <div class="col-xs-12">
+                        <p>{{user.first_name}} haven't added any friends.</p>
+                      </div>
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div id="trips" class="tab-pane fade">
+                <div class="content">
+                    <div class="row">
+                        {% if trips %}
+                        {% for trip in trips %}
+                        <div class="col-sm-3 text-center">
+                            <div class="container" style="display:inline; width:100%;">
+                                <div class="panel panel-default bootcards-media" style="width:100%;">
+                                    <div class="panel-heading" align="center" style="width: 100%;">
+                                        {{ trip.tripName }}
+                                        <a href="/trips/{{ trip.tripName }}/edit" class="btn btn-primary" style="display: block; margin: 0 auto;">Edit</a>
+                                    </div>
+                                    <div class="panel-body" style="width: 100%; height: 100%;" align="center">
+                                        <img style="height: 100%; width: 100%; object-fit:contain;" src=""/>
+                                    </div>
+                                    <div class="panel-footer" align="left" style="display: inline-block; width: 100%;">
+                                        <div class="row">
+                                            &nbsp; From: {{ trip.tripDateFrom }}
+                                        </div>
+                                        <div class="row">
+                                            &nbsp; To: {{ trip.tripDateTo }}
+                                            <br>&nbsp; {{ trip.viewsNum }} views
+                                        </div>
+                                        <div class="panel-footer">
+                                            <div class="row" align="left" style="display: inline-block; width: 120%;">
+                                                <a href="/trips/{{ trip.tripName }}/additineraries" class="btn btn-primary" style="display: block; margin: 0 auto;">Add Itineraries</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <ul class="list-group">
+                            <li class="list-group-item">No trips yet.</li>
+                        </ul>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
-
-      <div class="col-xs-12 col-md-4">
-        <div class="panel panel-default">
-          <!-- Default panel contents -->
-          <div class="panel-heading">
-            <h3>Recent Trip</h3>
-          </div>
-
-          <!-- List group -->
-          {% if recent_trip %}
-            <div class="list-group">
-              {% for visit in recent_trips %}
-                <a href="/trips/{{ visit.trips.trip_id }}" class="list-group-item">
-                  <div class="media">
-                    <div class="media-left">
-                      <img class="media-object" src="" alt="Image for {{ trips.trip_name }}">
-                    </div>
-                    <div class="media-body">
-                      <h4 class="media-heading"></h4>
-                      <p>
-                        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span>
-                        <br>
-                        <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
-                      </p>
-                    </div>
-                  </div>
-                </a>
-              {% endfor %}
-                <a href="#" class="list-group-item">See rest of the trips.</a>
-            </div>
-          {% else %}
-            <div class="table-full-width">
-                <table class="table">
-                    <tbody>
-                    <tr>
-                      <td>No upcoming trips.</td>
-                      <td class="td-actions text-right">
-                          <a href = "/trips/createtrip">Create new trip</a>
-                      </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-          {% endif %}
-        {% endif %}
-        </div><!-- /.panel -->
-      </div><!-- /.col -->
-    </div><!-- /.row -->
+    </div>
   </div><!-- /.container -->
-
+ </div>
 {% endblock %}
 
-{% block javascript %}
-  <script type="text/javascript" src="{{ url_for('.static', filename='js/add-friend.js') }}"></script>
-
-{% endblock %}
