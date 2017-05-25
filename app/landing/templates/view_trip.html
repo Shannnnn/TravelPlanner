@@ -70,7 +70,7 @@
               <ul class="timeline">
 
               {% for i in ite %}   
-               <li><div class="tldate">{{ i.itineraryDateFrom }} - {{ i.itineraryDateTo }}</div></li>            
+               <li><div class="tldate">{{ i.itineraryDate }}</div></li>            
                 {% if (loop.index-1)%2==0 %}
                 <li>
                 {% else %}
@@ -81,7 +81,7 @@
                   <div class="timeline-panel">
                     <div class="tl-heading">
                       <h4>{{ i.itineraryName }}</h4>
-                      <p><small class="text-muted"><i class="glyphicon glyphicon-time"></i> {{ i.itineraryTimeFrom }} - {{ i.itineraryTimeTo }}</small></p>
+                      <p><small class="text-muted"><i class="glyphicon glyphicon-time"></i> {{ i.itineraryTime }}</small></p>
                     </div>
                     <div class="tl-body">
                       <p> {{ i.itineraryDesc }}</p>

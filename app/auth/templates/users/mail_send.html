@@ -2,7 +2,7 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}
-Login
+Success
 {% endblock %}
 
 {% block styles %}
@@ -55,6 +55,7 @@ Login
         </nav><br><br><br>
 
 <div class="container text-center">
+    <img src="{{ url_for('landing_blueprint.static', filename='images/misc/sent.png')}}">
   <h2>      A verification message was sent to your email.</h2>
   <h2>Please check your email and from there reset your password</h2>
 

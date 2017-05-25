@@ -8,7 +8,6 @@ class TripForm(Form):
     trip_country = SelectField('Country', choices=[])
     trip_date_from = DateField('From(mm/dd/yyyy)', format='%m/%d/%Y', validators=[DataRequired()])
     trip_date_to = DateField('To(mm/dd/yyyy)', format='%m/%d/%Y', validators=[DataRequired()])
-    trip_status = SelectField('Status', choices=[(0,'Inactive'),(1,'Active')], coerce=int)
     trip_visibility = SelectField('Visibility', choices=[(0,'Public'),(1,'Private')], coerce=int)
     file = FileField('Choose Thumbnail', validators=[DataRequired()])
 
@@ -26,7 +25,6 @@ class EditTripForm(Form):
     trip_country = SelectField('Country', choices=[])
     trip_date_from = DateField('From(mm/dd/yyyy)', format='%m/%d/%Y', validators=[DataRequired()])
     trip_date_to = DateField('To(mm/dd/yyyy)', format='%m/%d/%Y', validators=[DataRequired()])
-    trip_status = SelectField('Status', choices=[(0, 'Inactive'), (1, 'Active')], coerce=int)
     trip_visibility = SelectField('Visibility', choices=[(0, 'Public'), (1, 'Private')], coerce=int)
 
 class EditItineraryForm(Form):

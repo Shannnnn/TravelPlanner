@@ -3,12 +3,9 @@ from app import db, app
 from werkzeug.security import generate_password_hash
 from flask import request
 import hashlib
-from sqlalchemy_searchable import make_searchable
-from sqlalchemy_utils.types import TSVectorType
 from sqlalchemy.orm import backref
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
-make_searchable()
 
 class User(db.Model, UserMixin):
     __tablename__ = "users"
@@ -29,12 +26,12 @@ class User(db.Model, UserMixin):
     contact_num = db.Column(db.BIGINT)
     description = db.Column(db.String(300))
     profile_pic = db.Column(db.Integer, nullable=True)
+    gender = db.Column(db.String(30))
 
     # search_vector = db.Column(TSVectorType('first_name', 'last_name', 'username', 'email'))
 
-    #User Information modification on first login
+    # User Information modification on first login
     first_login = db.Column(db.Boolean, default=True, nullable=False)
-
 
     def __init__(self, username='', email='', password='', role_id=''):
         self.username = username
@@ -49,14 +46,15 @@ class User(db.Model, UserMixin):
         self.birth_date = None
         self.contact_num = 0
         self.description = ""
-        self.profile_pic =  None
+        self.gender = ""
+        self.profile_pic = None
 
     def isAuthenticated(self):
         return True
- 
+
     def is_active(self):
         return True
- 
+
     def is_anonymous(self):
         return False
 
@@ -79,14 +77,13 @@ class User(db.Model, UserMixin):
         return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
             url=url, hash=hash, size=size, default=default, rating=rating)
 
-
-    #reset password functions:
-    #generates a token for a user
+    # reset password functions:
+    # generates a token for a user
     def get_token(self, expiration=1800):
         s = Serializer(app.config['SECRET_KEY'], expiration)
         return s.dumps({'user': self.id}).decode('utf-8')
 
-    #verifies the token and returns the user associated with it
+    # verifies the token and returns the user associated with it
     @staticmethod
     def verify_token(token):
         s = Serializer(app.config['SECRET_KEY'])
@@ -105,12 +102,13 @@ class Anonymous(AnonymousUserMixin):
 
     def isAuthenticated(self):
         return False
- 
+
     def is_active(self):
         return False
- 
+
     def is_anonymous(self):
         return True
+
 
 class Role(db.Model):
     __tablename__ = 'roles'
@@ -134,6 +132,7 @@ class Role(db.Model):
             db.session.add(role)
         db.session.commit()
 
+
 class Connection(db.Model):
     """Connection between two users to establish a friendship and can see each other's info."""
 
@@ -148,17 +147,18 @@ class Connection(db.Model):
     # to handle multiple join paths in the square brackets of foreign_keys per below
     user_a = db.relationship("User", foreign_keys=[user_a_id], backref=db.backref("sent_connections"))
     user_b = db.relationship("User", foreign_keys=[user_b_id], backref=db.backref("received_connections"))
-    
+
     def __init__(self, user_a_id, user_b_id, status):
         self.user_a_id = user_a_id
         self.user_b_id = user_b_id
         self.status = status
-        
+
     def __repr__(self):
         return "<Connection connection_id=%s user_a_id=%s user_b_id=%s status=%s>" % (self.connection_id,
                                                                                       self.user_a_id,
                                                                                       self.user_b_id,
                                                                                       self.status)
+
 
 class Photos(db.Model):
     __tablename__ = "User_Photos"

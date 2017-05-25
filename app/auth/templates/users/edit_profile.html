@@ -87,7 +87,15 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                {{wtf.form_field(form.file)}}
+                                                <label>Gender</label>
+                                                {{wtf.form_field(form.gender)}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                {{ form.file(class_='filestyle') }}
                                             </div>
                                         </div>
                                     </div>
@@ -126,6 +134,8 @@
 {% endblock %}
 
 {% block javascript %}
+<script type="text/javascript" src="{{ url_for('.static', filename='js/bootstrap-filestyle.min.js') }}"></script>
+
 <script>
     $( function() {
         $( "#datepicker" ).datepicker();

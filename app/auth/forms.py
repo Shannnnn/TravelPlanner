@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import StringField, PasswordField, ValidationError, DateField, IntegerField, SubmitField, FileField
+from wtforms import StringField, PasswordField, ValidationError, DateField, IntegerField, SubmitField, FileField, RadioField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 from model import User
 
@@ -46,6 +46,7 @@ class EditForm(Form):
     birth_date = DateField('Birth Date(mm/dd/yyyy)', format='%m/%d/%Y', validators=[DataRequired()])
     contact_num = IntegerField('Contact Number', validators=[DataRequired()])
     description = StringField('Description')
+    gender = RadioField('Label', choices=[('male','Male'),('female','Female')])
     file = FileField('Choose Profile Picture', validators=[DataRequired()])
 
 class PasswordSettingsForm(Form):
