@@ -837,3 +837,8 @@ def logout():
     logout_user()
     flash('You were logged out.')
     return redirect(url_for('auth_blueprint.login'))
+
+@auth_blueprint.route('/')
+def initial():
+    return render_template('users/initial.html')
+
