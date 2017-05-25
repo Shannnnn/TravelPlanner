@@ -17,6 +17,37 @@
         $( "#datepicker2" ).datepicker();
     });
     </script>
+
+    <script charset="utf-8" type="text/javascript">
+    $(function(){
+        var dropdown = {
+            country: $('#trip_country'),
+            city: $('#trip_city')
+        };
+        updateCities();
+        function updateCities() {
+
+            dropdown.city.attr('disabled', 'disabled');
+            dropdown.city.empty();
+
+            $.getJSON("/trips/get_cities/", {country: dropdown.country.val()}, function(data) {
+                data.forEach(function(item){
+                   dropdown.city.append(
+                       $('<option>', {
+                           value: item[0],
+                           text: item[1]
+                       })
+                   );
+                });
+                dropdown.city.removeAttr('disabled');
+            });
+        }
+        dropdown.country.on('change', function(){
+            updateCities();
+        });
+    });
+    </script>
+
 {% endblock %}
 
 {% block content %}
@@ -41,14 +72,14 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                {{wtf.form_field(form.trip_country, id="trip_country")}}
+                                                {{wtf.form_field(form.trip_country)}}
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                {{wtf.form_field(form.trip_city, id="trip_city")}}
+                                                {{wtf.form_field(form.trip_city)}}
                                             </div>
                                         </div>
                                     </div>
