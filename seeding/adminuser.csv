@@ -1,2 +1,2 @@
-id,username,email,password,role_id,first_name,last_name,address,city,country,birth_date,contact_number,description,profile_pic,first_login,gender
-100,admin,admin@email.com,pbkdf2:sha1:1000$ZqPbDjOY$b144f8fbd7e97e9bacabd0547e1f1471fcd35a00,1,admii,admin,admin,admin,admin,1/1/1999,8888,admin,3,FALSE,male
+id,username,email,password,role_id,first_name,last_name,address,city,country,birth_date,contact_number,description,profile_pic,gender,first_login
+100,admin,admin@email.com,pbkdf2:sha1:1000$ZqPbDjOY$b144f8fbd7e97e9bacabd0547e1f1471fcd35a00,1,admii,admin,admin,admin,admin,1/1/1999,8888,admin,3,male,FALSE

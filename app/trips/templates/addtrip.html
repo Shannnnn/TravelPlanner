@@ -1,6 +1,8 @@
 {% extends 'base1.html' %}
 {% import "bootstrap/wtf.html" as wtf %}
 
+{% block content %}
+
 {% block styles %}
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="/resources/demos/style.css">
@@ -50,11 +52,10 @@
 
 {% endblock %}
 
-{% block content %}
         <div class="content">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-8 col-sm-offset-2">
                         <div class="card">
                             <div class="header">
                                 <h4 class="title">Add Trip</h4>
@@ -114,31 +115,6 @@
                                     <div class="clearfix"></div>
                             </div>
                             </form>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card card-user">
-                            <div class="image">
-                            </div>
-                            <div class="content">
-                                <div class="author">
-                                     <a href="#">
-                                    <!--<img class="avatar border-gray" src="{{current_user.gravatar(size=256)}}" alt="..."/>-->
-                                     {% if csPic=='default' %}
-                                        <img class="avatar border-gray" src="{{current_user.gravatar(size=256)}}" alt="..."/>
-                                     {% else %}
-                                        <img class="avatar border-gray" src="{{ url_for('auth_blueprint.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..."/>
-                                     {% endif %}
-
-                                      <h4 class="title">{{current_user.first_name}} {{current_user.last_name}}<br>
-                                         <small>{{current_user.username}}</small><br><br>
-                                         <small>"{{current_user.description}}"</small>
-                                      </h4>
-                                    </a>
-                                </div>
-                                <p class="description text-center"></p>
-                            </div>
-                            <hr>
                         </div>
                     </div>
                 </div>
