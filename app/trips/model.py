@@ -13,8 +13,9 @@ class Trips(db.Model):
     img_thumbnail = db.Column(db.String(70))
     status = db.Column(db.Integer)
     visibility = db.Column(db.Integer)
+    featuredTrip = db.Column(db.Integer)
 
-    def __init__(self, tripName, tripDateFrom, tripDateTo, tripCity, tripCountry, userID, img_thumbnail, status, visibility):
+    def __init__(self, tripName, tripDateFrom, tripDateTo, tripCity, tripCountry, userID, img_thumbnail, status, visibility, featuredTrip):
         self.tripName = tripName
         self.tripDateFrom = tripDateFrom
         self.tripDateTo = tripDateTo
@@ -25,6 +26,7 @@ class Trips(db.Model):
         self.img_thumbnail = img_thumbnail
         self.status = status
         self.visibility = visibility
+        self.featuredTrip = featuredTrip
 
     def __repr__(self):
         return '<tripName {}>'.format(self.tripName)
@@ -71,6 +73,7 @@ class City(db.Model):
     cityID = db.Column(db.Integer, primary_key=True)
     cityName = db.Column(db.String(80))
     cityCode = db.Column(db.String(80))
+    countryName = db.Column(db.String(80), db.ForeignKey('countries.countryName'), nullable=True)
 
     def __init__(self, cityName, cityCode):
         self.cityName = cityName
@@ -81,9 +84,9 @@ class City(db.Model):
 
 class Country(db.Model):
     __tablename__ = "countries"
-    countryID = db.Column(db.Integer, primary_key=True)
-    countryName = db.Column(db.String(80))
+    countryName = db.Column(db.String(80), primary_key=True)
     countryCode = db.Column(db.String(80))
+    countryID = db.Column(db.Integer)
 
     def __init__(self, countryName, countryCode):
         self.countryName = countryName

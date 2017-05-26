@@ -1,0 +1,245 @@
+countryName,countryCode,countryID
+Andorra,AD,1
+United Arab Emirates,AE,2
+Afghanistan,AF,3
+Antigua And Barbuda,AG,4
+Anguilla,AI,5
+Albania,AL,6
+Armenia,AM,7
+Angola,AO,8
+Argentina,AR,9
+American Samoa,AS,10
+Austria,AT,11
+Australia,AU,12
+Aruba,AW,13
+Aland Islands,AI,14
+Azerbaijan,AZ,15
+Bosnia And Herzegovina,BA,16
+Barbados,BB,17
+Bangladesh,BD,18
+Belgium,BE,19
+Burkina Faso,BF,20
+Bulgaria,BG,21
+Bahrain,BH,22
+Burundi,BI,23
+Benin,BJ,24
+Saint Barthelemy,BL,25
+Bermuda,BM,26
+Brunei,BN,27
+Bolivia,BO,28
+Bonaire Saint Eustatius and Saba,BU,29
+Brazil,BR,30
+Bahamas,BS,31
+Bhutan,BT,32
+Botswana,BW,33
+Belarus,BY,34
+Belize,BZ,35
+Canada,CA,36
+Cocos Islands,CS,37
+Democratic Republic of the Congo,CD,38
+Central African Republic,CF,39
+Republic of the Congo,CG,40
+Switzerland,CH,41
+Ivory Coast,CI,42
+Cook Islands,CK,43
+Chile,CL,44
+Cameroon,CM,45
+China,CN,46
+Colombia,CO,47
+Costa Rica,CR,48
+Cuba,CU,49
+Cape Verde,CV,50
+Curacao,CW,51
+Christmas Island,CX,52
+Cyprus,CY,53
+Czech Republic,CZ,54
+Germany,DE,55
+Djibouti,DJ,56
+Denmark,DK,57
+Dominica,DM,58
+Dominican Republic,DO,59
+Algeria,DZ,60
+Ecuador,EC,61
+Estonia,EE,62
+Egypt,EG,63
+Western Sahara,EH,64
+Eritrea,ER,65
+Spain,ES,66
+Ethiopia,ET,67
+Finland,FI,68
+Fiji,FJ,69
+Falkland Islands,FK,70
+Micronesia,FM,71
+Faroe Islands,FO,72
+France,FR,73
+Gabon,GA,74
+United Kingdom,GB,75
+Grenada,GD,76
+Georgia,GE,77
+French Guiana,GF,78
+Guernsey,GG,79
+Ghana,GH,80
+Gibraltar,GI,81
+Greenland,GL,82
+Gambia,GM,83
+Guinea,GN,84
+Guadeloupe,GP,85
+Equatorial Guinea,GQ,86
+Greece,GR,87
+South Georgia And the South Sandwich Islands,GS,88
+Guatemala,GT,89
+Guam,GU,90
+Guinea-Bissau,GW,91
+Guyana,GY,92
+Hong Kong,HK,93
+Honduras,HN,94
+Croatia,HR,95
+Haiti,HT,96
+Hungary,HU,97
+Indonesia,ID,98
+Ireland,IE,99
+Israel,IL,100
+Isle of Man,IM,101
+India,IN,102
+Iraq,IQ,103
+Iran,IR,104
+Iceland,IS,105
+Italy,IT,106
+Jersey,JE,107
+Jamaica,JM,108
+Jordan,JO,109
+Japan,JP,110
+Kenya,KE,111
+Kyrgyzstan,KG,112
+Cambodia,KH,113
+Kiribati,KI,114
+Comoros,KM,115
+Saint Kitts And Nevis,KN,116
+North Korea,KP,117
+South Korea,KR,118
+Kuwait,KW,119
+Cayman Islands,KY,120
+Kazakhstan,KZ,121
+Laos,LA,122
+Lebanon,LB,123
+Saint Lucia,LC,124
+Liechtenstein,LI,125
+Sri Lanka,LK,126
+Liberia,LR,127
+Lesotho,LS,128
+Lithuania,LT,129
+Luxembourg,LU,130
+Latvia,LV,131
+Libya,LY,132
+Morocco,MA,133
+Monaco,MC,134
+Moldova,MD,135
+Montenegro,ME,136
+Saint Martin,MF,137
+Madagascar,MG,138
+Marshall Islands,MH,139
+Macedonia,MK,140
+Mali,ML,141
+Myanmar,MM,142
+Mongolia,MN,143
+Macao,MO,144
+Northern Mariana Islands,MP,145
+Martinique,MQ,146
+Mauritania,MR,147
+Montserrat,MS,148
+Malta,MT,149
+Mauritius,MU,150
+Maldives,MV,151
+Malawi,MW,152
+Mexico,MX,153
+Malaysia,MY,154
+Mozambique,MZ,155
+Namibia,NA,156
+New Caledonia,NC,157
+Niger,NE,158
+Norfolk Island,NF,159
+Nigeria,NG,160
+Nicaragua,NI,161
+Netherlands,NL,162
+Norway,NO,163
+Nepal,NP,164
+Nauru,NR,165
+Niue,NU,166
+New Zealand,NZ,167
+Oman,OM,168
+Panama,PA,169
+Peru,PE,170
+French Polynesia,PF,171
+Papua New Guinea,PG,172
+Philippines,PH,173
+Pakistan,PK,174
+Poland,PL,175
+Saint Pierre And Miquelon,PM,176
+Pitcairn,PI,177
+Puerto Rico,PR,178
+Palestinian Territory,PO,179
+Portugal,PT,180
+Palau,PW,181
+Paraguay,PY,182
+Qatar,QA,183
+Reunion,RE,184
+Romania,RO,185
+Serbia,RS,186
+Russia,RU,187
+Rwanda,RW,188
+Saudi Arabia,SA,189
+Solomon Islands,SB,190
+Seychelles,SC,191
+Sudan,SD,192
+Sweden,SE,193
+Singapore,SG,194
+Saint Helena,SH,195
+Slovenia,SI,196
+Svalbard And Jan Mayen,SV,197
+Slovakia,SK,198
+Sierra Leone,SL,199
+San Marino,SM,200
+Senegal,SN,201
+Somalia,SO,202
+Suriname,SR,203
+South Sudan,SS,204
+Sao Tome And Principe,ST,205
+El Salvador,SV,206
+Sint Maarten,SX,207
+Syria,SY,208
+Swaziland,SZ,209
+Turks And Caicos Islands,TC,210
+Chad,TD,211
+French Southern Territories,FT,212
+Togo,TG,213
+Thailand,TH,214
+Tajikistan,TJ,215
+East Timor,TL,216
+Turkmenistan,TM,217
+Tunisia,TN,218
+Tonga,TO,219
+Turkey,TR,220
+Trinidad And Tobago,TT,221
+Tuvalu,TV,222
+Taiwan,TW,223
+Tanzania,TZ,224
+Ukraine,UA,225
+Uganda,UG,226
+United States,US,227
+Uruguay,UY,228
+Uzbekistan,UZ,229
+Vatican,VA,230
+Saint Vincent And the Grenadines,VC,231
+Venezuela,VE,232
+British Virgin Islands,BV,233
+U.S. Virgin Islands,VI,234
+Vietnam,VN,235
+Vanuatu,VU,236
+Wallis And Futuna,WF,237
+Samoa,WS,238
+Kosovo,XK,239
+Yemen,YE,240
+Mayotte,YT,241
+South Africa,ZA,242
+Zambia,ZM,243
+Zimbabwe,ZW,244

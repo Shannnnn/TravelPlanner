@@ -1053,4 +1053,13 @@ def register():
 def logout():
     logout_user()
     flash('You were logged out.')
+<<<<<<< HEAD
     return redirect(url_for('auth_blueprint.login'))
+=======
+    return redirect(url_for('auth_blueprint.login'))
+
+@auth_blueprint.route('/')
+def initial():
+    return render_template('users/initial.html')
+
+>>>>>>> fc119c29104da64c99b1f6f6bacd55b8eede9158
