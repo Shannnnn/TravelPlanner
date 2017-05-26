@@ -1,6 +1,7 @@
 from flask_wtf import Form
-from wtforms import StringField, DateField, FileField, SelectField, TextAreaField
+from wtforms import StringField, DateField, FileField, SelectField, TextAreaField, ValidationError
 from wtforms.validators import DataRequired
+from model import Country, City
 
 class TripForm(Form):
     trip_name = StringField('Trip Name', validators=[DataRequired()])
@@ -39,6 +40,11 @@ class CountryForm(Form):
     countryname= StringField('Country', validators=[DataRequired()])
     countrycode = StringField('Code', validators=[DataRequired()])
 
+
 class CityForm(Form):
     cityname = StringField('City', validators=[DataRequired()])
     citycode = StringField('Code', validators=[DataRequired()])
+
+    def check(self, field):
+        if City.query.filter_by(cityName=field.data).first():
+            raise ValidationError('City already saved.')
