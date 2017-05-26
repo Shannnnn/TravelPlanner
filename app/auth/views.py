@@ -5,7 +5,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from model import User, Role, Anonymous, Photos, Connection
 from forms import LoginForm, RegisterForm, EditForm, SearchForm, PasswordSettingsForm, UsernameSettingsForm, EmailResetForm, PasswordResetForm
 from app import db, app
-from decorators import required_roles, get_friends, get_friend_requests, allowed_file, deleteTrip_user, img_folder, is_friends_or_pending, is_friends_or_pending2, user_query, determine_pic
+from decorators import required_roles, get_friends, get_friend_requests, allowed_file, deleteTrip_user, img_folder, is_friends_or_pending, is_friends_or_pending2, user_query
 from app.landing.views import landing_blueprint
 from werkzeug import secure_filename
 from PIL import Image
@@ -368,7 +368,8 @@ def user_settings(username):
         else:
             form.newpassword.data = current_user.password
             return render_template('users/settings.html', form=form, user=user)
-    return render_template('users/settings.html', form=form, user=user)
+    return render_template('users/settings.html', form=form, user=user, csID=str(current_user.id),
+                           csPic=str(get_profile(current_user.profile_pic)))
 
 
 @auth_blueprint.route("/users/<int:id>")
@@ -592,40 +593,36 @@ def show_friends():
 
 
 @auth_blueprint.route("/friends/search/", methods=["GET", "POST"])
-@auth_blueprint.route('/friends/search/<int:page>', methods=['GET', 'POST'])
 @login_required
 @required_roles('User')
-def search_users(page=1):
+def search_users():
     """Search for a user and return results."""
 
+    page = 1
     cas = []
     usID = []
     userr = User.query.order_by(desc(User.id)).paginate(page, POSTS_PER_PAGE, False)
-    print userr
+    resAllCount = User.query.filter(User.id != current_user.id).count()
+
+    numm = resAllCount / POSTS_PER_PAGE
+    if resAllCount % POSTS_PER_PAGE != 0:
+        numm = (resAllCount / POSTS_PER_PAGE) + 1;
+
     for user in userr.items:
         cas.append(str(get_profile(user.profile_pic)))
         usID.append(str(user.id))
-
-    ph = Photos.query.filter_by(id=current_user.profile_pic).first()
-    if ph is None:
-        cas = 'default'
-    else:
-        cas = ph.photoName
 
     # Returns users for current user's friend requests
     received_friend_requests, sent_friend_requests = get_friend_requests(session["current_user"]["id"])
 
     # Returns query for current user's friends (not User objects) so add .all() to the end to get list of User objects
     friends = get_friends(session["current_user"]["id"]).all()
-
     return render_template("users/browse_friends.html",
                            received_friend_requests=received_friend_requests,
                            sent_friend_requests=sent_friend_requests,
                            friends=friends, userr=userr, page=page,
-                           users=user_query(request.args.get('q')),
-                           csID=str(current_user.id), csPic=str(cas),
-                           csPic2=cas, usID=usID,
-                           photo=determine_pic(user_query(request.args.get('q')), 1))
+                           numm=numm, users=user_query(request.args.get('q')),
+                           csPic=cas, usID=usID)
 
 
 @auth_blueprint.route('/userprofile/<username>')
