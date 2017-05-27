@@ -47,7 +47,7 @@ class EditForm(Form):
     contact_num = IntegerField('Contact Number', validators=[DataRequired()])
     description = StringField('Description')
     gender = RadioField('Label', choices=[('male','Male'),('female','Female')])
-    file = FileField('Choose Profile Picture', validators=[DataRequired()])
+    file = FileField('Choose Profile Picture')
 
 class PasswordSettingsForm(Form):
     currpassword = PasswordField('Current Password', validators=[DataRequired()])
