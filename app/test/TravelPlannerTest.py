@@ -127,7 +127,7 @@ class TestAdmin(unittest.TestCase):
         db.create_all()
         example_data()
         
-        def tearDown(self):
+    def tearDown(self):
         db.session.remove()
         db.drop_all()
         
