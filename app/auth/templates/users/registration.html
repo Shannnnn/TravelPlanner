@@ -15,6 +15,15 @@ Register
 <link rel="stylesheet" href="{{ url_for('.static', filename='css/pace.css') }}">
 <link rel="stylesheet" href="{{ url_for('.static', filename='css/landing-style.css') }}">
 <link rel="stylesheet" href="{{ url_for('landing_blueprint.static', filename='css/search-box.css') }}">
+ {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message }} alert-dismissible" role="alert">{{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
 {% endblock %}
 
 {% block content %}

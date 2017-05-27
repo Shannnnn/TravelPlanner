@@ -786,44 +786,52 @@ def login():
         if request.method == 'POST':
             if form.validate_on_submit():
                 user = User.query.filter_by(username=request.form['username']).first()
-                if user.role_id == 3:
-                    if user is not None and check_password_hash(user.password, request.form['password']):
-                        login_user(user)
-                        flash('You are now logged in!')
+                if user:
+                    if user.role_id == 3:
+                        if user is not None and check_password_hash(user.password, request.form['password']):
+                            login_user(user)
+                            flash('You are now logged in!')
 
-                    # Get current user's friend requests and number of requests to display in badges
-                    received_friend_requests, sent_friend_requests = get_friend_requests(current_user.id)
-                    num_received_requests = len(received_friend_requests)
-                    num_sent_requests = len(sent_friend_requests)
-                    num_total_requests = num_received_requests + num_sent_requests
+                        # Get current user's friend requests and number of requests to display in badges
+                        received_friend_requests, sent_friend_requests = get_friend_requests(current_user.id)
+                        num_received_requests = len(received_friend_requests)
+                        num_sent_requests = len(sent_friend_requests)
+                        num_total_requests = num_received_requests + num_sent_requests
 
-                    # Use a nested dictionary for session["current_user"] to store more than just user_id
-                    session["current_user"] = {
-                        "first_name": current_user.first_name,
-                        "id": current_user.id,
-                        "num_received_requests": num_received_requests,
-                        "num_sent_requests": num_sent_requests,
-                        "num_total_requests": num_total_requests
-                    }
-                    if user.first_login == True:
-                        user.first_login = False
-                        db.session.add(user)
-                        db.session.commit()
-                        return redirect(url_for('auth_blueprint.edit', username=request.form['username']))
-
-                    return redirect(url_for('auth_blueprint.home', name=request.form['username']))
-                elif user.role_id == 1:
-                    if user is not None and check_password_hash(user.password, request.form['password']):
-                        login_user(user)
-                        flash('You are now logged in!')
-                    return redirect(url_for('auth_blueprint.addash', name=request.form['username']))
+                        # Use a nested dictionary for session["current_user"] to store more than just user_id
+                        session["current_user"] = {
+                            "first_name": current_user.first_name,
+                            "id": current_user.id,
+                            "num_received_requests": num_received_requests,
+                            "num_sent_requests": num_sent_requests,
+                            "num_total_requests": num_total_requests
+                        }
+                        if user.first_login == True:
+                            user.first_login = False
+                            db.session.add(user)
+                            db.session.commit()
+                            flash('You are now logged in!')
+                            return redirect(url_for('auth_blueprint.edit', username=request.form['username']))
+                        flash('You are now Logged in!')
+                        return redirect(url_for('auth_blueprint.home', name=request.form['username']))
+                    elif user.role_id == 1:
+                        if user is not None and check_password_hash(user.password, request.form['password']):
+                            login_user(user)
+                            flash('You are now logged in!')
+                        return redirect(url_for('auth_blueprint.addash', name=request.form['username']))
+                    else:
+                        flash('ERROR! Incorrect login credentials', 'error')
+                        return redirect(url_for('landing_blueprint.index'))
                 else:
-                    return redirect(url_for('landing_blueprint.index'))
+                    flash('user not found!')
+                    return render_template('users/signin.html', form=form)
             else:
                 error = 'Invalid username or password'
+                flash('ERROR! Incorrect login credentials', 'error')
                 return render_template('users/signin.html', form=form, error=error)
         else:
             error = 'Invalid username or password'
+        flash('Please log in!', 'error')
         return render_template('users/signin.html', form=form, error=error)
 
 
@@ -832,6 +840,7 @@ def register():
     form = RegisterForm()
     Role.insert_roles()
     if current_user.is_active():
+        flash('Continue')
         return redirect(url_for('landing_blueprint.index'))
     else:
         if form.validate_on_submit():
@@ -849,8 +858,9 @@ def register():
                 "num_total_requests": 0
             }
 
-            flash('Log In')
+            flash('NNow you can Log In')
             return redirect(url_for('auth_blueprint.login'))
+        flash('Register!')
         return render_template('users/registration.html', form=form)
 
 
