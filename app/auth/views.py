@@ -296,8 +296,8 @@ def sortmytrips():
 @auth_blueprint.route('/admin/trips/featured')
 @login_required
 @required_roles('Admin')
-def sortmytrips():
-    result = Trips.query.order_by(Trips.tripID).filter_by(Trips.isFiltered == '1').paginate(1, TRIPS_PER_PAGE, False)
+def featuredtrips():
+    result = Trips.query.order_by(Trips.tripID).filter_by(Trips.featuredTrip == '1').paginate(1, TRIPS_PER_PAGE, False)
     return render_template('admin/trips.html', result=result, numm=pageFormula(len(result), TRIPS_PER_PAGE))
 
 @auth_blueprint.route('/admin/trips/add', methods=['GET', 'POST'])
@@ -306,30 +306,30 @@ def sortmytrips():
 def addtrip():
     error = None
     tripForm = TripForm()
-    tripForm.trip_country.choices = [(a.countryName, a.countryName) for a in Country.query]
-    tripForm.trip_city.choices = [(a.cityName, a.cityName) for a in City.query]
+    tripForm.trip_country.choices = [(a.countryName, a.countryName) for a in Country.query.all()]
+    tripForm.trip_city.choices = [(a.cityName, a.cityName) for a in City.query.all()]
     if request.method == 'POST':
         if tripForm.validate_on_submit():
-            now_loc = img_folder + str(current_user.id)
-            # if directory is not yet created this function will create it
-            if os.path.isdir(now_loc) == False:
+            now_loc = img_folder+str(current_user.id)
+            #if directory is not yet created this function will create it
+            if os.path.isdir(now_loc)==False:
                 os.makedirs(now_loc)
 
             if tripForm.file.data and allowed_file(tripForm.file.data.filename):
                 filename = secure_filename(tripForm.file.data.filename)
-                tripForm.file.data.save(os.path.join(now_loc + '/', filename))
-                uploadFolder = now_loc + '/'
+                tripForm.file.data.save(os.path.join(now_loc+'/', filename))
+                uploadFolder = now_loc+'/'
 
-                # the renaming process of the image
-                nameNow = str(int(time.time())) + '.' + str(os.path.splitext(filename)[1][1:])
+                #the renaming process of the image
+                nameNow = str(int(time.time()))+'.'+str(os.path.splitext(filename)[1][1:])
 
-                # saving the changes
-                os.rename(uploadFolder + filename, uploadFolder + nameNow)
+                #saving the changes
+                os.rename(uploadFolder+filename, uploadFolder+nameNow)
 
-                # this is the compressor part, this will optimize the image
-                # and will decrease its file size but not losing that much quality
-                img = Image.open(open(str(uploadFolder + nameNow), 'rb'))
-                img.save(str(uploadFolder + nameNow), quality=90, optimize=True)
+                #this is the compressor part, this will optimize the image
+                #and will decrease its file size but not losing that much quality
+                img = Image.open(open(str(uploadFolder+nameNow), 'rb'))
+                img.save(str(uploadFolder+nameNow), quality=90, optimize=True)
 
             tripform = Trips(tripName=tripForm.trip_name.data,
                              tripDateFrom=tripForm.trip_date_from.data,
@@ -339,18 +339,20 @@ def addtrip():
                              tripCity=tripForm.trip_city.data,
                              status=0,
                              visibility=tripForm.trip_visibility.data,
-                             img_thumbnail=nameNow)
+                             img_thumbnail=nameNow,
+                             featuredTrip=0)
             db.session.add(tripform)
             db.session.commit()
             return redirect(url_for('auth_blueprint.managetrips'))
 
-        ph = Photos.query.filter_by(id=current_user.profile_pic).first()
-        if ph is None:
-            cas = 'default'
-        else:
-            cas = ph.photoName
 
-        return render_template('/admin/addtrips.html', form=tripForm, error=error, csID=str(current_user.id), csPic=str(cas))
+    ph = Photos.query.filter_by(id=current_user.profile_pic).first()
+    if ph is None:
+        cas = 'default'
+    else:
+        cas = ph.photoName
+
+    return render_template('/admin/addtrips.html', form=tripForm, error=error, csID=str(current_user.id), csPic=str(cas))
 
 # delete
 @auth_blueprint.route('/admin/trips/remove/<tripName>', methods=['GET', 'POST'])
@@ -372,8 +374,8 @@ def removetrips(tripName):
 def editTrips(tripName):
     tripname = Trips.query.filter_by(tripName=tripName).first()
     form = EditTripForm()
-    form.trip_country.choices = [(a.countryName, a.countryName) for a in Country.query]
-    form.trip_city.choices = [(a.cityName, a.cityName) for a in City.query]
+    form.trip_country.choices = [(a.countryName, a.countryName) for a in Country.query.all()]
+    form.trip_city.choices = [(a.cityName, a.cityName) for a in City.query.all()]
     trips = Trips.query.all()
     if request.method == 'POST':
         if form.validate_on_submit():
@@ -383,6 +385,7 @@ def editTrips(tripName):
             tripname.tripCity = form.trip_city.data
             tripname.tripCountry = form.trip_country.data
             tripname.visibility = form.trip_visibility.data
+            tripname.featuredTrip = request.form['featuredTrip']
             db.session.add(tripname)
             db.session.commit()
             return redirect(url_for("auth_blueprint.managetrips"))
@@ -394,6 +397,7 @@ def editTrips(tripName):
         form.trip_city.data = tripname.tripCity
         form.trip_country.data = tripname.tripCountry
         form.trip_visibility.data = tripname.visibility
+        request.form['featuredTrip'] = tripname.featuredTrip
     return render_template('/admin/edittrips.html', form=form, tripname=tripname)
 
 @auth_blueprint.route('/admin/trips/<tripName>/itineraries', methods=['GET'])
@@ -438,30 +442,30 @@ def additineraries(tripName):
 @required_roles('Admin')
 def editItineraries(tripName, itineraryName):
     tripname = Trips.query.filter_by(tripName=tripName).first()
-    itineraryname = Itineraries.query.filter_by(tripID=tripname.tripID, itineraryName=itineraryName).first()
-    itineraries = Itineraries.query.all()
-    form = EditItineraryForm()
-    form.itinerary_location_type.choices = [(a.locationTypeID, a.locationType) for a in itineraryLocationType.query]
+    form = EditTripForm()
+    form.trip_country.choices = [(a.countryName, a.countryName) for a in Country.query.all()]
+    form.trip_city.choices = [(a.cityName, a.cityName) for a in City.query.all()]
+    trips = Trips.query.all()
     if request.method == 'POST':
         if form.validate_on_submit():
-            itineraryname.itineraryName = form.itinerary_name.data
-            itineraryname.itineraryDate = form.itinerary_date.data
-            itineraryname.itineraryDesc = form.itinerary_desc.data
-            itineraryname.itineraryLocation = form.itinerary_location.data
-            itineraryname.locationTypeID = form.itinerary_location_type.data
-            itineraryname.itineraryTime = form.itinerary_time.data
-            db.session.add(itineraryname)
+            tripname.tripName = form.trip_name.data
+            tripname.tripDateFrom = form.trip_date_from.data
+            tripname.tripDateTo = form.trip_date_to.data
+            tripname.tripCity = form.trip_city.data
+            tripname.tripCountry = form.trip_country.data
+            tripname.visibility = form.trip_visibility.data
+            db.session.add(tripname)
             db.session.commit()
-            return redirect(url_for("auth_blueprint.itineraries", tripName=tripName))
-        return render_template('/admin/itineraries.html', trip=tripname, itineraries=itineraries)
+            return redirect(url_for("trip_blueprint.trips"))
+        return render_template('/admin/managetrips.html', trips=trips)
     else:
-        form.itinerary_name.data = itineraryname.itineraryName
-        form.itinerary_date.data = itineraryname.itineraryDate
-        form.itinerary_desc.data = itineraryname.itineraryDesc
-        form.itinerary_location_type.data = itineraryname.locationTypeID
-        form.itinerary_location.data = itineraryname.itineraryLocation
-        form.itinerary_time.data = itineraryname.itineraryTime
-    return render_template('/admin/edititinerary.html', form=form, tripname=tripname)
+        form.trip_name.data = tripname.tripName
+        form.trip_date_from.data = tripname.tripDateFrom
+        form.trip_date_to.data = tripname.tripDateTo
+        form.trip_city.data = tripname.tripCity
+        form.trip_country.data = tripname.tripCountry
+        form.trip_visibility.data = tripname.visibility
+    return render_template('/admin/edittrip.html', form=form, tripname=tripname)
 
 @auth_blueprint.route('/admin/trips/location')
 @login_required
