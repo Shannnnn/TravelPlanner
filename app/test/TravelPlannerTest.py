@@ -3,7 +3,7 @@ from app import app
 import unittest
 import tempfile
 
-class TestTravePlanner(unittest.TestCase):
+class TestTravelPlanner(unittest.TestCase):
     def setUp(self):
         self.db_fd, app.config['DATABASE'] = tempfile.mkstemp()
         app.config['TESTING'] = True
@@ -63,7 +63,57 @@ class TestTravePlanner(unittest.TestCase):
         response = self.login('userexpress', 'itsawesome')
         self.assertIn(b'ERROR! Incorrect login credentials', response.data)
 
+        
+class FlaskTestsLoggedIn(unittest.TestCase):
+    """Flask tests with user logged into session."""
 
+    def setUp(self):
+        """Stuff to do before every test."""
+
+        app.config['TESTING'] = True
+        app.config['DEBUG'] = False
+        app.config['WTF_CSRF_ENABLED'] = False
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:databaseadmin@127.0.0.1:5432/testdb'
+        self.app = app.test_client()
+
+        db.create_all()
+        example_data()
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess["current_user"] = {
+                    "first_name": "John",
+                    "user_id": 1,
+                    "num_received_requests": 2,
+                    "num_sent_requests": 1,
+                    "num_total_requests": 3
+                }
+
+    def tearDown(self):
+        """Do at end of every test."""
+
+        db.session.close()
+        db.drop_all()
+
+    def test_user_profile(self):
+        """Test user profile page."""
+
+        result = self.client.get("/users/1")
+        self.assertEqual(result.status_code, 200)
+        self.assertIn("John", result.data)
+
+    def test_friends(self):
+        """Test friends page."""
+
+        result = self.client.get("/friends")
+        self.assertIn("My Friends", result.data)
+
+    def test_friends_search(self):
+        """Test friends search results page."""
+
+        result = self.client.get("/friends/search",
+                                 data={"user_input": "John"})
+        self.assertIn("John Test", result.data)
 
 if __name__ == '__main__':
     unittest.main()
