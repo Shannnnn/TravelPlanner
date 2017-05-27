@@ -25,7 +25,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'auth_blueprint.login'
 login_manager.anonymous_user = Anonymous
 
-POSTS_PER_PAGE = 9
+POSTS_PER_PAGE = 6
 
 
 # to get the user profile pictures easily
@@ -396,7 +396,7 @@ def users(id):
     }
 
     user = db.session.query(User).filter(User.id == id).one()
-    trips = Trips.query.filter_by(userID=current_user.id)
+    trips = Trips.query.filter_by(userID=user.id)
 
     total_friends = len(get_friends(user.id).all())
 
@@ -408,7 +408,7 @@ def users(id):
     friends2, pending_request2 = is_friends_or_pending2(user_a_id, user_b_id)
 
     friends = get_friends(user.id).all()
-    photos = Photos.query.filter_by(userID=current_user.id).all()
+    photos = Photos.query.filter_by(userID=user.id).all()
 
     return render_template("users/user.html",
                            user=user,
@@ -539,17 +539,44 @@ def unfriend(id):
         print "User ID %s and User ID %s are not friends." % (user_a_id, user_b_id)
         return redirect(url_for('auth_blueprint.users', id=user.id))
 
+@auth_blueprint.route('/paginateUserFriends')
+def paginateUserFriends():
+    firstname, lastname, address, city, cas, usID = ([] for i in range(6))
+    page_string = request.args.get('page')
+
+    # again assigning query objects to different list to enable jsonify function to return the results
+    users = User.query.filter(User.id!=current_user.id).paginate(int(page_string), POSTS_PER_PAGE, False)
+    for user in users.items:
+        firstname.append(user.first_name)
+        lastname.append(user.last_name)
+        address.append(user.address)
+        city.append(user.city)
+        cas.append(str(get_profile(user.profile_pic)))
+        usID.append(str(user.id))
+
+    return jsonify(fname=firstname,
+                   lname=lastname,
+                   addr=address,
+                   ct=city,
+                   cas=cas,
+                   id=usID,
+                   size=len(usID))
 
 @auth_blueprint.route('/friends')
-@auth_blueprint.route('/friends/<int:page>', methods=['GET', 'POST'])
+@auth_blueprint.route('/friends/')
 @login_required
 @required_roles('User')
-def show_friends(page=1):
+def show_friends():
     """Show friend requests and list of all friends"""
     cas = []
     usID = []
-    users = User.query.order_by(desc(User.id)).paginate(page, POSTS_PER_PAGE, False)
-    print users
+    users = User.query.filter(User.id!=current_user.id).paginate(1, POSTS_PER_PAGE, False)
+    resAllCount = User.query.filter(User.id!=current_user.id).count()
+
+    numm=resAllCount/POSTS_PER_PAGE
+    if resAllCount%POSTS_PER_PAGE!=0:
+        numm=(resAllCount/POSTS_PER_PAGE)+1;
+
     for user in users.items:
         cas.append(str(get_profile(user.profile_pic)))
         usID.append(str(user.id))
@@ -565,7 +592,7 @@ def show_friends(page=1):
                            sent_friend_requests=sent_friend_requests,
                            friends=friends,
                            users=users,
-                           page=page, csPic=cas, usID=usID)
+                           numm=numm, csPic=cas, usID=usID)
 
 
 @auth_blueprint.route("/friends/search/", methods=["GET", "POST"])

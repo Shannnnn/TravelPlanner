@@ -2,63 +2,17 @@
 
 {% block title %}User: {{ user.username }}{% endblock %}
 
-{% block javascript %}
-  <script type="text/javascript" src="{{ url_for('.static', filename='js/add-friend.js') }}"></script>
-  <script type="text/javascript" src="{{ url_for('.static', filename='js/unfriend-friend.js') }}"></script>
-  <script type="text/javascript" src="{{ url_for('.static', filename='js/accept-friend.js') }}"></script>
-  <script type="text/javascript" src="{{ url_for('.static', filename='js/reject-friend.js') }}"></script>
-  <script type="text/javascript" src="{{ url_for('.static', filename='js/sweetalert.min.js') }}"></script>
-  <script type="text/javascript">
 
-  function modify_profile(pid){
-      $.getJSON('/set_profile', {
-              id : pid,
-            }, function(data) {
-
-            if(data.response=='ok'){
-              alert('Profile Picture changed!');
-              $('#imggg').html("");
-              $('#imggg').append('<img class="img-circle img-responsive" src="/static//images/users/'+data.userid+'/'+data.filename+'" alt="..." style="width:150px;height:150px;">');
-            }
-            else
-              alert('An error occured!');
-
-        });
-        return false;
-}
-    function photo_change(id, filename, pid){
-      $('#exampleModalLong').html("")
-      Stringrespify = '<div class="modal-dialog" role="document" style="width: 1000px; height:500px;">'+
-        '<div class="modal-content">'+
-          '<div class="modal-header">'+
-            '<h5 class="modal-title" id="exampleModalLongTitle">'+filename+'</h5>'+
-          '</div>'+
-          '<div class="modal-body" style="width: 1000px; height: 700px;">'+
-            '<img style="height: 100%; width: 100%; object-fit:contain;" src="/static//images/users/'+id+'/'+filename+'"/>'+
-          '</div>'+
-          '<div class="modal-footer">'+
-            '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>'+
-            '<button type="button" class="btn btn-secondary" onclick="modify_profile('+pid+')">Set as Profile picture</button>'+
-          '</div>'+
-        '</div>'+
-      '</div>';
-
-      $('#exampleModalLong').append(Stringrespify)
-      $('#exampleModalLong').modal('show');
-    }
-
-  </script>
-{% endblock %}
 
 {% block content %}
   <div class="jumbotron top-header" id="user-info" data-userid="{{ user.id }}">
     <div class="container">
       <div class="row">
-        <div class="col-xs-12 col-md-2">
+        <div class="col-xs-12 col-md-2" id="imggg">
           {% if csPic=='default' %}
               <img class="img-circle img-responsive" src="{{current_user.gravatar(size=150)}}" alt="..." style="width:150px;height:150px;">
           {% else %}
-              <img class="img-circle img-responsive" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..." style="width:150px;height:150px;">
+              <img class="img-circle img-responsive" id="tex" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..." style="width:150px;height:150px;">
           {% endif %}
         </div>
         <div class="col-xs-12 col-md-6">
@@ -205,6 +159,8 @@
                 <div class="content">
                     <div class="row">
                         {% if trips %}
+
+                        {% if user.id==current_user.id %}
                         {% for trip in trips %}
                         <div class="col-sm-3 text-center">
                             <div class="container" style="display:inline; width:100%;">
@@ -235,6 +191,37 @@
                         </div>
                         {% endfor %}
                         {% else %}
+                        {% for trip in trips %}
+                        <div class="col-sm-3 text-center">
+                            <div class="container" style="display:inline; width:100%;">
+                                <div class="panel panel-default bootcards-media" style="width:100%;">
+                                    <div class="panel-heading" align="center" style="width: 100%;">
+                                        {{ trip.tripName }}
+                                        <a href="/trips/{{ trip.tripName }}/edit" class="btn btn-primary" style="display: block; margin: 0 auto;" disabled>Edit</a>
+                                    </div>
+                                    <div class="panel-body" style="width: 100%; height: 100%;" align="center">
+                                        <img style="height: 100%; width: 100%; object-fit:contain;" src=""/>
+                                    </div>
+                                    <div class="panel-footer" align="left" style="display: inline-block; width: 100%;">
+                                        <div class="row">
+                                            &nbsp; From: {{ trip.tripDateFrom }}
+                                        </div>
+                                        <div class="row">
+                                            &nbsp; To: {{ trip.tripDateTo }}
+                                            <br>&nbsp; {{ trip.viewsNum }} views
+                                        </div>
+                                        <div class="panel-footer">
+                                            <div class="row" align="left" style="display: inline-block; width: 120%;">
+                                                <a href="/trips/{{ trip.tripName }}/additineraries" class="btn btn-primary" style="display: block; margin: 0 auto; " disabled>Add Itineraries</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        {% else %}
                         <ul class="list-group">
                             <li class="list-group-item">No trips yet.</li>
                         </ul>
@@ -246,5 +233,57 @@
     </div>
   </div><!-- /.container -->
  </div>
+
+  <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+
+</div>
+{% endblock %}
+
+{% block javascript %}
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/add-friend.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/unfriend-friend.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/accept-friend.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/reject-friend.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/sweetalert.min.js') }}"></script>
+  <script type="text/javascript">
+
+  function modify_profile(pid){
+      $.getJSON('/set_profile', {
+              id : pid,
+            }, function(data) {
+
+            if(data.response=='ok'){
+              alert('Profile Picture changed!');
+              $('#imggg').html("");
+              $('#imggg').append('<img class="img-circle img-responsive" src="/static//images/users/'+data.userid+'/'+data.filename+'" alt="..." style="width:150px;height:150px;">');
+            }
+            else
+              alert('An error occured!');
+
+        });
+        return false;
+}
+    function photo_change(id, filename, pid){
+      $('#exampleModalLong').html("")
+      Stringrespify = '<div class="modal-dialog" role="document" style="width: 1000px; height:500px;">'+
+        '<div class="modal-content">'+
+          '<div class="modal-header">'+
+            '<h5 class="modal-title" id="exampleModalLongTitle">'+filename+'</h5>'+
+          '</div>'+
+          '<div class="modal-body" style="width: 1000px; height: 700px;">'+
+            '<img style="height: 100%; width: 100%; object-fit:contain;" src="/static//images/users/'+id+'/'+filename+'"/>'+
+          '</div>'+
+          '<div class="modal-footer">'+
+            '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>'+
+            '<button type="button" class="btn btn-secondary" onclick="modify_profile('+pid+')">Set as Profile picture</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>';
+
+      $('#exampleModalLong').append(Stringrespify)
+      $('#exampleModalLong').modal('show');
+    }
+
+  </script>
 {% endblock %}
 

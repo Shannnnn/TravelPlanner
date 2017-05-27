@@ -30,9 +30,9 @@ def change_val(var1, var2, var3):
     op1 = [var1, var2, var3]
 
 
-# returns the value of op1 for server run
+# returns the value of op1 per server run
 def ret_op1():
-    return ret_op1
+    return op1
 
 
 # this is basically all titles what will bbe displayed in the trip-plans template
