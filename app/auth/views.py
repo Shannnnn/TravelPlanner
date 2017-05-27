@@ -286,6 +286,20 @@ def managetrips():
     result = Trips.query.order_by(Trips.tripID).paginate(1, TRIPS_PER_PAGE, False)
     return render_template('admin/trips.html', result=result, numm=pageFormula(len(Trips.query.all()), TRIPS_PER_PAGE))
 
+@auth_blueprint.route('/admin/trips/<username>')
+@login_required
+@required_roles('Admin')
+def sortmytrips():
+    result = Trips.query.order_by(Trips.tripID).filter_by(Trips.userID == current_user.username).paginate(1, TRIPS_PER_PAGE, False)
+    return render_template('admin/trips.html', result=result, numm=pageFormula(len(result), TRIPS_PER_PAGE))
+
+@auth_blueprint.route('/admin/trips/featured')
+@login_required
+@required_roles('Admin')
+def sortmytrips():
+    result = Trips.query.order_by(Trips.tripID).filter_by(Trips.isFiltered == '1').paginate(1, TRIPS_PER_PAGE, False)
+    return render_template('admin/trips.html', result=result, numm=pageFormula(len(result), TRIPS_PER_PAGE))
+
 @auth_blueprint.route('/admin/trips/add', methods=['GET', 'POST'])
 @login_required
 @required_roles('Admin')
