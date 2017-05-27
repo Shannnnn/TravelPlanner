@@ -74,7 +74,7 @@ class FlaskTestsLoggedIn(unittest.TestCase):
         app.config['DEBUG'] = False
         app.config['WTF_CSRF_ENABLED'] = False
         app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:databaseadmin@127.0.0.1:5432/testdb'
-        self.app = app.test_client()
+        self.client = app.test_client()
 
         db.create_all()
         example_data()
