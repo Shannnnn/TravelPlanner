@@ -54,13 +54,8 @@ class PasswordSettingsForm(Form):
     newpassword = PasswordField('New Password', validators=[DataRequired(), Length(min=6, max=25)])
     confirm = PasswordField('Repeat password', validators=[DataRequired(), EqualTo('newpassword', message='Passwords must match.')])
 
-class UsernameSettingsForm(Form):
-    username = StringField('Username', validators=[Length(min=3, max=25)])
-    currpassword = PasswordField('Current Password', validators=[DataRequired()])
-
-    def validate_username(self, field):
-        if User.query.filter_by(username=field.data).first():
-            raise ValidationError('Username already in use.')
+class TrialForm(Form):
+	trial = StringField('Trial')
 
 class SearchForm(Form):
     search = StringField('',validators=[DataRequired()])

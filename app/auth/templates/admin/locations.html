@@ -1,0 +1,143 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>{{ title }}</title>
+
+    <!-- Common plugins -->
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/simple-line-icons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/pace.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/landing-style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/help.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('.static', filename='js/sidebar.js') }}">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>
+</head>
+<body class="float-landing" data-spy="scroll" data-offset="70" data-taget=".navbar-default">
+        <!-- Static navbar -->
+        <nav class="navbar navbar-inverse sidebar" role="navigation">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-sidebar-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/main">TravelPlanner</a>
+                </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-sidebar-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#">Dashboard<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-home"></span></a></li>
+                        <li ><a href="/admin/users">Users<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-user"></span></a></li>
+                        <li class="dropdown">
+                            <a href="Trips" class="dropdown-toggle" data-toggle="dropdown">Trips <span class="caret"></span><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-plane"></span></a>
+                            <ul class="dropdown-menu forAnimate" role="menu">
+                                <li><a href="/admin/trips/{{current_user.username}}">My Trips</a></li>
+				                <li><a href="/admin/trips/featured">Featured Trips</a></li>
+				                <li><a href="/admin/trips">All Trips</a></li>
+                            </ul>
+                        </li>
+                        <li ><a href="/admin/locations">Location<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-map-marker"></span></a></li>
+                        <li><a href="/admin/settings/{{ current_user.username }}">Settings<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-cog"></span></a></li>
+                        <li ><a href="#">Notifications<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-envelope"></span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav  smooth-scroll navbar-right">
+                        <li><a href="/admin">Admin Dashboard<span class="badge">{{ users|count }}</span></a></li>
+                        <li><a href="/admin/users">Users</a></li>
+                        <li><a href="/admin/trips">Trip Plans</a></li>
+                        <li class="active"><a href="/admin/trips/location">Location</a></li>
+                        <li><a href="/admin/settings/{{current_user.username}}">Settings</a></li>
+                        <li class="nav-button"><a href="/main">View Site</a></li>
+                        <li class="nav-button"><a href="/logout">Log out</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <section id="features" class="features-section">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-8 col-sm-offset-2 text-center">
+                        <div class="card">
+                            <form action="" method="POST" name="list">
+                                <a href="/admin/trips/location/new" class="btn btn-info pull-left">Add Location</a>
+                                <table id="mytable" class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2">Action</th>
+                                            <th>Country</th>
+                                            <th>Code</th>
+                                            <th style="text-align: center">Cities</th>
+                                        </tr>
+                                    </thead>
+                                    {% for country in country %}
+                                    <tbody>
+                                        <tr>
+                                            <td><a href="/admin/trips/location/edit/{{ country.countryID }}" class="btn btn-success btn-xs" style="text-align: center"><span class="glyphicon glyphicon-pencil"></span></a></td>
+                                            <td><a href="" class="btn btn-danger btn-xs" style="text-align: center"><span class="glyphicon glyphicon-trash"></span></a></td>
+                                            <td>{{country.countryName}}</td>
+                                            <td>{{country.countryCode}}</td>
+                                            <td style="text-align: center"><a href="/admin/trips/city" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus"></span></a></td>
+                                        </tr>
+                                    </tbody>
+                                    {% endfor %}
+                                </table>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="container text-center">
+            <nav class="navbar navbar-default navbar-fixed-bottom">
+                <ul class="pagination" style="alignment: center">
+                    <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+                    <li class="active"><a href="#">1</a></li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li><a href="#">4</a></li>
+                    <li><a href="#">5</a></li>
+                    <li><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+                </ul>
+            </nav>
+        </div>
+
+    <!--Common plugins-->
+        <script type="text/javascript" src="{{ url_for('.static', filename='js/jquery.min.js') }}"></script>
+
+        <script type="text/javascript" src="{{ url_for('.static', filename='js/bootstrap.min.js') }}"></script>
+
+        <script type="text/javascript" src="{{ url_for('.static', filename='js/help.js') }}"></script>
+
+        <script type="text/javascript" src="{{ url_for('.static', filename='js/sweetalert.min.js') }}"></script>
+
+        <script type="text/javascript" src="{{ url_for('.static', filename='js/pace.min.js') }}"></script>
+
+        <script type="text/javascript" src="{{ url_for('.static', filename='js/landing.custom.js') }}"></script>
+
+        <script type="text/javascript" src="{{ url_for('.static', filename='js/maintainscroll.jquery.min.js') }}"></script>
+</body>
+</html>

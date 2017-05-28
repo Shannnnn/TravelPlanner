@@ -45,6 +45,3 @@ app.register_blueprint(landing_blueprint)
 db.create_all()
 
 app.debug = True
-
-
-
