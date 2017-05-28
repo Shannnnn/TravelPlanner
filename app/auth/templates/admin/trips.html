@@ -115,7 +115,7 @@
                                             <div class="row" align="center" style="display: inline-block; width: 120%;">
                                                 <a href="/admin/trips/{{ trip.tripName }}/itineraries" class="btn btn-primary" style="display: inline-block; width: 30%;"><span class="fa fa-bars"></span></a>
                                                 <a href="/admin/trips/edit/{{trip.tripName}}" class="btn btn-success" style="display: inline-block; width: 30%;"><span class="fa fa-pencil"></span></a>
-                                                <a class="btn btn-danger" href="" style="display: inline-block; width: 30%;"><span class="fa fa-trash"></span></a>
+                                                <a class="btn btn-danger btn-xs confirmation" href="/admin/trips/remove/{{ trip.tripName }}" style="display: inline-block; width: 30%;"><span class="fa fa-trash"></span></a>
                                             </div>
                                         </div>
                                     </div>
@@ -144,7 +144,15 @@
             </nav>
         </div>
 
-
+        <script type="text/javascript">
+            var elems = document.getElementsByClassName('confirmation');
+            var confirmIt = function (e) {
+                if (!confirm('Are you sure?')) e.preventDefault();
+            };
+            for (var i = 0, l = elems.length; i < l; i++) {
+                elems[i].addEventListener('click', confirmIt, false);
+            }
+        </script>
 
     <!--Common plugins-->
         <script type="text/javascript" src="{{ url_for('.static', filename='js/jquery.min.js') }}"></script>

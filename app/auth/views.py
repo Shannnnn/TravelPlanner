@@ -10,7 +10,7 @@ from app.landing.views import landing_blueprint
 from werkzeug import secure_filename
 from PIL import Image
 from app.trips.model import Trips, Itineraries, Country, City, itineraryLocationType
-from app.trips.forms import EditTripForm, EditItineraryForm, TripForm, CountryForm, CityForm, ItineraryForm
+from app.trips.forms import EditTripForm, EditItineraryForm, TripForm, CountryForm, CityForm, ItineraryForm, AdminEditTripForm
 import datetime
 import time
 from sqlalchemy import func, desc
@@ -166,9 +166,10 @@ def addusers():
                         role_id = '3')
             db.session.add(user)
             db.session.commit()
-            result = User.query.order_by(User.id)
             flash("Your changes have been saved.")
-            return render_template('admin/users.html', result=result)
+            result = User.query.order_by(User.id).paginate(1, POSTS_PER_PAGE, False)
+            return render_template('admin/users.html', result=result, stry=0,
+                           numm=pageFormula(User.query.order_by(User.id).count(), POSTS_PER_PAGE))
     return render_template('admin/createusers.html', form=form)
 
 # update
@@ -223,8 +224,9 @@ def editusers(username):
             cas = ph.photoName
 
         flash("Your changes have been saved.")
-        result = User.query.all()
-        return render_template('admin/users.html', result=result, user=user, csID=str(user.id), csPic=str(cas))
+        result = User.query.order_by(User.id).paginate(1, POSTS_PER_PAGE, False)
+        return render_template('admin/users.html', result=result, stry=0,
+                               numm=pageFormula(User.query.order_by(User.id).count(), POSTS_PER_PAGE))
     else:
         form.first_name.data = user.first_name
         form.last_name.data = user.last_name
@@ -250,14 +252,15 @@ def editusers(username):
 @required_roles('Admin')
 def deleteusers(username):
     user = User.query.filter_by(username=username).first()
-    photo = Photos.query.filter_by(userID = user.id)
+    photo = Photos.query.filter_by(userID = user.id).delete()
     deleteTrip_user(user.id)
     #if user.profile_pic != 'default':
     #    os.remove(img_folder + str(user.profile_pic))
-    db.session.delete(user, photo)
+    db.session.delete(user)
     db.session.commit()
-    result = User.query.all()
-    return render_template('admin/users.html', result=result)
+    result = User.query.order_by(User.id).paginate(1, POSTS_PER_PAGE, False)
+    return render_template('admin/users.html', result=result, stry=0,
+                           numm=pageFormula(User.query.order_by(User.id).count(), POSTS_PER_PAGE))
 
 # TRIPS --> read
 @auth_blueprint.route('/admin/paginate/trips')
@@ -328,7 +331,9 @@ def addtrip():
                              featuredTrip=0)
             db.session.add(tripform)
             db.session.commit()
-            return redirect(url_for('auth_blueprint.managetrips'))
+            result = Trips.query.order_by(Trips.tripID).paginate(1, TRIPS_PER_PAGE, False)
+            return render_template('admin/trips.html', result=result,
+                                   numm=pageFormula(len(Trips.query.all()), TRIPS_PER_PAGE))
 
 
     ph = Photos.query.filter_by(id=current_user.profile_pic).first()
@@ -345,12 +350,12 @@ def addtrip():
 @required_roles('Admin')
 def removetrips(tripName):
     trips = Trips.query.filter_by(tripName=tripName).first()
-    itineraries = Itineraries.query.filter_by(tripID = trips.tripID)
+    itineraries = Itineraries.query.filter_by(tripID = trips.tripID).delete()
     os.remove('app/trips/static/images/trips/'+trips.img_thumbnail)
-    db.session.delete(trips, itineraries)
+    db.session.delete(trips)
     db.session.commit()
-    result = Trips.query.all()
-    return render_template('/admin/trips.html', result=result)
+    result = Trips.query.order_by(Trips.tripID).paginate(1, TRIPS_PER_PAGE, False)
+    return render_template('admin/trips.html', result=result, numm=pageFormula(len(Trips.query.all()), TRIPS_PER_PAGE))
 
 # update
 @auth_blueprint.route('/admin/trips/edit/<tripName>', methods=['GET', 'POST'])
@@ -358,7 +363,7 @@ def removetrips(tripName):
 @required_roles('Admin')
 def editTrips(tripName):
     tripname = Trips.query.filter_by(tripName=tripName).first()
-    form = EditTripForm()
+    form = AdminEditTripForm()
     form.trip_country.choices = [(a.countryName, a.countryName) for a in Country.query.all()]
     form.trip_city.choices = [(a.cityName, a.cityName) for a in City.query.all()]
     trips = Trips.query.all()
@@ -373,8 +378,9 @@ def editTrips(tripName):
             tripname.featuredTrip = form.isFeatured.data
             db.session.add(tripname)
             db.session.commit()
-            return redirect(url_for("auth_blueprint.managetrips"))
-        return render_template('/admin/trips.html', trips=trips)
+            result = Trips.query.order_by(Trips.tripID).paginate(1, TRIPS_PER_PAGE, False)
+            return render_template('admin/trips.html', result=result,
+                                   numm=pageFormula(len(Trips.query.all()), TRIPS_PER_PAGE))
     else:
         form.trip_name.data = tripname.tripName
         form.trip_date_from.data = tripname.tripDateFrom
@@ -392,7 +398,7 @@ def itineraries(tripName):
     tripid = Trips.query.filter_by(tripName=tripName).first()
     itinerary = Itineraries.query.filter_by(tripID=tripid.tripID)
     trip = Trips.query.filter_by(userID=current_user.id, tripName=tripName).first()
-    return render_template('/admin/itineraries.html', trip=trip, itineraries=itinerary)
+    return render_template('/admin/itineraries.html', trip=trip, itineraries=itinerary, tripName=tripName)
 
 @auth_blueprint.route('/admin/trips/<tripName>/additineraries', methods=['GET', 'POST'])
 @login_required
@@ -480,8 +486,8 @@ def addlocations():
 @required_roles('Admin')
 def removelocations(countryID):
     country = Country.query.filter_by(countryID=countryID).first()
-    city = City.query.filter_by(countryName= country.countryName)
-    db.session.delete(city, country)
+    city = City.query.filter_by(countryName= country.countryName).delete()
+    db.session.delete(country)
     db.session.commit()
     countries = Country.query.all()
     cities = City.query.all()

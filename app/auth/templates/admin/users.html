@@ -109,7 +109,7 @@
                                             {% if r.role_id==1%}
                                             <td style="text-align: center"><a class="btn btn-danger btn-xs" style="text-align: center" disabled readonly><span class="glyphicon glyphicon-trash"></span></a></td>
                                             {% else %}
-                                            <td style="text-align: center"><a href="/admin/users/remove/{{r.username}}" class="btn btn-danger btn-xs" style="text-align: center"><span class="glyphicon glyphicon-trash"></span></a></td>
+                                            <td style="text-align: center"><a href="/admin/users/remove/{{r.username}}" class="btn btn-danger btn-xs confirmation" style="text-align: center"><span class="glyphicon glyphicon-trash"></span></a></td>
                                             {% endif %}
                                             <td>{{r.id}}</td>
                                             <td>{{r.username}}</td>
@@ -147,6 +147,16 @@
                 </ul>
             </nav>
         </div>
+
+        <script type="text/javascript">
+            var elems = document.getElementsByClassName('confirmation');
+            var confirmIt = function (e) {
+                if (!confirm('Are you sure?')) e.preventDefault();
+            };
+            for (var i = 0, l = elems.length; i < l; i++) {
+                elems[i].addEventListener('click', confirmIt, false);
+            }
+        </script>
 
     <!--Common plugins-->
         <script type="text/javascript" src="{{ url_for('.static', filename='js/jquery.min.js') }}"></script>
