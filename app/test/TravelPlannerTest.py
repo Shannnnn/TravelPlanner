@@ -1,9 +1,9 @@
 import os
-from app import app
+from app import app, db
 import unittest
 import tempfile
 
-class TestTravePlanner(unittest.TestCase):
+class TestTravelPlanner(unittest.TestCase):
     def setUp(self):
         self.db_fd, app.config['DATABASE'] = tempfile.mkstemp()
         app.config['TESTING'] = True
@@ -60,7 +60,7 @@ class TestTravePlanner(unittest.TestCase):
     def test_login_without_registration(self):
         self.app.get('/login', follow_redirects=True)
         response = self.login('userexpress', 'itsawesome')
-        self.assertIn(b'ERROR! Incorrect login credentials', response.data)
+        self.assertIn(b'user not found', response.data)
 
     def test_login_logout_with_registration(self):
         self.app.get('/register', follow_redirects=True)
@@ -79,6 +79,133 @@ class TestTravePlanner(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Something went wrong!', response.data)
 
+    def test_login_without_registering(self):
+        response = self.login('userexpress', 'itsawesome')
+        self.assertIn(b'user not found', response.data)
+
+        
+class FlaskTestsLoggedIn(unittest.TestCase):
+    """Flask tests with user logged into session."""
+
+    def setUp(self):
+        """Stuff to do before every test."""
+
+        app.config['TESTING'] = True
+        app.config['DEBUG'] = False
+        app.config['WTF_CSRF_ENABLED'] = False
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:databaseadmin@127.0.0.1:5432/testdb'
+        self.client = app.test_client()
+
+        db.create_all()
+        example_data()
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess["current_user"] = {
+                    "first_name": "John",
+                    "user_id": 1,
+                    "num_received_requests": 2,
+                    "num_sent_requests": 1,
+                    "num_total_requests": 3
+                }
+
+    def tearDown(self):
+        """Do at end of every test."""
+
+        db.session.close()
+        db.drop_all()
+
+    def test_user_profile(self):
+        """Test user profile page."""
+
+        result = self.client.get("/users/1")
+        self.assertEqual(result.status_code, 200)
+        self.assertIn("John", result.data)
+
+    def test_friends(self):
+        """Test friends page."""
+
+        result = self.client.get("/friends")
+        self.assertIn("My Friends", result.data)
+
+    def test_friends_search(self):
+        """Test friends search results page."""
+
+        result = self.client.get("/friends/search",
+                                 data={"user_input": "John"})
+        self.assertIn("John Test", result.data)
+        
+class TestAdmin(unittest.TestCase):
+
+    def setUp(self):
+        app.config['TESTING'] = True
+        app.config['DEBUG'] = False
+        app.config['WTF_CSRF_ENABLED'] = False
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:databaseadmine@127.0.0.1:5432/testdb'
+        self.client = app.test_client()
+        
+        db.create_all()
+        example_data()
+        
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+        
+    def addusers(self, username, email, password, role_id):
+        return self.app.post(
+            '/admin/users/create',
+            data=dict(username=username, email=email, password=password, role_id=role_id),
+            follow_redirects=True
+        )
+        
+    def editusers(self, username, email, password, role_id):
+        return self.app.post(
+            '/admin/users/edit/<username>',
+            data=dict(),
+            follow_redirects=True
+        )   
+    
+    def testViewAdmin(self):
+        response = self.app.get('/admin')
+        self.assertEqual(response.status_code, 200)
+
+    def testViewUsers(self):
+        response = self.app.get('/admin/users')
+        self.assertEqual(response.status_code, 200)
+        
+    def testAddUser(self):
+        response = self.addusers('user', 'user@gmail.com', 'user123', '3')
+        self.assertEqual(response.status_code, 200)
+
+    def testEditUsers(self):
+        response = self.editusers('userfirst', 'userlast', 'tibanga', 'iligan', 'philippines', '01/01/1997', '090909999', 'helloo', 'Female')
+        self.assertEqual(response.status_code, 200)
+    
+    def testViewLocations(self):
+        response = self.app.get('/admin/trips/locations')
+        self.assertEqual(response.status_code, 200)
+        
+    def addlocations(self, countryName, countryCode):
+        return self.app.post(
+            '/admin/trips/location/new',
+            data=dict(countryName=countryName, countryCode=countryCode),
+            follow_redirects=True
+        )    
+    
+    def testAddLocations(self):
+        response = self.addlocations('Baker Street', '221')
+        self.assertEqual(response.status_code, 200)
+        
+    def addcities(self, cityName, cityyCode):
+        return self.app.post(
+            '/admin/trips/city/add',
+            data=dict(cityName=cityName, cityCode=cityCode),
+            follow_redirects=True
+        )   
+    
+    def testAddLocations(self):
+        response = self.addlocations('Baker Street', '221')
+        self.assertEqual(response.status_code, 200)
 
 if __name__ == '__main__':
     unittest.main()

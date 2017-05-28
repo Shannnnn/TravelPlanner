@@ -50,11 +50,11 @@
                 <a href="/users/{{ friend.id }}" class="list-group-item" style="width:250px;height:150px;">
                 <div class="media">
                     <div class="media-left">
-                      {% if csPic=='default' %}
-                      <img class="avatar border-gray" src="{{current_user.gravatar(size=90)}}" alt="Image for {{ friend.first_name }}"/>
-                      {% else %}
-                      <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="Image for {{ friend.first_name }}" style="width:100px;height:100px;">
-                      {% endif %}
+                       {% if csPic=='default' %}
+                          <img class="avatar border-gray" src="{{current_user.gravatar(size=90)}}" alt="Image for {{ friend.first_name }}"/>
+                       {% else %}
+                           <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+usID[loop.index-1]+'/'+csPic[loop.index-1]) }}" alt="Image for {{ friend.first_name }}" style="width:90px;height:90px;"/>
+                       {% endif %}
                     </div><!-- /.media-left -->
                     <div class="media-body">
                       <h3 class="media-heading">{{ friend.first_name }} {{ friend.last_name }}</h3>
@@ -84,11 +84,11 @@
               {% for received_friend_request in received_friend_requests %}
                 <div class="col-xs-6 col-sm-2" id="user-profile-pic-sm">
                   <a href="/users/{{ received_friend_request.id }}">
-                    {% if csPic=='default' %}
-                      <img class="img-circle img-responsive" src="{{current_user.gravatar(size=90)}}" alt="Image for {{ received_friend_request.first_name }}"/>
-                    {% else %}
-                      <img class="img-circle img-responsive" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="Image for {{ received_friend_request.first_name }}" style="width:100px;height:100px;">
-                    {% endif %}
+                     {% if csPic=='default' %}
+                        <img class="avatar border-gray" src="{{current_user.gravatar(size=90)}}" alt="Image for {{ received_friend_requests.first_name }}"/>
+                     {% else %}
+                         <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+usID[loop.index-1]+'/'+csPic[loop.index-1]) }}" alt="Image for {{ received_friend_requests.first_name }}" style="width:90px;height:90px;"/>
+                     {% endif %}
                     {{ received_friend_request.first_name }} {{ received_friend_request.last_name }}
                   </a>
                   <br><br>
