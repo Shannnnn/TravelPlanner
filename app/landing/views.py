@@ -30,9 +30,9 @@ def change_val(var1, var2, var3):
     op1 = [var1, var2, var3]
 
 
-# returns the value of op1 for server run
+# returns the value of op1 per server run
 def ret_op1():
-    return ret_op1
+    return op1
 
 
 # this is basically all titles what will bbe displayed in the trip-plans template
@@ -172,7 +172,7 @@ def sendUs():
 # this is the route for the searchbar on top of the page
 @landing_blueprint.route('/siteSearch', methods=['GET', 'POST'])
 def siteSearch():
-    trips, main_count = mainSearch(1, request.args.get('search_1'))
+    trips, main_count = mainSearch(num=1, var=request.args.get('search_1'))
     return render_template('search.html', 
                             title='Search Result', 
                             label=verify(),
@@ -281,12 +281,10 @@ def paginate(index):
 # this route is used for sending mails to the default username for app.config
 @landing_blueprint.route('/sendResponse')
 def sendMail():
-    print 'helo'
     body = "From: %s \n Email: %s \n Message: %s" % (
     request.args.get('name'), request.args.get('email'), request.args.get('body'))
-    send_email('TravelPlanner', app.config['MAIL_USERNAME'], [app.config['MAIL_USERNAME']], body)
+    send_email(subject='TravelPlanner',sender=app.config['MAIL_USERNAME'], recipients=[app.config['MAIL_USERNAME']], text_body=body)
     return jsonify(sent=True)
-
 
 # this is a customized pagination route for viewwing trips by category and its search functions
 @landing_blueprint.route('/exp/<string:linklabel>')

@@ -84,7 +84,7 @@
                         <div class="card">
                             <form action="" method="POST" name="list">
                                 <h3>{{ country.countryName }}</h3>
-                                <a href="/admin/trips/city/add" class="btn btn-info pull-left">Add City</a>
+                                <a href="/admin/trips/{{ country.countryName }}/city/add" class="btn btn-info pull-left">Add City</a>
                                 <table id="mytable" class="table table-hover">
                                     <thead>
                                         <tr>
@@ -97,8 +97,8 @@
                                     {% for city in city %}
                                     <tbody>
                                         <tr>
-                                            <td style="text-align: center"><a href="/admin/trips/city/{{ city.cityID }}/edit" class="btn btn-success btn-xs" style="text-align: center"><span class="glyphicon glyphicon-pencil"></span></a></td>
-                                            <td style="text-align: center"><a href="/admin/trips/city/{{ city.cityID }}/remove" class="btn btn-danger btn-xs" style="text-align: center"><span class="glyphicon glyphicon-trash"></span></a></td>
+                                            <td style="text-align: center"><a href="/admin/trips/{{ country.countryName }}/city/{{ city.cityID }}/edit" class="btn btn-success btn-xs" style="text-align: center"><span class="glyphicon glyphicon-pencil"></span></a></td>
+                                            <td style="text-align: center"><a href="/admin/trips/{{ city.countryName }}/city/{{ city.cityID }}/remove" class="btn btn-danger btn-xs" style="text-align: center"><span class="glyphicon glyphicon-trash"></span></a></td>
                                             <td>{{city.cityID}}</td>
                                             <td>{{city.cityName}}</td>
                                             <td>{{city.cityCode}}</td>

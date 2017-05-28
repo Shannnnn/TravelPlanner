@@ -5,7 +5,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from model import User, Role, Anonymous, Photos, Connection
 from forms import LoginForm, RegisterForm, EditForm, SearchForm, PasswordSettingsForm, EmailResetForm, PasswordResetForm
 from app import db, app
-from decorators import required_roles, get_friends, get_friend_requests, allowed_file, deleteTrip_user, img_folder, is_friends_or_pending, is_friends_or_pending2, user_query, determine_pic
+from decorators import required_roles, get_friends, get_friend_requests, allowed_file, deleteTrip_user, img_folder, is_friends_or_pending, is_friends_or_pending2, user_query
 from app.landing.views import landing_blueprint
 from werkzeug import secure_filename
 from PIL import Image
@@ -38,7 +38,6 @@ TRIPS_PER_PAGE = 12
 
 def filter_user_for_admin(roleid):
     return User.query.filter_by(role_id=roleid)
-
 
 def pageFormula(total, perpage):
     if total % perpage == 0:
@@ -289,7 +288,7 @@ def managetrips():
 @auth_blueprint.route('/admin/trips/<username>')
 @login_required
 @required_roles('Admin')
-def sortmytrips():
+def sortmytrips(username):
     result = Trips.query.order_by(Trips.tripID).filter_by(Trips.userID == current_user.username).paginate(1, TRIPS_PER_PAGE, False)
     return render_template('admin/trips.html', result=result, numm=pageFormula(len(result), TRIPS_PER_PAGE))
 
@@ -442,38 +441,38 @@ def additineraries(tripName):
 @required_roles('Admin')
 def editItineraries(tripName, itineraryName):
     tripname = Trips.query.filter_by(tripName=tripName).first()
-    form = EditTripForm()
-    form.trip_country.choices = [(a.countryName, a.countryName) for a in Country.query.all()]
-    form.trip_city.choices = [(a.cityName, a.cityName) for a in City.query.all()]
-    trips = Trips.query.all()
+    itineraryname = Itineraries.query.filter_by(tripID=tripname.tripID, itineraryName=itineraryName).first()
+    itineraries = Itineraries.query.all()
+    form = EditItineraryForm()
+    form.itinerary_location_type.choices = [(a.locationTypeID, a.locationType) for a in itineraryLocationType.query]
     if request.method == 'POST':
         if form.validate_on_submit():
-            tripname.tripName = form.trip_name.data
-            tripname.tripDateFrom = form.trip_date_from.data
-            tripname.tripDateTo = form.trip_date_to.data
-            tripname.tripCity = form.trip_city.data
-            tripname.tripCountry = form.trip_country.data
-            tripname.visibility = form.trip_visibility.data
-            db.session.add(tripname)
+            itineraryname.itineraryName = form.itinerary_name.data
+            itineraryname.itineraryDate = form.itinerary_date.data
+            itineraryname.itineraryDesc = form.itinerary_desc.data
+            itineraryname.itineraryLocation = form.itinerary_location.data
+            itineraryname.locationTypeID = form.itinerary_location_type.data
+            itineraryname.itineraryTime = form.itinerary_time.data
+            db.session.add(itineraryname)
             db.session.commit()
-            return redirect(url_for("trip_blueprint.trips"))
-        return render_template('/admin/managetrips.html', trips=trips)
+            return redirect(url_for("trip_blueprint.itineraries", tripName=tripName))
+        return render_template('itineraries.html', trip=tripname, itineraries=itineraries)
     else:
-        form.trip_name.data = tripname.tripName
-        form.trip_date_from.data = tripname.tripDateFrom
-        form.trip_date_to.data = tripname.tripDateTo
-        form.trip_city.data = tripname.tripCity
-        form.trip_country.data = tripname.tripCountry
-        form.trip_visibility.data = tripname.visibility
-    return render_template('/admin/edittrip.html', form=form, tripname=tripname)
+        form.itinerary_name.data = itineraryname.itineraryName
+        form.itinerary_date.data = itineraryname.itineraryDate
+        form.itinerary_desc.data = itineraryname.itineraryDesc
+        form.itinerary_location_type.data = itineraryname.locationTypeID
+        form.itinerary_location.data = itineraryname.itineraryLocation
+        form.itinerary_time.data = itineraryname.itineraryTime
+    return render_template('edititineraries.html', form=form, tripname=tripname)
+
 
 @auth_blueprint.route('/admin/trips/location')
 @login_required
 @required_roles('Admin')
 def locations():
     country = Country.query.order_by(Country.countryName)
-    city = City.query.order_by(City.cityName)
-    return render_template('/admin/locations.html', country=country, city=city)
+    return render_template('/admin/locations.html', country=country)
 
 @auth_blueprint.route('/admin/trips/location/new', methods=['GET', 'POST'])
 @login_required
@@ -495,7 +494,7 @@ def addlocations():
 @required_roles('Admin')
 def removelocations(countryID):
     country = Country.query.filter_by(countryID=countryID).first()
-    city = City.query.filter_by(country=countryID)
+    city = City.query.filter_by(countryName= country.countryName)
     db.session.delete(city, country)
     db.session.commit()
     countries = Country.query.all()
@@ -520,12 +519,20 @@ def editlocations(countryID):
     else:
         form.countryname.data = country.countryName
         form.countrycode.data = country.countryCode
-    return render_template('/admin/editlocations.html', form=form, country=country)
+    return render_template('/admin/editlocations.html', form=form, countries=country)
 
-@auth_blueprint.route('/admin/trips/city/add', methods=['POST', 'GET'])
+@auth_blueprint.route('/admin/trips/<countryName>/city')
 @login_required
 @required_roles('Admin')
-def addcities():
+def cities(countryName):
+    city = Country.query.filter_by(countryName=countryName)
+    countries = Country.query.filter_by(countryName = countryName).first()
+    return render_template('/admin/cities.html', city=city, country=countries)
+
+@auth_blueprint.route('/admin/trips/<countryName>/city/add', methods=['POST', 'GET'])
+@login_required
+@required_roles('Admin')
+def addcities(countryName):
     form = CityForm()
     if request.method == 'POST':
         if form.validate_on_submit():
@@ -533,43 +540,42 @@ def addcities():
                           cityCode=form.citycode.data)
             db.session.add(cities)
             db.session.commit()
-            country = Country.query.all()
-            city = City.query.all()
-            return render_template('/admin/locations.html', city=city, country=country)
+            countries = Country.query.filter_by(countryName = countryName)
+            city = City.query.filter_by(countryName=countryName)
+            return render_template('/admin/cities.html', city=city, country=countries)
     else:
-        return render_template('/admin/editcities.html', form=form)
+        return render_template('/admin/addcities.html', form=form, countryName=countryName)
 
-@auth_blueprint.route('/admin/trips/city/<cityID>/edit', methods=['POST', 'GET'])
+@auth_blueprint.route('/admin/trips/<countryName>/city/<cityID>/edit', methods=['POST', 'GET'])
 @login_required
 @required_roles('Admin')
-def editcities(cityID):
+def editcities(cityID, countryName):
     form = CityForm()
-    city = City.query.filter_by(cityID = cityID).first()
+    city = City.query.filter_by(cityID=cityID).first()
     if request.method == 'POST':
         if form.validate_on_submit():
             city.cityName = form.cityname.data
             city.cityCode = form.citycode.data
             db.session.add(city)
             db.session.commit()
-            country = Country.query.all()
-            cities = City.query.all()
-            return render_template('/admin/locations.html', city=cities, country=country)
+            cities = City.query.filter_by(countryName=countryName)
+            countries = Country.query.filter_by(countryName = countryName)
+            return render_template('/admin/cities.html', city=cities, country=countries)
         else:
             form.cityname.data = city.cityName
             form.citycode.data = city.cityCode
             return render_template('/admin/editcities.html', form=form, city=city)
-    return render_template('/admin/editcities.html', form=form)
+    return render_template('/admin/editcities.html', form=form, cityID=cityID, countryName=countryName)
 
-@auth_blueprint.route('/admin/trips/city/<cityID>/remove', methods=['POST', 'GET'])
+@auth_blueprint.route('/admin/trips/<countryName>/city/<cityID>/remove', methods=['POST', 'GET'])
 @login_required
 @required_roles('Admin')
-def removecity(countryID,cityID):
+def removecity(countryName,cityID):
     city= City.query.filter_by(cityID = cityID).first()
     db.session.delete(city)
     db.session.commit()
-    country = Country.query.all()
-    cities = City.query.all()
-    return render_template('/admin/locations.html', city=cities, country=country)
+    cities = City.query.filter_by(countryName=countryName)
+    return render_template('/admin/locations.html', city=cities)
 # END ADMIN <----------
 
 @auth_blueprint.route('/home')
@@ -614,7 +620,8 @@ def user_settings(username):
         else:
             form.newpassword.data = current_user.password
             return render_template('users/settings.html', form=form, user=user)
-    return render_template('users/settings.html', form=form, user=user)
+    return render_template('users/settings.html', form=form, user=user, csID=str(current_user.id),
+                           csPic=str(get_profile(current_user.profile_pic)))
 
 @auth_blueprint.route("/users/<int:id>")
 @login_required
@@ -637,7 +644,7 @@ def users(id):
     }
 
     user = db.session.query(User).filter(User.id == id).one()
-    trips = Trips.query.filter_by(userID=current_user.id)
+    trips = Trips.query.filter_by(userID=user.id)
 
     total_friends = len(get_friends(user.id).all())
 
@@ -649,7 +656,7 @@ def users(id):
     friends2, pending_request2 = is_friends_or_pending2(user_a_id, user_b_id)
 
     friends = get_friends(user.id).all()
-    photos = Photos.query.filter_by(userID=current_user.id).all()
+    photos = Photos.query.filter_by(userID=user.id).all()
 
     return render_template("users/user.html",
                             user=user,
@@ -776,16 +783,44 @@ def unfriend(id):
         print "User ID %s and User ID %s are not friends." % (user_a_id, user_b_id)
         return redirect(url_for('auth_blueprint.users', id=user.id))
 
+@auth_blueprint.route('/paginateUserFriends')
+def paginateUserFriends():
+    firstname, lastname, address, city, cas, usID = ([] for i in range(6))
+    page_string = request.args.get('page')
+
+    # again assigning query objects to different list to enable jsonify function to return the results
+    users = User.query.filter(User.id!=current_user.id).paginate(int(page_string), POSTS_PER_PAGE, False)
+    for user in users.items:
+        firstname.append(user.first_name)
+        lastname.append(user.last_name)
+        address.append(user.address)
+        city.append(user.city)
+        cas.append(str(get_profile(user.profile_pic)))
+        usID.append(str(user.id))
+
+    return jsonify(fname=firstname,
+                   lname=lastname,
+                   addr=address,
+                   ct=city,
+                   cas=cas,
+                   id=usID,
+                   size=len(usID))
+
 @auth_blueprint.route('/friends')
-@auth_blueprint.route('/friends/<int:page>', methods=['GET', 'POST'])
+@auth_blueprint.route('/friends/')
 @login_required
 @required_roles('User')
-def show_friends(page=1):
+def show_friends():
     """Show friend requests and list of all friends"""
     cas = []
     usID = []
-    users = User.query.order_by(desc(User.id)).paginate(page, POSTS_PER_PAGE, False)
-    print users
+    users = User.query.filter(User.id!=current_user.id).paginate(1, POSTS_PER_PAGE, False)
+    resAllCount = User.query.filter(User.id!=current_user.id).count()
+
+    numm=resAllCount/POSTS_PER_PAGE
+    if resAllCount%POSTS_PER_PAGE!=0:
+        numm=(resAllCount/POSTS_PER_PAGE)+1;
+
     for user in users.items:
         cas.append(str(get_profile(user.profile_pic)))
         usID.append(str(user.id))
@@ -802,43 +837,39 @@ def show_friends(page=1):
                            sent_friend_requests=sent_friend_requests,
                            friends=friends,
                            users=users,
-                           page=page, csPic=cas, usID=usID)
+                           numm=numm, csPic=cas, usID=usID)
 
 @auth_blueprint.route("/friends/search/", methods=["GET", "POST"])
-@auth_blueprint.route('/friends/search/<int:page>', methods=['GET', 'POST'])
 @login_required
 @required_roles('User')
-def search_users(page=1):
+def search_users():
     """Search for a user and return results."""
 
+    page = 1
     cas = []
     usID = []
     userr = User.query.order_by(desc(User.id)).paginate(page, POSTS_PER_PAGE, False)
-    print userr
+    resAllCount = User.query.filter(User.id != current_user.id).count()
+
+    numm = resAllCount / POSTS_PER_PAGE
+    if resAllCount % POSTS_PER_PAGE != 0:
+        numm = (resAllCount / POSTS_PER_PAGE) + 1;
+
     for user in userr.items:
         cas.append(str(get_profile(user.profile_pic)))
         usID.append(str(user.id))
-
-    ph = Photos.query.filter_by(id=current_user.profile_pic).first()
-    if ph is None:
-        cas = 'default'
-    else:
-        cas = ph.photoName
 
     # Returns users for current user's friend requests
     received_friend_requests, sent_friend_requests = get_friend_requests(session["current_user"]["id"])
 
     # Returns query for current user's friends (not User objects) so add .all() to the end to get list of User objects
     friends = get_friends(session["current_user"]["id"]).all()
-
     return render_template("users/browse_friends.html",
                            received_friend_requests=received_friend_requests,
                            sent_friend_requests=sent_friend_requests,
                            friends=friends, userr=userr, page=page,
-                           users=user_query(request.args.get('q')),
-                           csID=str(current_user.id), csPic=str(cas),
-                           csPic2=cas, usID=usID,
-                           photo=determine_pic(user_query(request.args.get('q')), 1))
+                           numm=numm, users=user_query(request.args.get('q')),
+                           csPic=cas, usID=usID)
 
 @auth_blueprint.route('/userprofile/<username>')
 @login_required
@@ -967,6 +998,7 @@ def reset():
             send_email('Password Reset', app.config['MAIL_USERNAME'], [str(email)], body)
             flash("Request Sent!")
             return render_template('users/mail_send.html')
+    flash('Something went wrong!')
     return render_template('users/reset.html', form=form)
 
 
@@ -998,44 +1030,52 @@ def login():
         if request.method == 'POST':
             if form.validate_on_submit():
                 user = User.query.filter_by(username=request.form['username']).first()
-                if user.role_id == 3:
-                    if user is not None and check_password_hash(user.password, request.form['password']):
-                        login_user(user)
+                if user:
+                    if user.role_id == 3:
+                        if user is not None and check_password_hash(user.password, request.form['password']):
+                            login_user(user)
+                            flash('You are now logged in!')
+
+                        # Get current user's friend requests and number of requests to display in badges
+                        received_friend_requests, sent_friend_requests = get_friend_requests(current_user.id)
+                        num_received_requests = len(received_friend_requests)
+                        num_sent_requests = len(sent_friend_requests)
+                        num_total_requests = num_received_requests + num_sent_requests
+
+                        # Use a nested dictionary for session["current_user"] to store more than just user_id
+                        session["current_user"] = {
+                            "first_name": current_user.first_name,
+                            "id": current_user.id,
+                            "num_received_requests": num_received_requests,
+                            "num_sent_requests": num_sent_requests,
+                            "num_total_requests": num_total_requests
+                        }
+                        if user.first_login == True:
+                            user.first_login = False
+                            db.session.add(user)
+                            db.session.commit()
+                            flash('You are now logged in!')
+                            return redirect(url_for('auth_blueprint.edit', username=request.form['username']))
                         flash('You are now logged in!')
-
-                    # Get current user's friend requests and number of requests to display in badges
-                    received_friend_requests, sent_friend_requests = get_friend_requests(current_user.id)
-                    num_received_requests = len(received_friend_requests)
-                    num_sent_requests = len(sent_friend_requests)
-                    num_total_requests = num_received_requests + num_sent_requests
-
-                    # Use a nested dictionary for session["current_user"] to store more than just user_id
-                    session["current_user"] = {
-                        "first_name": current_user.first_name,
-                        "id": current_user.id,
-                        "num_received_requests": num_received_requests,
-                        "num_sent_requests": num_sent_requests,
-                        "num_total_requests": num_total_requests
-                    }
-                    if user.first_login == True:
-                        user.first_login = False
-                        db.session.add(user)
-                        db.session.commit()
-                        return redirect(url_for('auth_blueprint.edit', username=request.form['username']))
-
-                    return redirect(url_for('auth_blueprint.home', name=request.form['username']))
-                elif user.role_id == 1:
-                    if user is not None and check_password_hash(user.password, request.form['password']):
-                        login_user(user)
-                        flash('You are now logged in!')
-                    return redirect(url_for('auth_blueprint.addash', name=request.form['username']))
+                        return redirect(url_for('auth_blueprint.home', name=request.form['username']))
+                    elif user.role_id == 1:
+                        if user is not None and check_password_hash(user.password, request.form['password']):
+                            login_user(user)
+                            flash('You are now logged in!')
+                        return redirect(url_for('auth_blueprint.addash', name=request.form['username']))
+                    else:
+                        flash('ERROR! Incorrect login credentials-1', 'error')
+                        return redirect(url_for('landing_blueprint.index'))
                 else:
-                    return redirect(url_for('landing_blueprint.index'))
+                    flash('user not found!')
+                    return render_template('users/signin.html', form=form)
             else:
                 error = 'Invalid username or password'
+                flash('ERROR! Incorrect login credentials-2', 'error')
                 return render_template('users/signin.html', form=form, error=error)
         else:
             error = 'Invalid username or password'
+        flash('Please log in!', 'error')
         return render_template('users/signin.html', form=form, error=error)
 
 
@@ -1044,11 +1084,12 @@ def register():
     form = RegisterForm()
     Role.insert_roles()
     if current_user.is_active():
+        flash('Continue')
         return redirect(url_for('landing_blueprint.index'))
     else:
         if form.validate_on_submit():
             user = User(username=request.form['username'], email=request.form['email'],
-                        password=request.form['password'], role_id=3)
+                        password=request.form['password'], role_id=1)
             db.session.add(user)
             db.session.commit()
 
@@ -1061,8 +1102,9 @@ def register():
                 "num_total_requests": 0
             }
 
-            flash('Log In')
+            flash('Please log in')
             return redirect(url_for('auth_blueprint.login'))
+        flash('Register!')
         return render_template('users/registration.html', form=form)
 
 

@@ -127,9 +127,9 @@
                    {% if csPic=='default' %}
                        <img class="avatar border-gray" src="{{current_user.gravatar(size=90)}}" alt="Image for {{ sent_friend_request.first_name }}"/>
                    {% else %}
-                       <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+usID[loop.index-1]+'/'+csPic[loop.index-1]) }}" alt="Image for {{ sent_friend_request.first_name }}" style="width:90px;height:90px;"/>
+                       <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+usID[loop.index-1]+'/'+csPic[loop.index-1]) }}" alt="Image for {{ sent_friend_request.first_name }}" style="width:50px;height:50px;"/>
                    {% endif %}
-                    {{ sent_friend_request.first_name }} {{ sent_friend_request.last_name }}
+                    <br>{{ sent_friend_request.first_name }} {{ sent_friend_request.last_name }}
                   </a>
                   <br><br>
                   <button type="button" class="btn btn-danger" id="cancel-btn">Cancel</button>
@@ -163,18 +163,29 @@
             </div>
           </div><!-- /.row -->
 
+
             <div class="row">
                 <div class="col-lg-12">
                     <h3>Suggested Friends</h3>
                 </div>
-                {% if users.has_prev %}<a class="btn btn-primary btn-fill" href="{{ url_for('auth_blueprint.index', page=users.prev_num) }}">Next</a>{% endif %}
-                {% if users.has_next %}<a  class="btn btn-primary btn-fill" href="{{ url_for('auth_blueprint.index', page=users.next_num) }}">Previous</a>{% endif %}
+                <div class="text-center">
+                  <ul class="pagination pagination-lg">
+                      <li><a href="javascript:void(0)" onclick="getUserFriends(1)">&laquo;</a></li>
+                      {% for i in range(0,numm) %}
+                      <li><a href="javascript:void(0)" onclick="getUserFriends({{ loop.index }})">{{ loop.index }}</a></li>
+                      {% endfor %}
+                      <li><a href="javascript:void(0)" onclick="getUserFriends({{ numm }})">&raquo;</a></li>
+                  </ul>
+                </div>
                 <div class="content" style="width:100%;">
-                    <table cellspacing="4" style="width:80%; height:80%; border-collapse: collapse;"><tr style="border-spacing: 0;">
+                    <!--<table cellspacing="4" style="width:80%; height:80%; border-collapse: collapse;"><tr style="border-spacing: 0;" id="frList">-->
+                      <div class="row">
+                        <div class="text-center" id="frList" style="display: inline-block;">
                         {% for user in users.items %}
                             {% if session.current_user.id != user.id %}
-                            <td>
-                            <div class="col-xs-12 col-md-8">
+
+                            <div class="col-xs-3 text-center">
+                              <div class="container">
                               <div class="list-group">
                                 <a href="/users/{{ user.id }}" class="list-group-item" style="width:230px;height:120px;">
                                   <div class="media">
@@ -194,15 +205,14 @@
                                   </div><!-- /.media -->
                                 </a>
                               </div><!-- /.list-group -->
-                            </div><!-- /.col -->
+                            </div>
+                          </div><!-- /.col -->
                             {% endif %}
-                            </td>
-                        {% if loop.index%2==0 %}
-                            </tr>
-                            <tr>
-                            {% endif %}
+
                         {% endfor %}
-                    </table>
+                          </div>
+                        </div>
+                    <!--</table>-->
                 </div>
             </div>
         </div><!-- /#find-friends -->
