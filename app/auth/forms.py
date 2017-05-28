@@ -54,9 +54,6 @@ class PasswordSettingsForm(Form):
     newpassword = PasswordField('New Password', validators=[DataRequired(), Length(min=6, max=25)])
     confirm = PasswordField('Repeat password', validators=[DataRequired(), EqualTo('newpassword', message='Passwords must match.')])
 
-class TrialForm(Form):
-	trial = StringField('Trial')
-
 class SearchForm(Form):
     search = StringField('',validators=[DataRequired()])
 

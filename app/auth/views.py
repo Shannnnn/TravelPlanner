@@ -36,6 +36,9 @@ POSTS_PER_PAGE = 10
 TRIPS_PER_PAGE = 12
 
 
+def filter_user_for_admin(roleid):
+    return User.query.filter_by(role_id=roleid)
+
 def pageFormula(total, perpage):
     if total % perpage == 0:
         return total / perpage
@@ -285,7 +288,7 @@ def managetrips():
 @auth_blueprint.route('/admin/trips/<username>')
 @login_required
 @required_roles('Admin')
-def sortmytrips():
+def sortmytrips(username):
     result = Trips.query.order_by(Trips.tripID).filter_by(Trips.userID == current_user.username).paginate(1, TRIPS_PER_PAGE, False)
     return render_template('admin/trips.html', result=result, numm=pageFormula(len(result), TRIPS_PER_PAGE))
 
@@ -438,38 +441,38 @@ def additineraries(tripName):
 @required_roles('Admin')
 def editItineraries(tripName, itineraryName):
     tripname = Trips.query.filter_by(tripName=tripName).first()
-    form = EditTripForm()
-    form.trip_country.choices = [(a.countryName, a.countryName) for a in Country.query.all()]
-    form.trip_city.choices = [(a.cityName, a.cityName) for a in City.query.all()]
-    trips = Trips.query.all()
+    itineraryname = Itineraries.query.filter_by(tripID=tripname.tripID, itineraryName=itineraryName).first()
+    itineraries = Itineraries.query.all()
+    form = EditItineraryForm()
+    form.itinerary_location_type.choices = [(a.locationTypeID, a.locationType) for a in itineraryLocationType.query]
     if request.method == 'POST':
         if form.validate_on_submit():
-            tripname.tripName = form.trip_name.data
-            tripname.tripDateFrom = form.trip_date_from.data
-            tripname.tripDateTo = form.trip_date_to.data
-            tripname.tripCity = form.trip_city.data
-            tripname.tripCountry = form.trip_country.data
-            tripname.visibility = form.trip_visibility.data
-            db.session.add(tripname)
+            itineraryname.itineraryName = form.itinerary_name.data
+            itineraryname.itineraryDate = form.itinerary_date.data
+            itineraryname.itineraryDesc = form.itinerary_desc.data
+            itineraryname.itineraryLocation = form.itinerary_location.data
+            itineraryname.locationTypeID = form.itinerary_location_type.data
+            itineraryname.itineraryTime = form.itinerary_time.data
+            db.session.add(itineraryname)
             db.session.commit()
-            return redirect(url_for("trip_blueprint.trips"))
-        return render_template('/admin/managetrips.html', trips=trips)
+            return redirect(url_for("trip_blueprint.itineraries", tripName=tripName))
+        return render_template('itineraries.html', trip=tripname, itineraries=itineraries)
     else:
-        form.trip_name.data = tripname.tripName
-        form.trip_date_from.data = tripname.tripDateFrom
-        form.trip_date_to.data = tripname.tripDateTo
-        form.trip_city.data = tripname.tripCity
-        form.trip_country.data = tripname.tripCountry
-        form.trip_visibility.data = tripname.visibility
-    return render_template('/admin/edittrip.html', form=form, tripname=tripname)
+        form.itinerary_name.data = itineraryname.itineraryName
+        form.itinerary_date.data = itineraryname.itineraryDate
+        form.itinerary_desc.data = itineraryname.itineraryDesc
+        form.itinerary_location_type.data = itineraryname.locationTypeID
+        form.itinerary_location.data = itineraryname.itineraryLocation
+        form.itinerary_time.data = itineraryname.itineraryTime
+    return render_template('edititineraries.html', form=form, tripname=tripname)
+
 
 @auth_blueprint.route('/admin/trips/location')
 @login_required
 @required_roles('Admin')
 def locations():
     country = Country.query.order_by(Country.countryName)
-    city = City.query.order_by(City.cityName)
-    return render_template('/admin/locations.html', country=country, city=city)
+    return render_template('/admin/locations.html', country=country)
 
 @auth_blueprint.route('/admin/trips/location/new', methods=['GET', 'POST'])
 @login_required
@@ -491,7 +494,7 @@ def addlocations():
 @required_roles('Admin')
 def removelocations(countryID):
     country = Country.query.filter_by(countryID=countryID).first()
-    city = City.query.filter_by(country=countryID)
+    city = City.query.filter_by(countryName= country.countryName)
     db.session.delete(city, country)
     db.session.commit()
     countries = Country.query.all()
@@ -516,12 +519,20 @@ def editlocations(countryID):
     else:
         form.countryname.data = country.countryName
         form.countrycode.data = country.countryCode
-    return render_template('/admin/editlocations.html', form=form, country=country)
+    return render_template('/admin/editlocations.html', form=form, countries=country)
 
-@auth_blueprint.route('/admin/trips/city/add', methods=['POST', 'GET'])
+@auth_blueprint.route('/admin/trips/<countryName>/city')
 @login_required
 @required_roles('Admin')
-def addcities():
+def cities(countryName):
+    city = Country.query.filter_by(countryName=countryName)
+    countries = Country.query.filter_by(countryName = countryName).first()
+    return render_template('/admin/cities.html', city=city, country=countries)
+
+@auth_blueprint.route('/admin/trips/<countryName>/city/add', methods=['POST', 'GET'])
+@login_required
+@required_roles('Admin')
+def addcities(countryName):
     form = CityForm()
     if request.method == 'POST':
         if form.validate_on_submit():
@@ -529,43 +540,42 @@ def addcities():
                           cityCode=form.citycode.data)
             db.session.add(cities)
             db.session.commit()
-            country = Country.query.all()
-            city = City.query.all()
-            return render_template('/admin/locations.html', city=city, country=country)
+            countries = Country.query.filter_by(countryName = countryName)
+            city = City.query.filter_by(countryName=countryName)
+            return render_template('/admin/cities.html', city=city, country=countries)
     else:
-        return render_template('/admin/editcities.html', form=form)
+        return render_template('/admin/addcities.html', form=form, countryName=countryName)
 
-@auth_blueprint.route('/admin/trips/city/<cityID>/edit', methods=['POST', 'GET'])
+@auth_blueprint.route('/admin/trips/<countryName>/city/<cityID>/edit', methods=['POST', 'GET'])
 @login_required
 @required_roles('Admin')
-def editcities(cityID):
+def editcities(cityID, countryName):
     form = CityForm()
-    city = City.query.filter_by(cityID = cityID).first()
+    city = City.query.filter_by(cityID=cityID).first()
     if request.method == 'POST':
         if form.validate_on_submit():
             city.cityName = form.cityname.data
             city.cityCode = form.citycode.data
             db.session.add(city)
             db.session.commit()
-            country = Country.query.all()
-            cities = City.query.all()
-            return render_template('/admin/locations.html', city=cities, country=country)
+            cities = City.query.filter_by(countryName=countryName)
+            countries = Country.query.filter_by(countryName = countryName)
+            return render_template('/admin/cities.html', city=cities, country=countries)
         else:
             form.cityname.data = city.cityName
             form.citycode.data = city.cityCode
             return render_template('/admin/editcities.html', form=form, city=city)
-    return render_template('/admin/editcities.html', form=form)
+    return render_template('/admin/editcities.html', form=form, cityID=cityID, countryName=countryName)
 
-@auth_blueprint.route('/admin/trips/city/<cityID>/remove', methods=['POST', 'GET'])
+@auth_blueprint.route('/admin/trips/<countryName>/city/<cityID>/remove', methods=['POST', 'GET'])
 @login_required
 @required_roles('Admin')
-def removecity(countryID,cityID):
+def removecity(countryName,cityID):
     city= City.query.filter_by(cityID = cityID).first()
     db.session.delete(city)
     db.session.commit()
-    country = Country.query.all()
-    cities = City.query.all()
-    return render_template('/admin/locations.html', city=cities, country=country)
+    cities = City.query.filter_by(countryName=countryName)
+    return render_template('/admin/locations.html', city=cities)
 # END ADMIN <----------
 
 @auth_blueprint.route('/home')
@@ -1079,7 +1089,7 @@ def register():
     else:
         if form.validate_on_submit():
             user = User(username=request.form['username'], email=request.form['email'],
-                        password=request.form['password'], role_id=3)
+                        password=request.form['password'], role_id=1)
             db.session.add(user)
             db.session.commit()
 

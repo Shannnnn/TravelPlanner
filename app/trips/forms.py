@@ -40,6 +40,9 @@ class CountryForm(Form):
     countryname= StringField('Country', validators=[DataRequired()])
     countrycode = StringField('Code', validators=[DataRequired()])
 
+    def check(self, field):
+        if Country.query.filter_by(countryName=field.data).first():
+            raise ValidationError('City already saved.')
 
 class CityForm(Form):
     cityname = StringField('City', validators=[DataRequired()])
