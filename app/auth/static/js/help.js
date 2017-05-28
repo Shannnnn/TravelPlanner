@@ -83,3 +83,54 @@ function trip_tabbing(num){
                 });
                 return false;
         }
+
+
+function paginateThis(name, id, code){
+                return '<tr>'+
+                            '<td><a href="/admin/trips/location/edit/'+id+'" class="btn btn-success btn-xs" style="text-align: center"><span class="glyphicon glyphicon-pencil"></span></a></td>'+
+                        '<td><a href="/admin/trips/location/remove/'+id+'" class="btn btn-danger btn-xs" style="text-align: center"><span class="glyphicon glyphicon-trash"></span></a></td>'+
+                                            '<td>'+name+'</td>'+
+                                            '<td>'+code+'</td>'+
+                                            '<td style="text-align: center"><a href="/admin/trips/'+name+'/city" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus"></span></a></td>'+
+                                        '</tr>';
+            }
+
+            function paginator_ic(num){
+              $.getJSON('/paginate/trips/location', {
+                      page : num,
+                    }, function(data) {
+                      var stringRes = "";
+                      for(i=0; i<data.size; i++){
+                        stringRes+=paginateThis(data.cnName[i], data.cnID[i], data.cnCode[i]);
+                        console.log(data.cnName[i]);
+                    }
+                    $('#table-body').html("");
+                    $('#table-body').append(stringRes);
+                });
+                return false;
+        }
+
+function paginateThisCity(name, id, code, countryName){
+                return '<tr>'+
+                            '<td style="text-align: center"><a href="/admin/trips/'+countryName+'/city/'+id+'/edit" class="btn btn-success btn-xs" style="text-align: center"><span class="glyphicon glyphicon-pencil"></span></a></td>'+
+                            '<td style="text-align: center"><a href="/admin/trips/'+countryName+'/city/'+id+'/remove" class="btn btn-danger btn-xs" style="text-align: center"><span class="glyphicon glyphicon-trash"></span></a></td>'+
+                            '<td>'+id+'</td>'+
+                            '<td>'+name+'</td>'+
+                            '<td>'+code+'</td>'+
+                        '</tr>';
+            }
+
+            function paginator_ic_city(num, country){
+              $.getJSON('/paginate/trips/location/cities/'+country, {
+                      page : num,
+                    }, function(data) {
+                      var stringRes = "";
+                      for(i=0; i<data.size; i++){
+                        stringRes+=paginateThisCity(data.ctName[i], data.ctID[i], data.ctCode[i], data.cnName_);
+                        console.log(data.cnName_);
+                    }
+                    $('#table-city').html("");
+                    $('#table-city').append(stringRes);
+                });
+                return false;
+        }

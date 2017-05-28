@@ -70,13 +70,15 @@
                 </div>
             </div>
         </nav>
+        <input type="submit" onclick="del();">
         <section id="features" class="features-section">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-sm-8 col-sm-offset-2 text-center">
                         <div class="card">
-                            <form action="" method="POST" name="list">
+                            <form action="return false;" method="POST" name="list" onsubmit="return false;">
                                 <a href="/admin/trips/location/new" class="btn btn-info pull-left">Add Location</a>
+                                <!--<input type="text" class="form-control" id="filter_within" placeholder="type to search" style="width:300px;">-->
                                 <table id="mytable" class="table table-hover">
                                     <thead>
                                         <tr>
@@ -86,8 +88,9 @@
                                             <th style="text-align: center">Cities</th>
                                         </tr>
                                     </thead>
-                                    {% for country in country %}
-                                    <tbody>
+                                    <tbody id="table-body">
+                                    {% for country in country.items %}
+                                    
                                         <tr>
                                             <td><a href="/admin/trips/location/edit/{{ country.countryID }}" class="btn btn-success btn-xs" style="text-align: center"><span class="glyphicon glyphicon-pencil"></span></a></td>
                                             <td><a href="/admin/trips/location/remove/{{ country.countryID }}" class="btn btn-danger btn-xs confirmation" style="text-align: center"><span class="glyphicon glyphicon-trash"></span></a></td>
@@ -95,8 +98,9 @@
                                             <td>{{country.countryCode}}</td>
                                             <td style="text-align: center"><a href="/admin/trips/{{ country.countryName }}/city" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus"></span></a></td>
                                         </tr>
-                                    </tbody>
+                                    
                                     {% endfor %}
+                                    </tbody>
                                 </table>
                             </form>
                         </div>
@@ -104,6 +108,7 @@
                 </div>
             </div>
         </section>
+<<<<<<< HEAD
 
         <script type="text/javascript">
             var elems = document.getElementsByClassName('confirmation');
@@ -114,6 +119,25 @@
                 elems[i].addEventListener('click', confirmIt, false);
             }
         </script>
+=======
+        <div class="container text-center">
+            <nav class="navbar navbar-default navbar-fixed-bottom">
+                <ul class="pagination" style="alignment: center">
+                    <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+                    <!--<li class="active"><a href="#">1</a></li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li><a href="#">4</a></li>
+                    <li><a href="#">5</a></li>-->
+                    {% for i in range(0,stry) %}
+                    <li><a href="javascript:void(0)" onclick="paginator_ic({{ loop.index }});">{{ loop.index }}</a></li>
+                    {% endfor %}
+                    <li><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+                </ul>
+            </nav>
+        </div>
+        
+>>>>>>> ae8b9f379b554b3afb4b5446ef3b00a6c3f9a31b
 
     <!--Common plugins-->
         <script type="text/javascript" src="{{ url_for('.static', filename='js/jquery.min.js') }}"></script>
@@ -129,5 +153,19 @@
         <script type="text/javascript" src="{{ url_for('.static', filename='js/landing.custom.js') }}"></script>
 
         <script type="text/javascript" src="{{ url_for('.static', filename='js/maintainscroll.jquery.min.js') }}"></script>
+
+        <script>
+            /*var $rows = $('#table-body tr');
+            $('#filter_within').keyup(function() {
+                var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+                    
+                $rows.show().filter(function() {
+                    var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+                    return !~text.indexOf(val);
+                }).hide();
+
+            });*/
+
+        </script>
 </body>
 </html>

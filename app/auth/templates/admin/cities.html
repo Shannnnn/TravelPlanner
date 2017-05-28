@@ -28,7 +28,7 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>
 </head>
-<body class="float-landing" data-spy="scroll" data-offset="70" data-taget=".navbar-default">
+<body class="float-landing" data-spy="scroll" data-offset="70" data-taget=".navbar-default" onload="pageOnly({{ stry }}, '{{ country.countryName }}')">
         <!-- Static navbar -->
         <nav class="navbar navbar-inverse sidebar" role="navigation">
             <div class="container-fluid">
@@ -87,17 +87,28 @@
                                             <th>Zip Code</th>
                                         </tr>
                                     </thead>
-                                    {% for city in city %}
-                                    <tbody>
+                                    <tbody id="table-city">
+                                    {% for city_ in city.items %}
+                                    
                                         <tr>
+<<<<<<< HEAD
                                             <td><a href="/admin/trips/{{ country.countryName }}/city/{{ city.cityID }}/edit" class="btn btn-success btn-xs" style="text-align: center"><span class="glyphicon glyphicon-pencil"></span></a></td>
                                             <td><a href="/admin/trips/{{ city.countryName }}/city/{{ city.cityID }}/remove" class="btn btn-danger btn-xs confirmation" style="text-align: center"><span class="glyphicon glyphicon-trash"></span></a></td>
                                             <td>{{city.cityID}}</td>
                                             <td>{{city.cityName}}</td>
                                             <td>{{city.cityCode}}</td>
+=======
+                                            <td style="text-align: center"><a href="/admin/trips/{{ country.countryName }}/city/{{ city_.cityID }}/edit" class="btn btn-success btn-xs" style="text-align: center"><span class="glyphicon glyphicon-pencil"></span></a></td>
+                                            <td style="text-align: center"><a href="/admin/trips/{{ city.countryName }}/city/{{ city_.cityID }}/remove" class="btn btn-danger btn-xs" style="text-align: center"><span class="glyphicon glyphicon-trash"></span></a></td>
+                                            <td>{{city_.cityID}}</td>
+                                            <td>{{city_.cityName}}</td>
+                                            <td>{{city_.cityCode}}</td>
+
+>>>>>>> ae8b9f379b554b3afb4b5446ef3b00a6c3f9a31b
                                         </tr>
-                                    </tbody>
+                                    
                                     {% endfor %}
+                                    </tbody>
                                 </table>
                             </form>
                             <a href="/admin/trips/locations" class="btn btn-info pull-right">Return to Locations</a>
@@ -106,6 +117,7 @@
                 </div>
             </div>
         </section>
+<<<<<<< HEAD
 
         <script type="text/javascript">
             var elems = document.getElementsByClassName('confirmation');
@@ -117,6 +129,19 @@
             }
         </script>
 
+=======
+        <div class="container text-center">
+            <nav class="navbar navbar-default navbar-fixed-bottom">
+                <ul class="pagination" id="pagination" alignment="enter">
+                    <li><a href="javascript:void(0)" onclick="paginator_ic_city(1, '{{ country.countryName|string }}');"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+                     {% for i in range(0,stry) %}
+                    <li id="pagination-demo"><a href="javascript:void(0)" onclick="paginator_ic_city({{ loop.index }}, '{{ country.countryName|string }}'); askPaginate({{ loop.index }}, {{ stry }}, '{{ country.countryName }}');">{{ loop.index }}</a></li>
+                    {% endfor %}
+                    <li><a href="javascript:void(0)" onclick="paginator_ic_city({{ stry }}, '{{ country.countryName|string }}');"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+                </ul>
+            </nav>
+        </div>
+>>>>>>> ae8b9f379b554b3afb4b5446ef3b00a6c3f9a31b
     <!--Common plugins-->
         <script type="text/javascript" src="{{ url_for('.static', filename='js/jquery.min.js') }}"></script>
 
@@ -131,5 +156,57 @@
         <script type="text/javascript" src="{{ url_for('.static', filename='js/landing.custom.js') }}"></script>
 
         <script type="text/javascript" src="{{ url_for('.static', filename='js/maintainscroll.jquery.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('.static', filename='js/jquery.twbsPagination.min.js') }}"></script>
+
+        <script>
+        var crit = 0;
+
+        function pageOnly(total, country){
+            var limit_ = total;
+            if(total>10)
+                limit_=10;
+
+            $("#pagination").html("");
+            for(i=1; i<=limit_; i++){
+                Stringres ='<li id="pagination-demo"><a href="javascript:void(0)" onclick="paginator_ic_city('+i+',\''+country+'\'); askPaginate('+i+','+total+',\''+country+'\');">'+i+'</a></li>';
+
+                $("#pagination").append(Stringres);
+            }
+        }
+        function askPaginate(page, total, country){
+            var count = 0;
+            if(total>10){
+                if(page!=1){
+                    $("#pagination").html("");
+                    //$("#pagination").append('<li><a href="javascript:void(0)" onclick="paginator_ic_city(1, \''+country+'\');"><span class="glyphicon glyphicon-chevron-left"></span></a></li>');
+                    if(page==crit){
+                        for(i=page; i>=1; i--){
+                            Stringres ='<li id="pagination-demo"><a href="javascript:void(0)" onclick="paginator_ic_city('+i+',\''+country+'\'); askPaginate('+i+','+total+',\''+country+'\');">'+i+'</a></li>';
+
+                            console.log(Stringres);
+                            $("#pagination").append(Stringres);
+                            if((i==total)||(count==10))
+                                break;
+                            count++;
+                        }
+                    }
+                    else {
+                        for(i=page; i<=total; i++){
+                            Stringres ='<li id="pagination-demo"><a href="javascript:void(0)" onclick="paginator_ic_city('+i+',\''+country+'\'); askPaginate('+i+','+total+',\''+country+'\');">'+i+'</a></li>';
+
+                            console.log(Stringres);
+                            $("#pagination").append(Stringres);
+                            if((i==total)||(count==10))
+                                break;
+                            count++;
+                        }
+                    }
+                    //$("pagination").append('<li><a href="javascript:void(0)" onclick="paginator_ic_city('+total+', \''+country+'\');"><span class="glyphicon glyphicon-chevron-right"></span></a></li>')
+                }
+                crit = page;
+            }
+        }
+        </script>
+
 </body>
 </html>
