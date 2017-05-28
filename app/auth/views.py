@@ -752,6 +752,7 @@ def reset():
             send_email('Password Reset', app.config['MAIL_USERNAME'], [str(email)], body)
             flash("Request Sent!")
             return render_template('users/mail_send.html')
+    flash('Something went wrong!')
     return render_template('users/reset.html', form=form)
 
 
@@ -809,7 +810,7 @@ def login():
                             db.session.commit()
                             flash('You are now logged in!')
                             return redirect(url_for('auth_blueprint.edit', username=request.form['username']))
-                        flash('You are now Logged in!')
+                        flash('You are now logged in!')
                         return redirect(url_for('auth_blueprint.home', name=request.form['username']))
                     elif user.role_id == 1:
                         if user is not None and check_password_hash(user.password, request.form['password']):
@@ -817,14 +818,14 @@ def login():
                             flash('You are now logged in!')
                         return redirect(url_for('auth_blueprint.addash', name=request.form['username']))
                     else:
-                        flash('ERROR! Incorrect login credentials', 'error')
+                        flash('ERROR! Incorrect login credentials-1', 'error')
                         return redirect(url_for('landing_blueprint.index'))
                 else:
                     flash('user not found!')
                     return render_template('users/signin.html', form=form)
             else:
                 error = 'Invalid username or password'
-                flash('ERROR! Incorrect login credentials', 'error')
+                flash('ERROR! Incorrect login credentials-2', 'error')
                 return render_template('users/signin.html', form=form, error=error)
         else:
             error = 'Invalid username or password'
@@ -855,7 +856,7 @@ def register():
                 "num_total_requests": 0
             }
 
-            flash('NNow you can Log In')
+            flash('Please log in')
             return redirect(url_for('auth_blueprint.login'))
         flash('Register!')
         return render_template('users/registration.html', form=form)

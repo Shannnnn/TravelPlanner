@@ -41,28 +41,43 @@ class TestTravePlanner(unittest.TestCase):
         self.assertIn(b'Please log in!', response.data)
 
     def test_valid_registration(self):
-        response = self.register('ivanovich', 'patkennedy79@gmail.com', 'FlaskIsAwesome', 'FlaskIsAwesome')
+        self.app.get('/register', follow_redirects=True)
+        self.register('ivanovich', 'patkennedy79@gmail.com', 'FlaskIsAwesome', 3)
+        response = self.app.get('/login')
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Register!', response.data)
+        self.assertIn(b'Please log in', response.data)
 
-    def test_valid_login_with_registering(self):
-        self.register('silversouly', 'gini@gmail.com', 'testpassword', 3)
-        response = self.login('silversouly', 'testpassword')
+    def test_valid_login_with_registration(self):
+        self.app.get('/register', follow_redirects=True)
+        self.register('silversou_ly', 'errorcode@gmail.com', 'testpassword', 3)
+        self.app.get('/logout', follow_redirects=True)
+        self.app.get('/login', follow_redirects=True)
+        self.login('silversou_ly', 'testpassword')
+        response = self.app.get('/userprofile/silversou_ly/edit', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'logged in', response.data)
+
+    def test_login_without_registration(self):
+        self.app.get('/login', follow_redirects=True)
+        response = self.login('userexpress', 'itsawesome')
         self.assertIn(b'ERROR! Incorrect login credentials', response.data)
 
-    def test_login_logout_with_registering(self):
+    def test_login_logout_with_registration(self):
+        self.app.get('/register', follow_redirects=True)
         self.register('silversoul', 'gin@gmail.com', 'testpassword', 3)
+        self.app.get('/login', follow_redirects=True)
         self.login('silversoul', 'testpassword')
         response = self.logout()
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Please log in', response.data)
 
-    def test_login_without_registering(self):
-        response = self.login('userexpress', 'itsawesome')
-        self.assertIn(b'ERROR! Incorrect login credentials', response.data)
-
+    def test_request_passeword_change_via_email(self):
+        self.app.get('/register', follow_redirects=True)
+        self.register('kimimaru', 'kimi@gmail.com', 'testpassword', 3)
+        self.app.get('/reset_request', follow_redirects=True)
+        response = self.app.post('/reset_request', data=dict(email='kimi@gmail.com'), follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Something went wrong!', response.data)
 
 
 if __name__ == '__main__':
