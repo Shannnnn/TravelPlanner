@@ -55,7 +55,6 @@ class TestTravelPlanner(unittest.TestCase):
         self.login('silversou_ly', 'testpassword')
         response = self.app.get('/userprofile/silversou_ly/edit', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'logged in', response.data)
 
     def test_login_without_registration(self):
         self.app.get('/login', follow_redirects=True)

@@ -36,7 +36,30 @@ class TripTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def testViewTrips(self):
+        self.app.post('/createtrip', data=dict(tripName='Trip',
+                                               tripDateFrom='10/01/2014',
+                                               tripDateTo='10/05/2014',
+                                               userID=1,
+                                               tripCountry='Philippines',
+                                               tripCity='Iligan City',
+                                               status=1,
+                                               visibility=0,
+                                               img_thumbnail='17878h88.jpg',
+                                               featuredTrip=0), follow_redirects=True)
+
         response = self.app.get('/trips', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+
+    def testViewItinerary(self):
+        self.app.post('/Trip/additineraries', data=dict(itineraryName='west-side',
+                                                          itineraryDate='10/01/2014',
+                                                          itineraryDesc='area61 here i come!',
+                                                          itineraryLocation='Iligan',
+                                                          itineraryTime='8:30',
+                                                          locationTypeID=1,
+                                                          tripID=1), follow_redirects=True)
+
+        response = self.app.get('/trips/Trip/itineraries', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
 
 
