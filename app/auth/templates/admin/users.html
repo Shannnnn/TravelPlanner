@@ -47,14 +47,7 @@
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="#">Dashboard<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-home"></span></a></li>
                         <li ><a href="/admin/users">Users<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-user"></span></a></li>
-                        <li class="dropdown">
-                            <a href="Trips" class="dropdown-toggle" data-toggle="dropdown">Trips <span class="caret"></span><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-plane"></span></a>
-                            <ul class="dropdown-menu forAnimate" role="menu">
-                                <li><a href="/admin/trips/{{current_user.username}}">My Trips</a></li>
-                                <li><a href="/admin/trips/featured">Featured Trips</a></li>
-                                <li><a href="/admin/trips">All Trips</a></li>
-                            </ul>
-                        </li>
+                        <li><a href="Trips" class="dropdown-toggle" data-toggle="dropdown">Trips<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-plane"></span></a></li>
                         <li ><a href="/admin/locations">Location<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-map-marker"></span></a></li>
                         <li><a href="/admin/settings/{{ current_user.username }}">Settings<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-cog"></span></a></li>
                         <li ><a href="#">Notifications<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-envelope"></span></a></li>
