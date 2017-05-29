@@ -91,20 +91,13 @@
                                     {% for city_ in city.items %}
                                     
                                         <tr>
-<<<<<<< HEAD
-                                            <td><a href="/admin/trips/{{ country.countryName }}/city/{{ city.cityID }}/edit" class="btn btn-success btn-xs" style="text-align: center"><span class="glyphicon glyphicon-pencil"></span></a></td>
-                                            <td><a href="/admin/trips/{{ city.countryName }}/city/{{ city.cityID }}/remove" class="btn btn-danger btn-xs confirmation" style="text-align: center"><span class="glyphicon glyphicon-trash"></span></a></td>
-                                            <td>{{city.cityID}}</td>
-                                            <td>{{city.cityName}}</td>
-                                            <td>{{city.cityCode}}</td>
-=======
+
                                             <td style="text-align: center"><a href="/admin/trips/{{ country.countryName }}/city/{{ city_.cityID }}/edit" class="btn btn-success btn-xs" style="text-align: center"><span class="glyphicon glyphicon-pencil"></span></a></td>
                                             <td style="text-align: center"><a href="/admin/trips/{{ city.countryName }}/city/{{ city_.cityID }}/remove" class="btn btn-danger btn-xs" style="text-align: center"><span class="glyphicon glyphicon-trash"></span></a></td>
                                             <td>{{city_.cityID}}</td>
                                             <td>{{city_.cityName}}</td>
                                             <td>{{city_.cityCode}}</td>
 
->>>>>>> ae8b9f379b554b3afb4b5446ef3b00a6c3f9a31b
                                         </tr>
                                     
                                     {% endfor %}
@@ -117,7 +110,7 @@
                 </div>
             </div>
         </section>
-<<<<<<< HEAD
+
 
         <script type="text/javascript">
             var elems = document.getElementsByClassName('confirmation');
@@ -129,7 +122,7 @@
             }
         </script>
 
-=======
+
         <div class="container text-center">
             <nav class="navbar navbar-default navbar-fixed-bottom">
                 <ul class="pagination" id="pagination" alignment="enter">
@@ -141,7 +134,7 @@
                 </ul>
             </nav>
         </div>
->>>>>>> ae8b9f379b554b3afb4b5446ef3b00a6c3f9a31b
+
     <!--Common plugins-->
         <script type="text/javascript" src="{{ url_for('.static', filename='js/jquery.min.js') }}"></script>
 
@@ -167,41 +160,45 @@
                 limit_=10;
 
             $("#pagination").html("");
+            $("#pagination").append('<li><a href="javascript:void(0)" onclick="paginator_ic_city(1, \''+country+'\');"><span class="glyphicon glyphicon-chevron-left"></span></a></li>');
             for(i=1; i<=limit_; i++){
                 Stringres ='<li id="pagination-demo"><a href="javascript:void(0)" onclick="paginator_ic_city('+i+',\''+country+'\'); askPaginate('+i+','+total+',\''+country+'\');">'+i+'</a></li>';
-
                 $("#pagination").append(Stringres);
             }
+            $("#pagination").append('<li><a href="javascript:void(0)" onclick="paginator_ic_city('+total+', \''+country+'\');"><span class="glyphicon glyphicon-chevron-right"></span></a></li>');
         }
         function askPaginate(page, total, country){
             var count = 0;
             if(total>10){
                 if(page!=1){
                     $("#pagination").html("");
-                    //$("#pagination").append('<li><a href="javascript:void(0)" onclick="paginator_ic_city(1, \''+country+'\');"><span class="glyphicon glyphicon-chevron-left"></span></a></li>');
+                    $("#pagination").append('<li><a href="javascript:void(0)" onclick="paginator_ic_city(1, \''+country+'\');"><span class="glyphicon glyphicon-chevron-left"></span></a></li>');
                     if(page==crit){
+                        var list_ = [];
+                        var listCount = 0;
                         for(i=page; i>=1; i--){
                             Stringres ='<li id="pagination-demo"><a href="javascript:void(0)" onclick="paginator_ic_city('+i+',\''+country+'\'); askPaginate('+i+','+total+',\''+country+'\');">'+i+'</a></li>';
-
-                            console.log(Stringres);
-                            $("#pagination").append(Stringres);
+                            list_[listCount]=Stringres;
+                            listCount++;
                             if((i==total)||(count==10))
                                 break;
                             count++;
+                        }
+                        for(i=listCount-1; i>=0; i--){
+                            $("#pagination").append(list_[i]);
                         }
                     }
                     else {
                         for(i=page; i<=total; i++){
                             Stringres ='<li id="pagination-demo"><a href="javascript:void(0)" onclick="paginator_ic_city('+i+',\''+country+'\'); askPaginate('+i+','+total+',\''+country+'\');">'+i+'</a></li>';
 
-                            console.log(Stringres);
                             $("#pagination").append(Stringres);
                             if((i==total)||(count==10))
                                 break;
                             count++;
                         }
                     }
-                    //$("pagination").append('<li><a href="javascript:void(0)" onclick="paginator_ic_city('+total+', \''+country+'\');"><span class="glyphicon glyphicon-chevron-right"></span></a></li>')
+                    $("#pagination").append('<li><a href="javascript:void(0)" onclick="paginator_ic_city('+total+', \''+country+'\');"><span class="glyphicon glyphicon-chevron-right"></span></a></li>');
                 }
                 crit = page;
             }

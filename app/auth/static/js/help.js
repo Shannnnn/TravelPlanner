@@ -102,7 +102,6 @@ function paginateThis(name, id, code){
                       var stringRes = "";
                       for(i=0; i<data.size; i++){
                         stringRes+=paginateThis(data.cnName[i], data.cnID[i], data.cnCode[i]);
-                        console.log(data.cnName[i]);
                     }
                     $('#table-body').html("");
                     $('#table-body').append(stringRes);
@@ -127,7 +126,6 @@ function paginateThisCity(name, id, code, countryName){
                       var stringRes = "";
                       for(i=0; i<data.size; i++){
                         stringRes+=paginateThisCity(data.ctName[i], data.ctID[i], data.ctCode[i], data.cnName_);
-                        console.log(data.cnName_);
                     }
                     $('#table-city').html("");
                     $('#table-city').append(stringRes);

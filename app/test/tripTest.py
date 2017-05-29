@@ -22,7 +22,7 @@ class TripTestCase(unittest.TestCase):
 
     def addItinerary(self, itineraryName, itineraryDesc, itineraryLocation, itineraryDate, itineraryTime, tripID, locationTypeID):
         return self.app.post(
-            '/trips/tripName/additineraries',
+            '/trips/<tripName>/additineraries',
             data = dict(itineraryName=itineraryName, itineraryDesc=itineraryDesc, itineraryLocation=itineraryLocation, itineraryDate=itineraryDate, itineraryTime=itineraryTime, tripID=tripID, locationTypeID=locationTypeID),
             follow_redirects=True
         )
