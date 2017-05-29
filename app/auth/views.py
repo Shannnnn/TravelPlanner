@@ -2,7 +2,7 @@ import os  # main
 from flask import Flask, render_template, redirect, Blueprint, request, flash, url_for, session, jsonify
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user, AnonymousUserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
-from model import User, Role, Anonymous, Photos, Connection
+from model import User, Role, Anonymous, Photos, Connection, Photos
 from forms import LoginForm, RegisterForm, EditForm, SearchForm, PasswordSettingsForm, EmailResetForm, PasswordResetForm
 from app import db, app
 from decorators import required_roles, get_friends, get_friend_requests, allowed_file, deleteTrip_user, img_folder, is_friends_or_pending, is_friends_or_pending2, user_query
@@ -10,7 +10,7 @@ from app.landing.views import landing_blueprint
 from werkzeug import secure_filename
 from PIL import Image
 from app.trips.model import Trips, Itineraries, Country, City, itineraryLocationType
-from app.trips.forms import EditTripForm, EditItineraryForm, TripForm, CountryForm, CityForm, ItineraryForm
+from app.trips.forms import EditTripForm, EditItineraryForm, TripForm, CountryForm, CityForm, ItineraryForm, AdminEditTripForm
 import datetime
 import time
 from sqlalchemy import func, desc
@@ -153,7 +153,6 @@ def manageusers():
     return render_template('admin/users.html', result=result, stry=0,
                            numm=pageFormula(User.query.order_by(User.id).count(), POSTS_PER_PAGE))
 
-
 @auth_blueprint.route('/admin/users/create', methods=['GET', 'POST'])
 @login_required
 @required_roles('Admin')
@@ -167,9 +166,10 @@ def addusers():
                         role_id = '3')
             db.session.add(user)
             db.session.commit()
-            result = User.query.order_by(User.id)
             flash("Your changes have been saved.")
-            return render_template('admin/users.html', result=result)
+            result = User.query.order_by(User.id).paginate(1, POSTS_PER_PAGE, False)
+            return render_template('admin/users.html', result=result, stry=0,
+                           numm=pageFormula(User.query.order_by(User.id).count(), POSTS_PER_PAGE))
     return render_template('admin/createusers.html', form=form)
 
 # update
@@ -224,8 +224,9 @@ def editusers(username):
             cas = ph.photoName
 
         flash("Your changes have been saved.")
-        result = User.query.all()
-        return render_template('admin/users.html', result=result, user=user, csID=str(user.id), csPic=str(cas))
+        result = User.query.order_by(User.id).paginate(1, POSTS_PER_PAGE, False)
+        return render_template('admin/users.html', result=result, stry=0,
+                               numm=pageFormula(User.query.order_by(User.id).count(), POSTS_PER_PAGE))
     else:
         form.first_name.data = user.first_name
         form.last_name.data = user.last_name
@@ -251,13 +252,15 @@ def editusers(username):
 @required_roles('Admin')
 def deleteusers(username):
     user = User.query.filter_by(username=username).first()
+    photo = Photos.query.filter_by(userID = user.id).delete()
     deleteTrip_user(user.id)
-    if user.profile_pic != 'default':
-        os.remove(img_folder + str(user.profile_pic))
+    #if user.profile_pic != 'default':
+    #    os.remove(img_folder + str(user.profile_pic))
     db.session.delete(user)
     db.session.commit()
-    result = User.query.all()
-    return render_template('admin/users.html', result=result)
+    result = User.query.order_by(User.id).paginate(1, POSTS_PER_PAGE, False)
+    return render_template('admin/users.html', result=result, stry=0,
+                           numm=pageFormula(User.query.order_by(User.id).count(), POSTS_PER_PAGE))
 
 # TRIPS --> read
 @auth_blueprint.route('/admin/paginate/trips')
@@ -275,29 +278,15 @@ def paginate_trip():
         tto.append(trip.tripDateTo)
         tviews.append(trip.viewsNum)
 
-        return jsonify(t_name=tname, t_from=tfrom, t_to=tto, t_views=tviews, size=len(tname))
+    return jsonify(t_name=tname, t_from=tfrom, t_to=tto, t_views=tviews, size=len(tname))
 
-    # TRIPS --> read
+# TRIPS --> read
 @auth_blueprint.route('/admin/trips')
 @login_required
 @required_roles('Admin')
 def managetrips():
     result = Trips.query.order_by(Trips.tripID).paginate(1, TRIPS_PER_PAGE, False)
     return render_template('admin/trips.html', result=result, numm=pageFormula(len(Trips.query.all()), TRIPS_PER_PAGE))
-
-@auth_blueprint.route('/admin/trips/<username>')
-@login_required
-@required_roles('Admin')
-def sortmytrips(username):
-    result = Trips.query.order_by(Trips.tripID).filter_by(Trips.userID == current_user.username).paginate(1, TRIPS_PER_PAGE, False)
-    return render_template('admin/trips.html', result=result, numm=pageFormula(len(result), TRIPS_PER_PAGE))
-
-@auth_blueprint.route('/admin/trips/featured')
-@login_required
-@required_roles('Admin')
-def featuredtrips():
-    result = Trips.query.order_by(Trips.tripID).filter_by(Trips.featuredTrip == '1').paginate(1, TRIPS_PER_PAGE, False)
-    return render_template('admin/trips.html', result=result, numm=pageFormula(len(result), TRIPS_PER_PAGE))
 
 @auth_blueprint.route('/admin/trips/add', methods=['GET', 'POST'])
 @login_required
@@ -342,7 +331,9 @@ def addtrip():
                              featuredTrip=0)
             db.session.add(tripform)
             db.session.commit()
-            return redirect(url_for('auth_blueprint.managetrips'))
+            result = Trips.query.order_by(Trips.tripID).paginate(1, TRIPS_PER_PAGE, False)
+            return render_template('admin/trips.html', result=result,
+                                   numm=pageFormula(len(Trips.query.all()), TRIPS_PER_PAGE))
 
 
     ph = Photos.query.filter_by(id=current_user.profile_pic).first()
@@ -359,12 +350,12 @@ def addtrip():
 @required_roles('Admin')
 def removetrips(tripName):
     trips = Trips.query.filter_by(tripName=tripName).first()
-    itineraries = Itineraries.query.filter_by(tripID = trips.tripID)
+    itineraries = Itineraries.query.filter_by(tripID = trips.tripID).delete()
     os.remove('app/trips/static/images/trips/'+trips.img_thumbnail)
-    db.session.delete(trips, itineraries)
+    db.session.delete(trips)
     db.session.commit()
-    result = Trips.query.all()
-    return render_template('/admin/trips.html', result=result)
+    result = Trips.query.order_by(Trips.tripID).paginate(1, TRIPS_PER_PAGE, False)
+    return render_template('admin/trips.html', result=result, numm=pageFormula(len(Trips.query.all()), TRIPS_PER_PAGE))
 
 # update
 @auth_blueprint.route('/admin/trips/edit/<tripName>', methods=['GET', 'POST'])
@@ -372,7 +363,7 @@ def removetrips(tripName):
 @required_roles('Admin')
 def editTrips(tripName):
     tripname = Trips.query.filter_by(tripName=tripName).first()
-    form = EditTripForm()
+    form = AdminEditTripForm()
     form.trip_country.choices = [(a.countryName, a.countryName) for a in Country.query.all()]
     form.trip_city.choices = [(a.cityName, a.cityName) for a in City.query.all()]
     trips = Trips.query.all()
@@ -384,11 +375,12 @@ def editTrips(tripName):
             tripname.tripCity = form.trip_city.data
             tripname.tripCountry = form.trip_country.data
             tripname.visibility = form.trip_visibility.data
-            tripname.featuredTrip = request.form['featuredTrip']
+            tripname.featuredTrip = form.isFeatured.data
             db.session.add(tripname)
             db.session.commit()
-            return redirect(url_for("auth_blueprint.managetrips"))
-        return render_template('/admin/trips.html', trips=trips)
+            result = Trips.query.order_by(Trips.tripID).paginate(1, TRIPS_PER_PAGE, False)
+            return render_template('admin/trips.html', result=result,
+                                   numm=pageFormula(len(Trips.query.all()), TRIPS_PER_PAGE))
     else:
         form.trip_name.data = tripname.tripName
         form.trip_date_from.data = tripname.tripDateFrom
@@ -396,7 +388,7 @@ def editTrips(tripName):
         form.trip_city.data = tripname.tripCity
         form.trip_country.data = tripname.tripCountry
         form.trip_visibility.data = tripname.visibility
-        request.form['featuredTrip'] = tripname.featuredTrip
+        form.isFeatured.data = tripname.featuredTrip
     return render_template('/admin/edittrips.html', form=form, tripname=tripname)
 
 @auth_blueprint.route('/admin/trips/<tripName>/itineraries', methods=['GET'])
@@ -406,7 +398,7 @@ def itineraries(tripName):
     tripid = Trips.query.filter_by(tripName=tripName).first()
     itinerary = Itineraries.query.filter_by(tripID=tripid.tripID)
     trip = Trips.query.filter_by(userID=current_user.id, tripName=tripName).first()
-    return render_template('/admin/itineraries.html', trip=trip, itineraries=itinerary)
+    return render_template('/admin/itineraries.html', trip=trip, itineraries=itinerary, tripName=tripName)
 
 @auth_blueprint.route('/admin/trips/<tripName>/additineraries', methods=['GET', 'POST'])
 @login_required
@@ -466,13 +458,26 @@ def editItineraries(tripName, itineraryName):
         form.itinerary_time.data = itineraryname.itineraryTime
     return render_template('edititineraries.html', form=form, tripname=tripname)
 
+@auth_blueprint.route('/paginate/trips/location')
+@login_required
+@required_roles('Admin')
+def paginate_location_for_admin():
+    cnName, cnCode, cnID = [],[],[]
+    country = Country.query.order_by(Country.countryName).paginate(int(request.args.get('page')), 11, False)
+    for c in country.items:
+        cnName.append(c.countryName)
+        cnID.append(c.countryID)
+        cnCode.append(c.countryCode)
+    return jsonify(cnName=cnName, cnID=cnID, cnCode=cnCode, size=len(cnName))
 
 @auth_blueprint.route('/admin/trips/location')
 @login_required
 @required_roles('Admin')
 def locations():
-    country = Country.query.order_by(Country.countryName)
-    return render_template('/admin/locations.html', country=country)
+    country = Country.query.order_by(Country.countryName).paginate(1, 11, False)
+    cc = len(Country.query.order_by(Country.countryName).all())
+
+    return render_template('/admin/locations.html', country=country, stry=pageFormula(cc, 11))
 
 @auth_blueprint.route('/admin/trips/location/new', methods=['GET', 'POST'])
 @login_required
@@ -494,8 +499,8 @@ def addlocations():
 @required_roles('Admin')
 def removelocations(countryID):
     country = Country.query.filter_by(countryID=countryID).first()
-    city = City.query.filter_by(countryName= country.countryName)
-    db.session.delete(city, country)
+    city = City.query.filter_by(countryName= country.countryName).delete()
+    db.session.delete(country)
     db.session.commit()
     countries = Country.query.all()
     cities = City.query.all()
@@ -521,13 +526,28 @@ def editlocations(countryID):
         form.countrycode.data = country.countryCode
     return render_template('/admin/editlocations.html', form=form, countries=country)
 
+@auth_blueprint.route('/paginate/trips/location/cities/<country>')
+@login_required
+@required_roles('Admin')
+def paginate_location_cities_for_admin(country):
+    ctName, ctCode, ctID, cnName_ = [],[],[], []
+    city = City.query.filter_by(countryName=country).paginate(int(request.args.get('page')), 10, False)
+    for c in city.items:
+        ctName.append(c.cityName)
+        ctID.append(c.cityID)
+        ctCode.append(c.cityCode)
+        
+    return jsonify(ctName=ctName, ctID=ctID, ctCode=ctCode, cnName_=country, size=len(ctName))
+
 @auth_blueprint.route('/admin/trips/<countryName>/city')
 @login_required
 @required_roles('Admin')
 def cities(countryName):
-    city = Country.query.filter_by(countryName=countryName)
+    city = City.query.filter_by(countryName=countryName).paginate(1, 10, False)
+    clenght = len(City.query.filter_by(countryName=countryName).all())
+
     countries = Country.query.filter_by(countryName = countryName).first()
-    return render_template('/admin/cities.html', city=city, country=countries)
+    return render_template('/admin/cities.html', city=city, country=countries, stry=pageFormula(clenght, 10))
 
 @auth_blueprint.route('/admin/trips/<countryName>/city/add', methods=['POST', 'GET'])
 @login_required
@@ -544,7 +564,7 @@ def addcities(countryName):
             city = City.query.filter_by(countryName=countryName)
             return render_template('/admin/cities.html', city=city, country=countries)
     else:
-        return render_template('/admin/addcities.html', form=form, countryName=countryName)
+        return render_template('/admin/editcities.html', form=form, countryName=countryName)
 
 @auth_blueprint.route('/admin/trips/<countryName>/city/<cityID>/edit', methods=['POST', 'GET'])
 @login_required
