@@ -113,7 +113,7 @@
                                 <div class="author">
                                     <!--<img class="avatar border-gray" src="{{current_user.gravatar(size=256)}}" alt="..."/>-->
                                     {% if csPic=='default' %}
-                                        <img class=""img-circle img-responsive" src="{{current_user.gravatar(size=200)}}" alt="..."/>
+                                        <img class="img-circle img-responsive" src="{{current_user.gravatar(size=200)}}" alt="..."/>
                                      {% else %}
                                         <img class="img-circle img-responsive" src="{{ url_for('.static', filename='images/users/'+csID+'/'+csPic) }}" alt="..." style="width:150px;height:150px;">
                                      {% endif %}

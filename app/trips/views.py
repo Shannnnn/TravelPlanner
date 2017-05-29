@@ -15,7 +15,7 @@ trip_blueprint = Blueprint('trip_blueprint', __name__, template_folder='template
                            static_folder='static',
                            static_url_path='/static/')
 
-img_folder = 'app/trips/static/images/users/'
+img_folder = 'app/trips/static/images/trips/'
 available_extension = set(['png', 'jpg', 'PNG', 'JPG'])
 
 def allowed_file(filename):

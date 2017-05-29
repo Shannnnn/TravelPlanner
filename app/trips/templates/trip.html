@@ -19,21 +19,21 @@
                                     <div class="panel-heading" style="width: 100%;">
                                         <p style="text-align: center; font-family: Cambria; font-size: 140%">{{ trip.tripName }}</p>
                                     </div>
-{#                                        <div class="panel-body" style="width: 100%; height: 100%;" align="center">#}
-{#                                            <img style="height: 100%; width: 100%; object-fit:contain;" src="{{ url_for('trip_blueprint.static', filename='images/trips/'+trip.userID|string+'/'+trip.img_thumbnail ) }}"">#}
-{#                                        </div>#}
-                                    <div class="panel-footer" align="justify" style="display: inline-block; width: 100%;">
+                                    <div class="panel-body" style="width: 100%; height: 100%;" align="center">
+                                        <img style="height: 100%; width: 100%; object-fit:contain;" src="{{ url_for('trip_blueprint.static', filename='images/trips/'+trip.userID|string+'/'+trip.img_thumbnail ) }}">
+                                    </div>
+                                    <div class="panel-footer" align="left" style="display: inline-block; width: 100%;">
                                         <div class="row">
-                                            &nbsp; From: {{ trip.tripDateFrom }}
+                                             From: {{ trip.tripDateFrom }}
                                         </div>
                                         <div class="row">
-                                            &nbsp; To: {{ trip.tripDateTo }}
+                                             To: {{ trip.tripDateTo }}
                                         </div>
                                         <div class="row">
-                                            &nbsp; Location: {{ trip.tripCity }}, {{ trip.tripCountry }}
+                                             Location: {{ trip.tripCity }}, {{ trip.tripCountry }}
                                         </div>
                                         <div class="row">
-                                            &nbsp; {{ trip.viewsNum }} views
+                                             {{ trip.viewsNum }} views
                                         </div>
                                         <div class="panel-footer">
                                             <div class="row" align="center" style="display: inline-block; width: 120%;">
