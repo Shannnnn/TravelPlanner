@@ -275,7 +275,7 @@ def paginate_trip():
         tto.append(trip.tripDateTo)
         tviews.append(trip.viewsNum)
 
-        return jsonify(t_name=tname, t_from=tfrom, t_to=tto, t_views=tviews, size=len(tname))
+    return jsonify(t_name=tname, t_from=tfrom, t_to=tto, t_views=tviews, size=len(tname))
 
     # TRIPS --> read
 @auth_blueprint.route('/admin/trips')
@@ -466,13 +466,26 @@ def editItineraries(tripName, itineraryName):
         form.itinerary_time.data = itineraryname.itineraryTime
     return render_template('edititineraries.html', form=form, tripname=tripname)
 
+@auth_blueprint.route('/paginate/trips/location')
+@login_required
+@required_roles('Admin')
+def paginate_location_for_admin():
+    cnName, cnCode, cnID = [],[],[]
+    country = Country.query.order_by(Country.countryName).paginate(int(request.args.get('page')), 11, False)
+    for c in country.items:
+        cnName.append(c.countryName)
+        cnID.append(c.countryID)
+        cnCode.append(c.countryCode)
+    return jsonify(cnName=cnName, cnID=cnID, cnCode=cnCode, size=len(cnName))
 
 @auth_blueprint.route('/admin/trips/location')
 @login_required
 @required_roles('Admin')
 def locations():
-    country = Country.query.order_by(Country.countryName)
-    return render_template('/admin/locations.html', country=country)
+    country = Country.query.order_by(Country.countryName).paginate(1, 11, False)
+    cc = len(Country.query.order_by(Country.countryName).all())
+
+    return render_template('/admin/locations.html', country=country, stry=pageFormula(cc, 11))
 
 @auth_blueprint.route('/admin/trips/location/new', methods=['GET', 'POST'])
 @login_required
@@ -521,13 +534,28 @@ def editlocations(countryID):
         form.countrycode.data = country.countryCode
     return render_template('/admin/editlocations.html', form=form, countries=country)
 
+@auth_blueprint.route('/paginate/trips/location/cities/<country>')
+@login_required
+@required_roles('Admin')
+def paginate_location_cities_for_admin(country):
+    ctName, ctCode, ctID, cnName_ = [],[],[], []
+    city = City.query.filter_by(countryName=country).paginate(int(request.args.get('page')), 10, False)
+    for c in city.items:
+        ctName.append(c.cityName)
+        ctID.append(c.cityID)
+        ctCode.append(c.cityCode)
+        
+    return jsonify(ctName=ctName, ctID=ctID, ctCode=ctCode, cnName_=country, size=len(ctName))
+
 @auth_blueprint.route('/admin/trips/<countryName>/city')
 @login_required
 @required_roles('Admin')
 def cities(countryName):
-    city = Country.query.filter_by(countryName=countryName)
+    city = City.query.filter_by(countryName=countryName).paginate(1, 10, False)
+    clenght = len(City.query.filter_by(countryName=countryName).all())
+
     countries = Country.query.filter_by(countryName = countryName).first()
-    return render_template('/admin/cities.html', city=city, country=countries)
+    return render_template('/admin/cities.html', city=city, country=countries, stry=pageFormula(clenght, 10))
 
 @auth_blueprint.route('/admin/trips/<countryName>/city/add', methods=['POST', 'GET'])
 @login_required
