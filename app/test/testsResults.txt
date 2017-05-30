@@ -13,10 +13,14 @@
 		(view admin)                        :   passed
 		(view users)                        :   passed
 		(add users)                         :   passed
+		(edit users)                        :   passed
 		(view locations)                    :   passed
 		(add locations)                     :   passed
+        (edit locations)                    :   passed
 		(view cities)                       :   passed
+		(edit cities)                       :   passed
 		(add cities)                        :   passed
+		(change password)                   :   passed
 
 		___________LandingModuleTest.py_______________
 		
