@@ -30,46 +30,34 @@
         <!-- Friends tab content -->
         <div role="tabpanel" class="tab-pane fade active in" id="friends" aria-labelledby="friends-tab">
           <h2>My Friends</h2>
-          <div class="row">
-                <div class="content" style="width:100%;">
-                    <!--<table cellspacing="4" style="width:80%; height:80%; border-collapse: collapse;"><tr style="border-spacing: 0;" id="frList">-->
-                      <div class="row">
-                        <div class="text-center" id="frList" style="display: inline-block;">
-                        {% if friends %}
-                            {% for friend in friends %}
-                            <div class="col-xs-3 text-center">
-                              <div class="container">
-                              <div class="list-group">
-                                <a href="/users/{{ friend.id }}" class="list-group-item" style="width:230px;height:120px;">
-                                  <div class="media">
-                                    <div class="media-left">
-                                     {% if csPic=='default' %}
-                                        <img class="avatar border-gray" src="{{current_user.gravatar(size=90)}}" alt="Image for {{ friend.first_name }}"/>
-                                     {% else %}
-                                        <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+usID[loop.index-1]+'/'+csPic[loop.index-1]) }}" alt="Image for {{ friend.first_name }}" style="width:90px;height:90px;"/>
-                                     {% endif %}
-                                    </div><!-- /.media-left -->
-                                    <div class="media-body">
-                                      <h3 class="media-heading">{{ friend.first_name }} {{ friend.last_name }}</h3>
-                                      <p>
-                                        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Location: {{friend.address}}, {{ friend.city }}
-                                      </p>
-                                    </div><!-- /.media-body -->
-                                  </div><!-- /.media -->
-                                </a>
-                              </div><!-- /.list-group -->
-                            {% endfor %}
-                        {% else %}
-                            <div class="col-xs-12">
-                                <p>You haven't added any friends. Find friends and connect with them!</p>
-                            </div>
-                        {% endif %}
-                            </div>
-                          </div><!-- /.col -->
-                          </div>
-                        </div>
-                    <!--</table>-->
-                </div>
+            <div class="row">
+            {% if friends %}
+              {% for friend in friends %}
+              <div class="list-group list-group-horizontal">
+                <a href="/users/{{ friend.id }}" class="list-group-item" style="width:230px;height:120px;">
+                <div class="media">
+                    <div class="media-left">
+                      {% if csPic=='default' %}
+                          <img class="avatar border-gray" src="{{current_user.gravatar(size=90)}}" alt="Image for {{ friend.first_name }}"/>
+                      {% else %}
+                          <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+usID[loop.index-1]+'/'+csPic[loop.index-1]) }}" alt="Image for {{ friend.first_name }}" style="width:90px;height:90px;"/>
+                      {% endif %}
+                    </div><!-- /.media-left -->
+                    <div class="media-body">
+                      <h3 class="media-heading">{{ friend.first_name }} {{ friend.last_name }}</h3>
+                      <p>
+                        <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Location: {{friend.address}}, {{ friend.city }}
+                      </p>
+                    </div><!-- /.media-body -->
+                  </div><!-- /.media -->
+              </a>
+              </div><!-- /.list-group -->
+              {% endfor %}
+            {% else %}
+              <div class="col-xs-12">
+                <p>You haven't added any friends. Find friends and connect with them!</p>
+              </div>
+            {% endif %}
           </div><!-- /.row -->
         </div><!-- /#friends -->
 

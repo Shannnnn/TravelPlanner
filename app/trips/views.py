@@ -3,6 +3,7 @@ from flask import Flask, render_template, redirect, Blueprint, request, url_for,
 from flask_login import current_user, login_required
 from forms import TripForm, ItineraryForm, EditTripForm, EditItineraryForm
 from model import Trips, Itineraries, itineraryLocationType, Country, City
+from app.auth.model import Request
 from app import db
 from werkzeug import secure_filename
 from app.auth.model import Photos
@@ -144,6 +145,15 @@ def itineraries(tripName):
     itinerary = Itineraries.query.filter_by(tripID=tripid.tripID)
     trip = Trips.query.filter_by(userID=current_user.id, tripName=tripName).first()
     return render_template('itineraries.html', trip=trip, itineraries=itinerary)
+
+
+@trip_blueprint.route('/<tripName>/itineraries/view', methods=['GET'])
+@login_required
+def itineraries_friends(tripName):
+    tripid = Trips.query.filter_by(tripName=tripName).first()
+    itinerary = Itineraries.query.filter_by(tripID=tripid.tripID)
+    trip = Trips.query.filter_by(userID=current_user.id, tripName=tripName).first()
+    return render_template('itineraries-friends.html', trip=trip, itineraries=itinerary)
 
 @trip_blueprint.route('/<tripName>/<itineraryName>/edit', methods=['GET', 'POST'])
 @login_required

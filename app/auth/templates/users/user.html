@@ -216,7 +216,7 @@
                                         <div class="panel panel-default bootcards-media" style="width:100%;">
                                             <div class="panel-heading" align="center" style="width: 100%;">
                                                 {{ trip.tripName }}
-                                                {% if check_request and check_request2 %}
+                                                {% if check_request2 %}
                                                    <a href="/trips/{{ trip.tripName }}/edit" class="btn btn-primary">Edit</a>
                                                 {% else %}
                                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Edit</button>
@@ -231,9 +231,15 @@
                                                     <br>&nbsp; {{ trip.viewsNum }} views
                                                 </div>
                                                 <div class="panel-footer">
+                                                    {% if check_request2 %}
                                                     <div class="row" align="left" style="display: inline-block; width: 120%;">
-                                                        <center><a href="/trips/{{ trip.tripName }}/itineraries" class="btn btn-primary" style="display: block; margin: 0 auto;">View</a></center>
+                                                        <a href="/trips/{{ trip.tripName }}/itineraries" class="btn btn-primary" style="display: block; margin: 0 auto;">View</a>
                                                     </div>
+                                                    {% else %}
+                                                    <div class="row" align="left" style="display: inline-block; width: 120%;">
+                                                        <a href="/trips/{{ trip.tripName }}/itineraries/view" class="btn btn-primary" style="display: block; margin: 0 auto;">View</a>
+                                                    </div>
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                         </div>
@@ -245,38 +251,7 @@
                                     <p>You are not friends with {{user.first_name}}. You are not allowed to view {{user.first_name}}'s trips.</p>
                                 </div>
                                 {% endif %}
-                            {% else %}
-                        {% for trip in trips %}
-                        <div class="col-sm-3 text-center">
-                            <div class="container" style="display:inline; width:100%;">
-                                <div class="panel panel-default bootcards-media" style="width:100%;">
-                                    <div class="panel-heading" align="center" style="width: 100%;">
-                                        {{ trip.tripName }}
-                                        <a href="/trips/{{ trip.tripName }}/edit" class="btn btn-primary" style="display: block; margin: 0 auto;" disabled>Edit</a>
-                                        </div>
-                                    <div class="panel-footer" align="left" style="display: inline-block; width: 100%;">
-                                        <div class="row">
-                                            &nbsp; From: {{ trip.tripDateFrom }}
-                                        </div>
-                                        <div class="row">
-                                            &nbsp; To: {{ trip.tripDateTo }}
-                                            <br>&nbsp; {{ trip.viewsNum }} views
-                                        </div>
-                                        <div class="panel-footer">
-                                            <div class="row" align="left" style="display: inline-block; width: 120%;">
-                                                <a href="/trips/{{ trip.tripName }}/itineraries" class="btn btn-primary" style="display: block; margin: 0 auto;">View</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                            {% endfor %}
                             {% endif %}
-                        {% else %}
-                        <ul class="list-group">
-                            <li class="list-group-item">No trips yet.</li>
-                        </ul>
                         {% endif %}
                     </div>
                 </div>

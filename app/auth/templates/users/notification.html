@@ -55,7 +55,7 @@
           <h2>Trip Requests</h2>
           <div class="row">
             {% if received_edit_requests %}
-              <h6>These users wants to edit your public trips/itineraries.</h6>
+              <h6>Users who wants to edit your public trips/itineraries.</h6>
               {% for received_edit_request in received_edit_requests %}
               <div class="col-xs-6 col-sm-2" id="user-profile-pic-sm">
                   <a href="/users/{{ received_edit_request.id }}">
