@@ -10,6 +10,14 @@
 		(register->login->logout )   		:   passed
 		(request token for new pwd)  		:   passed
 
+		(view admin)                        :   passed
+		(view users)                        :   passed
+		(add users)                         :   passed
+		(view locations)                    :   passed
+		(add locations)                     :   passed
+		(view cities)                       :   passed
+		(add cities)                        :   passed
+
 		___________LandingModuleTest.py_______________
 		
 		(main page display)          		:   passed
