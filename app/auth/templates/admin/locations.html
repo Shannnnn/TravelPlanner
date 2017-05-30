@@ -93,7 +93,7 @@
                                     
                                         <tr>
                                             <td><a href="/admin/trips/location/edit/{{ country.countryID }}" class="btn btn-success btn-xs" style="text-align: center"><span class="glyphicon glyphicon-pencil"></span></a></td>
-                                            <td><a href="/admin/trips/location/remove/{{ country.countryID }}" class="btn btn-danger btn-xs" style="text-align: center"><span class="glyphicon glyphicon-trash"></span></a></td>
+                                            <td><a href="/admin/trips/location/remove/{{ country.countryID }}" class="btn btn-danger btn-xs confirmation" style="text-align: center"><span class="glyphicon glyphicon-trash"></span></a></td>
                                             <td>{{country.countryName}}</td>
                                             <td>{{country.countryCode}}</td>
                                             <td style="text-align: center"><a href="/admin/trips/{{ country.countryName }}/city" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus"></span></a></td>
@@ -108,6 +108,18 @@
                 </div>
             </div>
         </section>
+
+
+        <script type="text/javascript">
+            var elems = document.getElementsByClassName('confirmation');
+            var confirmIt = function (e) {
+                if (!confirm('Are you sure?')) e.preventDefault();
+            };
+            for (var i = 0, l = elems.length; i < l; i++) {
+                elems[i].addEventListener('click', confirmIt, false);
+            }
+        </script>
+
         <div class="container text-center">
             <nav class="navbar navbar-default navbar-fixed-bottom">
                 <ul class="pagination" style="alignment: center">
@@ -125,6 +137,7 @@
             </nav>
         </div>
         
+
 
     <!--Common plugins-->
         <script type="text/javascript" src="{{ url_for('.static', filename='js/jquery.min.js') }}"></script>

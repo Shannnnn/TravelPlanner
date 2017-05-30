@@ -91,6 +91,7 @@
                                     {% for city_ in city.items %}
                                     
                                         <tr>
+
                                             <td style="text-align: center"><a href="/admin/trips/{{ country.countryName }}/city/{{ city_.cityID }}/edit" class="btn btn-success btn-xs" style="text-align: center"><span class="glyphicon glyphicon-pencil"></span></a></td>
                                             <td style="text-align: center"><a href="/admin/trips/{{ city.countryName }}/city/{{ city_.cityID }}/remove" class="btn btn-danger btn-xs" style="text-align: center"><span class="glyphicon glyphicon-trash"></span></a></td>
                                             <td>{{city_.cityID}}</td>
@@ -109,6 +110,19 @@
                 </div>
             </div>
         </section>
+
+
+        <script type="text/javascript">
+            var elems = document.getElementsByClassName('confirmation');
+            var confirmIt = function (e) {
+                if (!confirm('Are you sure?')) e.preventDefault();
+            };
+            for (var i = 0, l = elems.length; i < l; i++) {
+                elems[i].addEventListener('click', confirmIt, false);
+            }
+        </script>
+
+
         <div class="container text-center">
             <nav class="navbar navbar-default navbar-fixed-bottom">
                 <ul class="pagination" id="pagination" alignment="enter">
@@ -120,6 +134,7 @@
                 </ul>
             </nav>
         </div>
+
     <!--Common plugins-->
         <script type="text/javascript" src="{{ url_for('.static', filename='js/jquery.min.js') }}"></script>
 

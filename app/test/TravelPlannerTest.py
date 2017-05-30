@@ -136,6 +136,7 @@ class FlaskTestsLoggedIn(unittest.TestCase):
 class TestAdmin(unittest.TestCase):
 
     def setUp(self):
+        self.db_fd, app.config['DATABASE'] = tempfile.mkstemp()
         app.config['TESTING'] = True
         app.config['DEBUG'] = False
         app.config['WTF_CSRF_ENABLED'] = False
@@ -145,9 +146,11 @@ class TestAdmin(unittest.TestCase):
         db.create_all()
         example_data()
         
+        self.app = app.test_client()
+
     def tearDown(self):
-        db.session.remove()
-        db.drop_all()
+        os.close(self.db_fd)
+        os.unlink(app.config['DATABASE'])
         
     def addusers(self, username, email, password, role_id):
         return self.app.post(
@@ -194,15 +197,15 @@ class TestAdmin(unittest.TestCase):
         response = self.addlocations('Baker Street', '221')
         self.assertEqual(response.status_code, 200)
         
-    def addcities(self, cityName, cityyCode):
+    def addcities(self, cityName, cityCode):
         return self.app.post(
-            '/admin/trips/city/add',
+            '/admin/trips/<countryName>/city/add',
             data=dict(cityName=cityName, cityCode=cityCode),
             follow_redirects=True
         )   
     
-    def testAddLocations(self):
-        response = self.addlocations('Baker Street', '221')
+    def testAddCities(self):
+        response = self.addcities('Baker Street', '221')
         self.assertEqual(response.status_code, 200)
 
 if __name__ == '__main__':

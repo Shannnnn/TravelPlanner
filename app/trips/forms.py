@@ -27,6 +27,14 @@ class EditTripForm(Form):
     trip_date_from = DateField('From(mm/dd/yyyy)', format='%m/%d/%Y', validators=[DataRequired()])
     trip_date_to = DateField('To(mm/dd/yyyy)', format='%m/%d/%Y', validators=[DataRequired()])
     trip_visibility = SelectField('Visibility', choices=[(0, 'Public'), (1, 'Private')], coerce=int)
+
+class AdminEditTripForm(Form):
+    trip_name = StringField('Trip Name', validators=[DataRequired()])
+    trip_city = SelectField('City', validators=[DataRequired()], id="trip_city")
+    trip_country = SelectField('Country', validators=[DataRequired()], id="trip_country")
+    trip_date_from = DateField('From(mm/dd/yyyy)', format='%m/%d/%Y', validators=[DataRequired()])
+    trip_date_to = DateField('To(mm/dd/yyyy)', format='%m/%d/%Y', validators=[DataRequired()])
+    trip_visibility = SelectField('Visibility', choices=[(0, 'Public'), (1, 'Private')], coerce=int)
     isFeatured = SelectField('Featured', choices=[(0,'No'),(1,'Yes')], coerce=int)
 
     def isPrivate(self, field):
