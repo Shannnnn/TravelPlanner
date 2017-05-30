@@ -87,43 +87,41 @@
                             <br>
                                 <div class="row" id="key_trip">
                                     {% for trip in result.items %}
-
-                                    <div>
-                                    <div class="col-sm-3 text-center">
-                                    <div class="container" style="display:inline; width:100%; lenght:100%">
-                                    <div class="panel panel-default bootcards-media" style="width:100%;">
-                                    <div class="panel-heading" align="center" style="width: 100%;">
-                                        {{ trip.tripName }}
-                                    </div>
-                                        <a href="/admin/trips/{{ trip.tripName }}/itineraries">
-                                        <div class="panel-body" style="width: 200px; height: 125px;" align="center">
-                                            <img style="height: 100%; width: 100%; object-fit:contain;" src="https://i.ytimg.com/vi/QGiJFumHUPo/maxresdefault.jpg"/>
-                                        </div>
-                                        </a>
-                                    <div class="panel-footer" align="left" style="display: inline-block; width: 100%;">
-                                        <div class="row">
-                                            &nbsp; From: {{ trip.tripDateFrom }}
-                                        </div>
-                                        <div class="row">
-                                            &nbsp; To: {{ trip.tripDateTo }}
-                                            <br>&nbsp; {{ trip.viewsNum }} views
-                                        </div>
-                                        <div class="row">
-                                            &nbsp; Location: {{ trip.tripCity }}, {{ trip.tripCountry }}
-                                        </div>
-                                        <div class="panel-footer">
-                                            <div class="row" align="center" style="display: inline-block; width: 120%;">
-                                                <a href="/admin/trips/{{ trip.tripName }}/itineraries" class="btn btn-primary" style="display: inline-block; width: 30%;"><span class="fa fa-bars"></span></a>
-                                                <a href="/admin/trips/edit/{{trip.tripName}}" class="btn btn-success" style="display: inline-block; width: 30%;"><span class="fa fa-pencil"></span></a>
-                                                <a class="btn btn-danger btn-xs confirmation" href="/admin/trips/remove/{{ trip.tripName }}" style="display: inline-block; width: 30%;"><span class="fa fa-trash"></span></a>
+                                        <div>
+                                            <div class="col-sm-3 text-center">
+                                                <div class="container" style="display:inline; width:100%; length:100%">
+                                                    <div class="panel panel-default bootcards-media" style="width:100%;">
+                                                        <div class="panel-heading" align="center" style="width: 100%;">
+                                                            {{ trip.tripName }}
+                                                        </div>
+                                                            <a href="/admin/trips/{{ trip.tripName }}/itineraries">
+                                                            <div class="panel-body" style="width: 200px; height: 125px;" align="center">
+                                                                <img style="height: 100%; width: 100%; object-fit:contain;" src="https://i.ytimg.com/vi/QGiJFumHUPo/maxresdefault.jpg"/>
+                                                            </div>
+                                                            </a>
+                                                        <div class="panel-footer" align="left" style="display: inline-block; width: 100%;">
+                                                            <div class="row">
+                                                                &nbsp; From: {{ trip.tripDateFrom }}
+                                                            </div>
+                                                            <div class="row">
+                                                                &nbsp; To: {{ trip.tripDateTo }}
+                                                                <br>&nbsp; {{ trip.viewsNum }} views
+                                                            </div>
+                                                            <div class="row">
+                                                                &nbsp; Location: {{ trip.tripCity }}, {{ trip.tripCountry }}
+                                                            </div>
+                                                            <div class="panel-footer">
+                                                                <div class="row" align="center" style="display: inline-block; width: 120%;">
+                                                                    <a href="/admin/trips/{{ trip.tripName }}/itineraries" class="btn btn-primary" style="display: inline-block; width: 30%;"><span class="fa fa-bars"></span></a>
+                                                                    <a href="/admin/trips/edit/{{trip.tripName}}" class="btn btn-success" style="display: inline-block; width: 30%;"><span class="fa fa-pencil"></span></a>
+                                                                    <a class="btn btn-danger btn-xs confirmation" href="/admin/trips/remove/{{ trip.tripName }}" style="display: inline-block; width: 30%;"><span class="fa fa-trash"></span></a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                        
                                     {% endfor %}
                                 </div>
                             </div>
