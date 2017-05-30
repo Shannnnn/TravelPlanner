@@ -1,4 +1,4 @@
-			tests				   Results
+			tests				                Results
 
 		__________TravelPlannerTest.py________________
 
@@ -15,8 +15,17 @@
 		(main page display)          		:   passed
 		(about page display)         		:   passed
 		(response page display)      		:   passed
-		(send responses via email)	 	:   passed
+		(send responses via email)	 	    :   passed
 		(view public trips)          		:   passed
-		(unable to view non pupblic trips)  	:   passed
-		(search trip from header searchbar) 	:   passed
-		(filter search)				:   failed(still working on it)
+		(unable to view non public trips)  :   passed
+		(search trip from header searchbar) :   passed
+		(filter search)				        :   failed(still working on it)
+
+		_____________tripTest.py_______________________
+
+        (add trip)                          :   passed
+        (add itinerary)                     :   passed
+        (view trips)                        :   passed
+        (view itineraries)                  :   passed
+        (add trip form display)             :   passed
+        (add itinerary form display)        :   passed
