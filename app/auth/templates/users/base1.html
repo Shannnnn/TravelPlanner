@@ -66,8 +66,9 @@
         {% if session.get('current_user') %}
           <ul class="nav navbar-nav">
             <li><a href="/home">Dashboard</a></li>
-            <li><a href="/friends">Friends {% if session.current_user.num_total_requests == 0 %} {% else %} <span class="badge">{{ session.current_user.num_total_requests }}</span> {% endif %}</a></li>
+            <li><a href="/friends">Friends</a></li>
             <li><a href="/trips">Trips</a></li>
+            <li><a href="/notifications">Notifications {% if session.current_user.num_total_requests == 0 %} {% else %} <span class="badge">{{ session.current_user.num_total_requests }}</span> {% endif %}</a></li>
           </ul>
 
           <ul class="nav navbar-nav navbar-right">
@@ -115,8 +116,6 @@
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script type="text/javascript" src="{{ url_for('.static', filename='js/bootstrap.min.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('.static', filename='js/paginateUser.js') }}"></script>
-  {% block javascript %}
-  {% endblock %}
 
 </body>
 </html>

@@ -1,6 +1,5 @@
 <!doctype html>
 <html>
-
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,6 +7,16 @@
   <link rel="icon" href="" type="image/gif" sizes="16x16">
   <link rel="shortcut icon" href="{{ url_for('landing_blueprint.static', filename='images/favicon.ico') }}" type="image/x-icon">
   <title>TravelPlanner || {% block title %} put title here {% endblock %}</title>
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message }} alert-dismissible" role="alert">{{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
 
   <!-- Bootstrap -->
   <link rel="stylesheet" href="{{ url_for('.static', filename='css/bootstrap.min.css') }}">
@@ -57,8 +66,9 @@
         {% if session.get('current_user') %}
           <ul class="nav navbar-nav">
             <li><a href="/home">Dashboard</a></li>
-            <li><a href="/friends">Friends {% if session.current_user.num_total_requests == 0 %} {% else %} <span class="badge">{{ session.current_user.num_total_requests }}</span> {% endif %}</a></li>
+            <li><a href="/friends">Friends</a></li>
             <li><a href="/trips">Trips</a></li>
+            <li><a href="/notifications">Notifications {% if session.current_user.num_total_requests == 0 %} {% else %} <span class="badge">{{ session.current_user.num_total_requests }}</span> {% endif %}</a></li>
           </ul>
 
           <ul class="nav navbar-nav navbar-right">
@@ -69,7 +79,7 @@
                 <span class="caret"></span>
               </a>
               <ul class="dropdown-menu">
-                <li><a href="/userprofile/{{current_user.username }}/edit">Edit Profile</a></li>
+                <li><center><h6>Signed in as {{ current_user.username }}</h6></center></li>
                 <li role="separator" class="divider"></li>
                 <li><a href="#">Help</a></li>
                 <li role="separator" class="divider"></li>
@@ -97,14 +107,15 @@
   <footer class="footer">
     <div class="container">
       <p class="footer-copyright">TravelPlanner &copy; 2017.</p>
-      </p>
     </div>
   </footer>
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-  {% block scripts %}
-  {% endblock %}
+  <!-- Placed at the end of the document so the pages load faster -->
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/jquery.min.js') }}"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/bootstrap.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/paginateUser.js') }}"></script>
 
 </body>
 </html>

@@ -2,10 +2,11 @@ import os  # main
 from flask import Flask, render_template, redirect, Blueprint, request, flash, url_for, session, jsonify
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user, AnonymousUserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
-from model import User, Role, Anonymous, Photos, Connection, Photos
+from model import User, Role, Anonymous, Photos, Connection, Photos, Request
 from forms import LoginForm, RegisterForm, EditForm, SearchForm, PasswordSettingsForm, EmailResetForm, PasswordResetForm
 from app import db, app
-from decorators import required_roles, get_friends, get_friend_requests, allowed_file, deleteTrip_user, img_folder, is_friends_or_pending, is_friends_or_pending2, user_query
+from decorators import required_roles, get_friends, get_friend_requests, allowed_file, deleteTrip_user, img_folder
+from decorators import is_permitted_or_pending, is_friends_or_pending, is_friends_or_pending2, user_query, get_edit_requests
 from app.landing.views import landing_blueprint
 from werkzeug import secure_filename
 from PIL import Image
@@ -1193,20 +1194,23 @@ def login():
                             login_user(user)
                             flash('You are now logged in!')
 
-                        # Get current user's friend requests and number of requests to display in badges
-                        received_friend_requests, sent_friend_requests = get_friend_requests(current_user.id)
-                        num_received_requests = len(received_friend_requests)
-                        num_sent_requests = len(sent_friend_requests)
-                        num_total_requests = num_received_requests + num_sent_requests
+                            # Get current user's friend requests and number of requests to display in badges
+                            received_friend_requests, sent_friend_requests = get_friend_requests(current_user.id)
+                            edit_requests = get_edit_requests(current_user.id)
+                            num_edit_requests = len(edit_requests)
+                            num_received_requests = len(received_friend_requests)
+                            num_sent_requests = len(sent_friend_requests)
+                            num_total_requests = num_received_requests + num_sent_requests + num_edit_requests
 
-                        # Use a nested dictionary for session["current_user"] to store more than just user_id
-                        session["current_user"] = {
-                            "first_name": current_user.first_name,
-                            "id": current_user.id,
-                            "num_received_requests": num_received_requests,
-                            "num_sent_requests": num_sent_requests,
-                            "num_total_requests": num_total_requests
-                        }
+                            # Use a nested dictionary for session["current_user"] to store more than just user_id
+                            session["current_user"] = {
+                                "first_name": current_user.first_name,
+                                "id": current_user.id,
+                                "num_received_requests": num_received_requests,
+                                "num_sent_requests": num_sent_requests,
+                                "num_total_requests": num_total_requests,
+                                "num_edit_requests": num_edit_requests
+                            }
                         if user.first_login == True:
                             user.first_login = False
                             db.session.add(user)
@@ -1256,7 +1260,8 @@ def register():
                 "id": user.id,
                 "num_received_requests": 0,
                 "num_sent_requests": 0,
-                "num_total_requests": 0
+                "num_total_requests": 0,
+                "num_edit_requests": 0
             }
 
             flash('Please log in')
