@@ -619,6 +619,7 @@ def home():
     }
     return redirect(url_for('auth_blueprint.users', id=user.id))
 
+
 @auth_blueprint.route('/settings/<username>', methods=['GET', 'POST'])
 @login_required
 @required_roles('User')
@@ -643,6 +644,7 @@ def user_settings(username):
     return render_template('users/settings.html', form=form, user=user, csID=str(current_user.id),
                            csPic=str(get_profile(current_user.profile_pic)))
 
+
 @auth_blueprint.route("/users/<int:id>")
 @login_required
 @required_roles('User')
@@ -651,20 +653,22 @@ def users(id):
 
     # Get current user's friend requests and number of requests to display in badges
     received_friend_requests, sent_friend_requests = get_friend_requests(current_user.id)
+    edit_requests = get_edit_requests(current_user.id)
+    num_edit_requests = len(edit_requests)
     num_received_requests = len(received_friend_requests)
     num_sent_requests = len(sent_friend_requests)
-    num_total_requests = num_received_requests + num_sent_requests
+    num_total_requests = num_received_requests + num_sent_requests + num_edit_requests
 
     # Use a nested dictionary for session["current_user"] to store more than just user_id
     session["current_user"] = {
         "first_name": current_user.first_name,
         "id": current_user.id,
         "num_received_requests": num_received_requests, "num_sent_requests": num_sent_requests,
-        "num_total_requests": num_total_requests
+        "num_total_requests": num_total_requests, "num_edit_requests": num_edit_requests
     }
 
     user = db.session.query(User).filter(User.id == id).one()
-    trips = Trips.query.filter_by(userID=user.id)
+    trips = Trips.query.filter_by(userID=user.id).all()
 
     total_friends = len(get_friends(user.id).all())
 
@@ -672,25 +676,64 @@ def users(id):
     user_b_id = user.id
 
     # Check connection status between user_a and user_b
-    friends, pending_request = is_friends_or_pending(user_a_id, user_b_id)
-    friends2, pending_request2 = is_friends_or_pending2(user_a_id, user_b_id)
+    check_friends, pending_request = is_friends_or_pending(user_a_id, user_b_id)
+    check_friends2, pending_request2 = is_friends_or_pending2(user_a_id, user_b_id)
+    check_request = is_permitted_or_pending(user_a_id, user_b_id)
+    check_request2 = is_permitted_or_pending(user_b_id, user_a_id)
 
     friends = get_friends(user.id).all()
     photos = Photos.query.filter_by(userID=user.id).all()
 
     return render_template("users/user.html",
-                            user=user,
-                            total_friends=total_friends,
-                            friends=friends,
-                            pending_request=pending_request,
-                            pending_request2=pending_request2,
-                            csID=str(user.id), csPic=str(get_profile(user.profile_pic)),
-                            trips=trips, photos=photos)
+                           user=user,
+                           total_friends=total_friends,
+                           check_friends=check_friends,
+                           friends=friends, check_request=check_request,
+                           check_request2=check_request2,
+                           pending_request=pending_request,
+                           pending_request2=pending_request2,
+                           csID=str(user.id), csPic=str(get_profile(user.profile_pic)),
+                           trips=trips, photos=photos)
 
-@auth_blueprint.route('/add-friend', methods=["POST"])
+
+@auth_blueprint.route('/send-request/<int:id>', methods=["POST"])
 @login_required
 @required_roles('User')
-def add_friend():
+def edit_request(id):
+    """Send a friend request to another user."""
+
+    user = db.session.query(User).filter(User.id == id).one()
+
+    user_x_id = session["current_user"]["id"]
+    user_y_id = user.id
+
+    # Check connection status between user_a and user_b
+    is_permitted, is_pending = is_permitted_or_pending(user_x_id, user_y_id)
+
+    if user_x_id == user_y_id:
+        flash("You send request to yourself.")
+        return redirect(url_for('auth_blueprint.users', id=user.id))
+    elif is_permitted:
+        flash("You are permitted to edit this trip.")
+        return redirect(url_for('auth_blueprint.users', id=user.id))
+    elif is_pending:
+        flash("Your edit request is pending.")
+        return redirect(url_for('auth_blueprint.users', id=user.id))
+    else:
+        requested = Request(user_x_id=user_x_id,
+                            user_y_id=user_y_id,
+                            status="Requested")
+        db.session.add(requested)
+        db.session.commit()
+        print "User ID %s has sent an edit request to User ID %s" % (user_x_id, user_y_id)
+        flash("Request Sent")
+        return redirect(url_for('auth_blueprint.users', id=user.id))
+
+
+@auth_blueprint.route('/add-friend/<int:id>', methods=["POST"])
+@login_required
+@required_roles('User')
+def add_friend(id):
     """Send a friend request to another user."""
 
     user = db.session.query(User).filter(User.id == id).one()
@@ -720,6 +763,7 @@ def add_friend():
         flash("Request Sent")
         return redirect(url_for('auth_blueprint.users', id=user.id))
 
+
 @auth_blueprint.route('/accept-friend/<int:id>', methods=["POST"])
 @login_required
 @required_roles('User')
@@ -736,16 +780,16 @@ def accept_friend(id):
         return redirect(url_for('auth_blueprint.users', id=user.id))
     else:
         requested_connection = Connection(user_a_id=user_a_id,
-                                        user_b_id=user_b_id,
-                                        status="Accepted")
+                                          user_b_id=user_b_id,
+                                          status="Accepted")
 
         requested_connection2 = Connection(user_a_id=user_b_id,
-                                        user_b_id=user_a_id,
-                                        status="Accepted")
+                                           user_b_id=user_a_id,
+                                           status="Accepted")
 
         Connection.query.filter_by(user_a_id=user_b_id,
-                                user_b_id=user_a_id,
-                                status="Requested").delete()
+                                   user_b_id=user_a_id,
+                                   status="Requested").delete()
 
         db.session.add(requested_connection)
         db.session.add(requested_connection2)
@@ -753,6 +797,7 @@ def accept_friend(id):
         print "User ID %s and User ID %s are now friends." % (user_a_id, user_b_id)
         flash("Request Accepted")
         return redirect(url_for('auth_blueprint.users', id=user.id))
+
 
 @auth_blueprint.route('/reject-friend/<int:id>', methods=["POST"])
 @login_required
@@ -770,11 +815,12 @@ def reject_friend(id):
         return redirect(url_for('auth_blueprint.users', id=user.id))
     else:
         Connection.query.filter_by(user_a_id=user_b_id,
-                                    user_b_id=user_a_id,
-                                    status="Requested").delete()
+                                   user_b_id=user_a_id,
+                                   status="Requested").delete()
         db.session.commit()
         print "User ID %s and User ID %s are not friends." % (user_a_id, user_b_id)
         return redirect(url_for('auth_blueprint.users', id=user.id))
+
 
 @auth_blueprint.route('/unfriend/<int:id>', methods=["POST"])
 @login_required
@@ -792,16 +838,17 @@ def unfriend(id):
         return redirect(url_for('auth_blueprint.users', id=user.id))
     else:
         Connection.query.filter_by(user_a_id=user_a_id,
-                                user_b_id=user_b_id,
-                                status="Accepted").delete()
+                                   user_b_id=user_b_id,
+                                   status="Accepted").delete()
 
         Connection.query.filter_by(user_a_id=user_b_id,
-                                user_b_id=user_a_id,
-                                status="Accepted").delete()
+                                   user_b_id=user_a_id,
+                                   status="Accepted").delete()
 
         db.session.commit()
         print "User ID %s and User ID %s are not friends." % (user_a_id, user_b_id)
         return redirect(url_for('auth_blueprint.users', id=user.id))
+
 
 @auth_blueprint.route('/paginateUserFriends')
 def paginateUserFriends():
@@ -825,6 +872,96 @@ def paginateUserFriends():
                    cas=cas,
                    id=usID,
                    size=len(usID))
+
+@auth_blueprint.route('/notifications')
+@login_required
+@required_roles('User')
+def notifications():
+    cas = []
+    usID = []
+    users = User.query.filter(User.id!=current_user.id).paginate(1, POSTS_PER_PAGE, False)
+    resAllCount = User.query.filter(User.id!=current_user.id).count()
+
+    numm=resAllCount/POSTS_PER_PAGE
+    if resAllCount%POSTS_PER_PAGE!=0:
+        numm=(resAllCount/POSTS_PER_PAGE)+1;
+
+    for user in users.items:
+        cas.append(str(get_profile(user.profile_pic)))
+        usID.append(str(user.id))
+
+    # This returns User objects for current user's friend requests
+    received_friend_requests, sent_friend_requests = get_friend_requests(session["current_user"]["id"])
+    received_edit_requests = get_edit_requests(session["current_user"]["id"])
+
+    # This returns a query for current user's friends (not User objects), but adding .all() to the end gets list of User objects
+    friends = get_friends(session["current_user"]["id"]).all()
+
+    return render_template("users/notification.html",
+                           received_friend_requests=received_friend_requests,
+                           sent_friend_requests=sent_friend_requests,
+                           received_edit_requests=received_edit_requests,
+                           friends=friends,
+                           users=users,
+                           numm=numm, csPic=cas, usID=usID)
+
+
+@auth_blueprint.route('/accept-request/<int:id>', methods=["POST"])
+@login_required
+@required_roles('User')
+def accept_request(id):
+    """Accept a edit request from another user."""
+
+    user = db.session.query(User).filter(User.id == id).one()
+
+    user_x_id = session["current_user"]["id"]
+    user_y_id = user.id
+
+    if user_x_id == user_y_id:
+        flash("You cannot send request to yourself.")
+        return redirect(url_for('auth_blueprint.notifications'))
+    else:
+        requested = Request(user_x_id=user_x_id,
+                            user_y_id=user_y_id,
+                            status="Accepted")
+
+        requested2 = Request(user_x_id=user_y_id,
+                             user_y_id=user_x_id,
+                             status="Accepted")
+
+        Request.query.filter_by(user_x_id=user_y_id,
+                                   user_y_id=user_x_id,
+                                   status="Requested").delete()
+
+        db.session.add(requested)
+        db.session.add(requested2)
+        db.session.commit()
+        print "User ID %s can now edit User ID %s's trips/itineraries." % (user_x_id, user_y_id)
+        flash("Request Accepted")
+        return redirect(url_for('auth_blueprint.notifications'))
+
+
+@auth_blueprint.route('/reject-request/<int:id>', methods=["POST"])
+@login_required
+@required_roles('User')
+def reject_request(id):
+    """Reject a edit request from another user."""
+
+    user = db.session.query(User).filter(User.id == id).one()
+
+    user_x_id = session["current_user"]["id"]
+    user_y_id = user.id
+
+    if user_x_id == user_y_id:
+        flash("Error.")
+        return redirect(url_for('auth_blueprint.notifications'))
+    else:
+        Request.query.filter_by(user_x_id=user_y_id,
+                                user_y_id=user_x_id,
+                                status="Requested").delete()
+        db.session.commit()
+        print "User ID %s cannot edit User ID %s's trips/itineraries." % (user_x_id, user_y_id)
+        return redirect(url_for('auth_blueprint.notifications'))
 
 @auth_blueprint.route('/friends')
 @auth_blueprint.route('/friends/')
