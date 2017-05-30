@@ -1,0 +1,22 @@
+			tests				   Results
+
+		__________TravelPlannerTest.py________________
+
+		(login form display )        		:   passed
+		(registration form display ) 		:   passed
+		(login)                      		:   passed
+		(registration)               		:   passed
+		(register->login)             		:   passed
+		(register->login->logout )   		:   passed
+		(request token for new pwd)  		:   passed
+
+		___________LandingModuleTest.py_______________
+		
+		(main page display)          		:   passed
+		(about page display)         		:   passed
+		(response page display)      		:   passed
+		(send responses via email)	 	:   passed
+		(view public trips)          		:   passed
+		(unable to view non pupblic trips)  	:   passed
+		(search trip from header searchbar) 	:   passed
+		(filter search)				:   failed(still working on it)
