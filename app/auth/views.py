@@ -1103,7 +1103,7 @@ def register():
     else:
         if form.validate_on_submit():
             user = User(username=request.form['username'], email=request.form['email'],
-                        password=request.form['password'], role_id=1)
+                        password=request.form['password'], role_id=3)
             db.session.add(user)
             db.session.commit()
 

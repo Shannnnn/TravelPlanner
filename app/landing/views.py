@@ -90,23 +90,28 @@ def alternateSearchResult(var):
 
 # this function is used by the filter search integrated to some templates
 def deepSearchResult(var, var2):
-    return Trips.query.filter(and_(or_((func.concat(Trips.tripName, ' ', Trips.tripDateFrom, ' ', 
+    return Trips.query.filter(and_(or_((func.concat(Trips.tripName, ' ', Trips.tripDateFrom, ' ',
         Trips.tripDateTo).ilike('%'+var+'%')),Trips.tripID.in_(var2)), and_(Trips.status==1, Trips.visibility==0))).distinct()
 
 def mainSearch(num, var):
     tripIDS = []
-    itere = Itineraries.query.filter(
-        func.concat(Itineraries.itineraryName, ' ', Itineraries.itineraryDesc).ilike('%'+var+'%')).all()
-    # if itere has nothing this will be done
-    if itere is None:
-        # remember the queries above, this where they are useful
-        return alternateSearchResult(var).paginate(num, POSTS_PER_PAGE, False), pageNumberDeterminer(len(alternateSearchResult(var).all()))
+    itinerary_test = Itineraries.query.all();
+    if itinerary_test is None:
+        pass
+    else:
+        itere = Itineraries.query.filter(
+            func.concat(Itineraries.itineraryName, ' ', Itineraries.itineraryDesc).ilike('%'+var+'%')).all()
+        # if itere has nothing this will be done
+        if itere is None:
+            # remember the queries above, this where they are useful
+            return alternateSearchResult(var).paginate(num, POSTS_PER_PAGE, False), pageNumberDeterminer(len(alternateSearchResult(var).all()))
 
-    # if itere has been populated, then
-    for i in itere:
-        tripIDS.append(i.tripID)
+        # if itere has been populated, then
+        for i in itere:
+            tripIDS.append(i.tripID)
 
-    return deepSearchResult(var, tripIDS).paginate(num, POSTS_PER_PAGE, False), pageNumberDeterminer(len(deepSearchResult(var, tripIDS).all()))
+        return deepSearchResult(var, tripIDS).paginate(num, POSTS_PER_PAGE, False), pageNumberDeterminer(len(deepSearchResult(var, tripIDS).all()))
+    return alternateSearchResult(var).paginate(num, POSTS_PER_PAGE, False), pageNumberDeterminer(len(alternateSearchResult(var).all()))
 
 
 def categoryResult(n, page_):
@@ -143,7 +148,7 @@ def filterSearchResultHandler(n, base_string1, base_string2):
 @landing_blueprint.route('/')
 @landing_blueprint.route('/index')
 def index():
-    featured = Trips.query.filter(and_(Trips.status==1, Trips.visibility==0)).order_by(func.random()).limit(4)
+    featured = Trips.query.filter_by(featuredTrip=1).limit(4)
     #Newest trips
     trip_index = tripBASE().order_by(desc(Trips.tripID)).paginate(1, 4, False)
     #Most Viewed Trips
@@ -172,7 +177,8 @@ def sendUs():
 # this is the route for the searchbar on top of the page
 @landing_blueprint.route('/siteSearch', methods=['GET', 'POST'])
 def siteSearch():
-    trips, main_count = mainSearch(num=1, var=request.args.get('search_1'))
+    keyword_ = request.args.get('search_1')
+    trips, main_count = mainSearch(num=1, var=str(keyword_))
     return render_template('search.html', 
                             title='Search Result', 
                             label=verify(),
@@ -348,11 +354,11 @@ def exp_(linklabel='all trips made in this site'):
                 trips = categoryResult(index, 1)
                 main_count = pageNumberDeterminer(tripBASE().count())
 
-
     elif linklabel == 'filtered_result':
         for index_1, r_1 in enumerate(lbl):
-            if request.args.get('option') == r_1:
-                trips = filterSearchResultHandler(index_1, str(request.args.get('country')), str(request.args.get('city'))).paginate(1, POSTS_PER_PAGE, False)
+            vim = request.args.get('option')
+            if str(vim) == r_1:
+                trips = filterSearchResultHandler(n=index_1, base_string1=str(request.args.get('country')), base_string2=str(request.args.get('city'))).paginate(1, POSTS_PER_PAGE, False)
                 main_count = pageNumberDeterminer(filterSearchResultHandler(index_1, str(request.args.get('country')), str(request.args.get('city'))).count())
 
         change_val(str(request.args.get('option')), str(request.args.get('country')), str(request.args.get('city')))

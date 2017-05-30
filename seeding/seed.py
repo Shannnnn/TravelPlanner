@@ -17,3 +17,9 @@ odo("adminuser.csv", adminstring)
 ds = dshape("var * {locationTypeID: int64, locationType: string, locationTypeIcon: string}")
 odo("itnloctype.csv", pd.DataFrame, dshape=ds)
 odo("itnloctype.csv", itnloctypestring)
+
+
+
+
+#COPY countries FROM '/anothersample.csv' DELIMITER ',' CSV HEADER;
+#COPY cities FROM '/world-cities.csv' DELIMITER ',' CSV HEADER;

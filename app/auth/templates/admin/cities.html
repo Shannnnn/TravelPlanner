@@ -145,41 +145,45 @@
                 limit_=10;
 
             $("#pagination").html("");
+            $("#pagination").append('<li><a href="javascript:void(0)" onclick="paginator_ic_city(1, \''+country+'\');"><span class="glyphicon glyphicon-chevron-left"></span></a></li>');
             for(i=1; i<=limit_; i++){
                 Stringres ='<li id="pagination-demo"><a href="javascript:void(0)" onclick="paginator_ic_city('+i+',\''+country+'\'); askPaginate('+i+','+total+',\''+country+'\');">'+i+'</a></li>';
-
                 $("#pagination").append(Stringres);
             }
+            $("#pagination").append('<li><a href="javascript:void(0)" onclick="paginator_ic_city('+total+', \''+country+'\');"><span class="glyphicon glyphicon-chevron-right"></span></a></li>');
         }
         function askPaginate(page, total, country){
             var count = 0;
             if(total>10){
                 if(page!=1){
                     $("#pagination").html("");
-                    //$("#pagination").append('<li><a href="javascript:void(0)" onclick="paginator_ic_city(1, \''+country+'\');"><span class="glyphicon glyphicon-chevron-left"></span></a></li>');
+                    $("#pagination").append('<li><a href="javascript:void(0)" onclick="paginator_ic_city(1, \''+country+'\');"><span class="glyphicon glyphicon-chevron-left"></span></a></li>');
                     if(page==crit){
+                        var list_ = [];
+                        var listCount = 0;
                         for(i=page; i>=1; i--){
                             Stringres ='<li id="pagination-demo"><a href="javascript:void(0)" onclick="paginator_ic_city('+i+',\''+country+'\'); askPaginate('+i+','+total+',\''+country+'\');">'+i+'</a></li>';
-
-                            console.log(Stringres);
-                            $("#pagination").append(Stringres);
+                            list_[listCount]=Stringres;
+                            listCount++;
                             if((i==total)||(count==10))
                                 break;
                             count++;
+                        }
+                        for(i=listCount-1; i>=0; i--){
+                            $("#pagination").append(list_[i]);
                         }
                     }
                     else {
                         for(i=page; i<=total; i++){
                             Stringres ='<li id="pagination-demo"><a href="javascript:void(0)" onclick="paginator_ic_city('+i+',\''+country+'\'); askPaginate('+i+','+total+',\''+country+'\');">'+i+'</a></li>';
 
-                            console.log(Stringres);
                             $("#pagination").append(Stringres);
                             if((i==total)||(count==10))
                                 break;
                             count++;
                         }
                     }
-                    //$("pagination").append('<li><a href="javascript:void(0)" onclick="paginator_ic_city('+total+', \''+country+'\');"><span class="glyphicon glyphicon-chevron-right"></span></a></li>')
+                    $("#pagination").append('<li><a href="javascript:void(0)" onclick="paginator_ic_city('+total+', \''+country+'\');"><span class="glyphicon glyphicon-chevron-right"></span></a></li>');
                 }
                 crit = page;
             }
