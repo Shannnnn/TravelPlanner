@@ -47,7 +47,7 @@ class Itineraries(db.Model):
         self.itineraryDesc = itineraryDesc
         self.itineraryLocation = itineraryLocation
         self.itineraryDate = itineraryDate
-        self.itineraryTimeTo = itineraryTime
+        self.itineraryTime = itineraryTime
         self.tripID = tripID
         self.locationTypeID = locationTypeID
 

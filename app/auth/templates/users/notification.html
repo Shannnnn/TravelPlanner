@@ -62,7 +62,7 @@
                     {% if csPic=='default' %}
                         <img class="avatar border-gray" src="{{current_user.gravatar(size=90)}}" alt="Image for {{ received_edit_request.first_name }}"/>
                     {% else %}
-                        <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+usID[loop.index-1]+'/'+csPic[loop.index-1]) }}" alt="Image for {{ received_edit_request.first_name }}" style="width:90px;height:90px;"/>
+                        <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+usID[loop.index-1]+'/'+csPic[loop.index-1]) }}" alt="Image for {{ received_edit_request.first_name }}" style="width:50px;height:50px;"/>
                     {% endif %}
                     {{ received_edit_request.first_name }} {{ received_edit_request.last_name }}
                   </a>
@@ -95,7 +95,7 @@
                     {% if csPic=='default' %}
                         <img class="avatar border-gray" src="{{current_user.gravatar(size=90)}}" alt="Image for {{ received_friend_requests.first_name }}"/>
                     {% else %}
-                        <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+usID[loop.index-1]+'/'+csPic[loop.index-1]) }}" alt="Image for {{ received_friend_requests.first_name }}" style="width:90px;height:90px;"/>
+                        <img class="avatar border-gray" src="{{ url_for('.static', filename='images/users/'+usID[loop.index-1]+'/'+csPic[loop.index-1]) }}" alt="Image for {{ received_friend_requests.first_name }}" style="width:50px;height:50px;"/>
                     {% endif %}
                     {{ received_friend_request.first_name }} {{ received_friend_request.last_name }}
                   </a>
@@ -131,7 +131,6 @@
                    {% endif %}
                     <br>{{ sent_friend_request.first_name }} {{ sent_friend_request.last_name }}
                   </a>
-                  <br><br>
                   <button type="button" class="btn btn-danger" id="cancel-btn">Cancel</button>
                 </div><!-- /.col -->
               {% endfor %}

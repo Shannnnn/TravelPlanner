@@ -132,19 +132,7 @@ class TestAdmin(unittest.TestCase):
     def setUp(self):
         self.db_fd, app.config['DATABASE'] = tempfile.mkstemp()
         app.config['TESTING'] = True
-        app.config['DEBUG'] = False
-        app.config['WTF_CSRF_ENABLED'] = False
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:databaseadmin@127.0.0.1:5432/testdb'
-        self.client = app.test_client()
-        
-        db.create_all()
-        example_data()
-        
         self.app = app.test_client()
-
-    def tearDown(self):
-        os.close(self.db_fd)
-        os.unlink(app.config['DATABASE'])
         
     def addusers(self, username, email, password, role_id):
         return self.app.post(
@@ -152,32 +140,22 @@ class TestAdmin(unittest.TestCase):
             data=dict(username=username, email=email, password=password, role_id=role_id),
             follow_redirects=True
         )
-        
-    def editusers(self, username, email, password, role_id):
-        return self.app.post(
-            '/admin/users/edit/<username>',
-            data=dict(),
-            follow_redirects=True
-        )   
-    
-    def testViewAdmin(self):
-        response = self.app.get('/admin')
-        self.assertEqual(response.status_code, 200)
 
-    def testViewUsers(self):
-        response = self.app.get('/admin/users')
-        self.assertEqual(response.status_code, 200)
-        
     def testAddUser(self):
         response = self.addusers('user', 'user@gmail.com', 'user123', '3')
         self.assertEqual(response.status_code, 200)
 
-    def testEditUsers(self):
-        response = self.editusers('userfirst', 'userlast', 'tibanga', 'iligan', 'philippines', '01/01/1997', '090909999', 'helloo', 'Female')
-        self.assertEqual(response.status_code, 200)
-    
-    def testViewLocations(self):
-        response = self.app.get('/admin/trips/locations')
+    def edituser(self, firstname, lastname, address, city, country, birth_date, contact_num, description, gender):
+        return self.app.post(
+            '/admin/users/edit/<username>',
+            data=dict(firstname=firstname, lastname=lastname, address=address, city=city, country=country,
+                      birth_date=birth_date, contact_num=contact_num, description=description, gender=gender),
+            follow_redirects=True
+        )
+
+    def testEditUser(self):
+        response = self.edituser('Firstuser', 'Lastuser', 'Tibanga', 'Iligan', 'Philippines',
+                                 '01/01/2000', '090909999', 'Hello World', 'Female')
         self.assertEqual(response.status_code, 200)
         
     def addlocations(self, countryName, countryCode):
@@ -190,6 +168,17 @@ class TestAdmin(unittest.TestCase):
     def testAddLocations(self):
         response = self.addlocations('Baker Street', '221')
         self.assertEqual(response.status_code, 200)
+
+    def editlocations(self, countryName, countryCode):
+        return self.app.post(
+            '/admin/trips/location/edit/<countryID>',
+            data=dict(countryName=countryName, countryCode=countryCode),
+            follow_redirects=True
+        )
+
+    def testEditLocations(self):
+        response = self.editlocations('South Korea', '9200')
+        self.assertEqual(response.status_code, 200)
         
     def addcities(self, cityName, cityCode):
         return self.app.post(
@@ -201,6 +190,46 @@ class TestAdmin(unittest.TestCase):
     def testAddCities(self):
         response = self.addcities('Baker Street', '221')
         self.assertEqual(response.status_code, 200)
+
+    def editcities(self, cityName, cityCode):
+        return self.app.post(
+            '/admin/trips/<countryName>/city/<cityID>/edit',
+            data=dict(cityName=cityName, cityCode=cityCode),
+            follow_redirects=True
+        )
+
+    def testEditCities(self):
+        response = self.editcities('Cagayan de Oro', '1234')
+        self.assertEqual(response.status_code, 200)
+
+    def testViewAdmin(self):
+        response = self.app.get('/admin', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+
+    def testViewUsers(self):
+        self.app.post('/admin/users/add', data=dict(username="User",
+                                                    email="user@gmail.com",
+                                                    password="user123",
+                                                    role_id="3"))
+        response = self.app.get('/admin/users', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+
+    def testViewLocations(self):
+        self.app.post('/admin/trips/location/new', data=dict(contryName="Philippines",
+                                                              countryCode="9000"))
+        response = self.app.get('/admin/trips/location', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+
+    def testViewCities(self):
+        self.app.post('/admin/trips/<countryName>/city/add', data=dict(cityName="Cebu",
+                                                                       cityCode="9700"))
+        response = self.app.get('/admin/trips/<countryName>/city', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+
+    def testViewSettings(self):
+        self.app.post('/admin/settings/<username>', data=dict(password="user123"))
+        response = self.app.get('/admin', follow_redirects=True)
+        self.assertEquals(response.status_code, 200)
 
 if __name__ == '__main__':
     unittest.main()

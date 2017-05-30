@@ -27,6 +27,14 @@ class TripTestCase(unittest.TestCase):
             follow_redirects=True
         )
 
+    def testViewTripForm(self):
+        response = self.app.get('/trips', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+
+    def testViewItineraryForm(self):
+        response = self.app.get('/trips/tripName/additineraries', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+
     def testAddTrip(self):
         response = self.addTrip('Trip', '1997/01/01', '1997/01/01', 'Iligan City', 'Philippines', 1, '1495638841.png', 0, 1, 0)
         self.assertEqual(response.status_code, 200)
