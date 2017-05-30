@@ -70,16 +70,12 @@ class TestTravelPlanner(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Please log in', response.data)
 
-    def test_request_passeword_change_via_email(self):
+    def test_send_request_passeword_change(self):
         self.app.get('/register', follow_redirects=True)
         self.register('kimimaru', 'kimi@gmail.com', 'testpassword', 3)
         self.app.get('/reset_request', follow_redirects=True)
         response = self.app.post('/reset_request', data=dict(email='kimi@gmail.com'), follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-
-    def test_login_without_registering(self):
-        response = self.login('userexpress', 'itsawesome')
-        self.assertIn(b'user not found', response.data)
 
         
 class FlaskTestsLoggedIn(unittest.TestCase):
