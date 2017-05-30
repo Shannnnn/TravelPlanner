@@ -931,8 +931,8 @@ def accept_request(id):
                              status="Accepted")
 
         Request.query.filter_by(user_x_id=user_y_id,
-                                   user_y_id=user_x_id,
-                                   status="Requested").delete()
+                                user_y_id=user_x_id,
+                                status="Requested").delete()
 
         db.session.add(requested)
         db.session.add(requested2)
