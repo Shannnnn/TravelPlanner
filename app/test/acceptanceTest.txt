@@ -1,0 +1,40 @@
+FEATURES
+
+Register
+    username: dextergod
+    email: sdexterous@yahoo.com
+    password: 12345678910
+
+Login
+    username: dextergod
+    password: 12345678910
+
+
+Edit Profile
+    first name: Dexter
+    last name: God
+    birth date: 08/19/1995
+    address: Brgy. San Miguel
+    city: Iligan
+    country: Philippines
+    contact number: 09752234710
+    description: Haha ulol!
+    gender: Male 
+    filename: happy.png
+
+Add Trip
+    trip name: The International 7
+    country: United States
+    city: New York City
+    from: 07/30/2017
+    to: 08/17/2017
+    visibility: Public
+    happy_stroke.png
+
+Edit Trip
+    trip name: The International 7
+    country: United States
+    city: New York City
+    from: 07/31/2017
+    to: 08/17/2017
+    visibility: Private

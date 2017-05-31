@@ -141,7 +141,7 @@ def allowed_file(filename):
 def deleteTrip_user(userID):
     trips = Trips.query.filter_by(userID=userID).all()
     for trip in trips:
-        os.remove('app/trips/static/images/trips/' + trip.img_thumbnail)
+        os.remove('app/trips/static/images/trips/'+str(userID) +'/' + trip.img_thumbnail)
         db.session.delete(trip)
     db.session.commit()
 
