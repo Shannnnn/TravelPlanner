@@ -8,7 +8,6 @@ from app import db
 from werkzeug import secure_filename
 from app.auth.model import Photos
 import datetime
-import time
 from PIL import Image
 
 trip = Flask(__name__)
@@ -182,6 +181,7 @@ def editItineraries(tripName, itineraryName):
         form.itinerary_location_type.data = itineraryname.locationTypeID
         form.itinerary_location.data = itineraryname.itineraryLocation
         form.itinerary_time.data = itineraryname.itineraryTime
+
     return render_template('edititineraries.html', form=form, tripname=tripname)
 
 @trip_blueprint.route('/get_cities/')
