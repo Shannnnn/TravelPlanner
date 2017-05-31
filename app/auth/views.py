@@ -351,8 +351,8 @@ def addtrip():
 @required_roles('Admin')
 def removetrips(tripName):
     trips = Trips.query.filter_by(tripName=tripName).first()
-    itineraries = Itineraries.query.filter_by(tripID = trips.tripID).delete()
-    os.remove('app/trips/static/images/trips/'+trips.img_thumbnail)
+    Itineraries.query.filter_by(tripID = trips.tripID).delete()
+    #os.remove('app/trips/static/images/trips/'+trips.img_thumbnail)
     db.session.delete(trips)
     db.session.commit()
     result = Trips.query.order_by(Trips.tripID).paginate(1, TRIPS_PER_PAGE, False)
