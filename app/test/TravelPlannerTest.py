@@ -252,6 +252,55 @@ class TestAdmin(unittest.TestCase):
         response = self.editcities('Cagayan de Oro', '1234')
         self.assertEqual(response.status_code, 200)
 
+    def addtrip(self, tripName, tripDateFrom, tripDateTo, tripCity, tripCountry, userID, img_thumbnail, status, visibility):
+        return self.app.post(
+            '/admin/trips/add',
+            data=dict(tripName=tripName, tripDateFrom=tripDateFrom, tripDateTo=tripDateTo, tripCity=tripCity, tripCountry=tripCountry, userID=userID, img_thumbnail=img_thumbnail, status=status, visibility=visibility),
+            follow_redirects=True
+        )
+
+    def testAddTrip(self):
+        response = self.addtrip('Trip', '1997/01/01', '1997/01/01', 'Iligan City', 'Philippines', 1, '1495638841.png', 0, 1)
+        self.assertEqual(response.status_code, 200)
+
+    def edittrip(self, tripName, tripDateFrom, tripDateTo, tripCity, tripCountry, userID, img_thumbnail, status, visibility, featuredTrip):
+        return self.app.post(
+            '/admin/trips/edit/<tripName>',
+            data=dict(tripName=tripName, tripDateFrom=tripDateFrom, tripDateTo=tripDateTo, tripCity=tripCity,
+                      tripCountry=tripCountry, userID=userID, img_thumbnail=img_thumbnail, status=status,
+                      visibility=visibility),
+            follow_redirects=True
+        )
+
+    def testEditTrip(self):
+        response = self.edittrip('Trips', '01/01/2000', '01/10/2000', 'Iligan City', 'Philippines', 1, '1495638841.png', 0, 1, 1)
+        self.assertEqual(response.status_code, 200)
+
+    def additinerary(self, itineraryName, itineraryDesc, itineraryLocation, itineraryDate, itineraryTime, tripID, locationTypeID):
+        return self.app.post(
+            '/admin/trips/<tripName>/additineraries',
+            data = dict(itineraryName=itineraryName, itineraryDesc=itineraryDesc, itineraryLocation=itineraryLocation,
+                        itineraryDate=itineraryDate, itineraryTime=itineraryTime, tripID=tripID, locationTypeID=locationTypeID),
+            follow_redirects=True
+        )
+
+    def testAddItinerary(self):
+        response = self.additinerary('ItnOne', 'ItnDesc', 'ItnLoc', '1997/01/01', '10:00', 1, 1)
+        self.assertEqual(response.status_code, 200)
+
+    def edititinerary(self, itineraryName, itineraryDesc, itineraryLocation, itineraryDate, itineraryTime, tripID, locationTypeID):
+        return self.app.post(
+            '/admin/trips/<tripName>/<itineraryName>/edit',
+            data=dict(itineraryName=itineraryName, itineraryDesc=itineraryDesc, itineraryLocation=itineraryLocation,
+                      itineraryDate=itineraryDate, itineraryTime=itineraryTime, tripID=tripID, locationTypeID=locationTypeID),
+            follow_redirects=True
+        )
+
+    def testEditItinerary(self):
+        response = self.edititinerary('ItnOne', 'ItnDesc', 'ItnLoc', '1997/01/01', '10:00', 1, 1)
+        self.assertEqual(response.status_code, 200)
+
+# views
     def testViewAdmin(self):
         response = self.app.get('/admin', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
@@ -280,6 +329,32 @@ class TestAdmin(unittest.TestCase):
         self.app.post('/admin/settings/<username>', data=dict(password="user123"))
         response = self.app.get('/admin', follow_redirects=True)
         self.assertEquals(response.status_code, 200)
+
+    def testViewTrips(self):
+        self.app.post('/admin/trips/add', data=dict(tripName='Trip',
+                                               tripDateFrom='10/01/2014',
+                                               tripDateTo='10/05/2014',
+                                               userID=1,
+                                               tripCountry='Philippines',
+                                               tripCity='Iligan City',
+                                               status=1,
+                                               visibility=0,
+                                               img_thumbnail='17878h88.jpg',
+                                               featuredTrip=0))
+
+        response = self.app.get('/admin/trips', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+
+    def testViewItinerary(self):
+        self.app.post('/admin/trips/<tripName>/additineraries', data=dict(itineraryName='itinerary',
+                                                          itineraryDate='10/01/2014',
+                                                          itineraryDesc='hello world',
+                                                          itineraryLocation='Iligan',
+                                                          itineraryTime='8:30',
+                                                          locationTypeID=1,
+                                                          tripID=1))
+        response = self.app.get('/admin/trips/<tripName>/itineraries', follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
 
 if __name__ == '__main__':
     unittest.main()

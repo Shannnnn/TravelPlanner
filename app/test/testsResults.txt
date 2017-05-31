@@ -35,7 +35,13 @@
 		(view cities)                       :   passed
 		(edit cities)                       :   passed
 		(add cities)                        :   passed
-		(change password)                   :   passed
+		(settings change password)          :   passed
+		(admin view trips)                  :   passed
+		(admin add trips)                   :   passed
+		(admin edit trips)                  :   passed
+		(admin view itineraries)            :   passed
+		(admin add itineraries)             :   passed
+		(admin edit itineraries)            :   passed
 
 		___________LandingModuleTest.py_______________
 		

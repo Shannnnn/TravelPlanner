@@ -351,8 +351,13 @@ def addtrip():
 @required_roles('Admin')
 def removetrips(tripName):
     trips = Trips.query.filter_by(tripName=tripName).first()
+<<<<<<< HEAD
     itineraries = Itineraries.query.filter_by(tripID = trips.tripID).delete()
     os.remove('app/trips/static/images/trips/'+str(trips.userID)+'/'+trips.img_thumbnail)
+=======
+    Itineraries.query.filter_by(tripID = trips.tripID).delete()
+    #os.remove('app/trips/static/images/trips/'+trips.img_thumbnail)
+>>>>>>> 486a8909ecb07e0ebd8e1aee7010c07ffb9d642e
     db.session.delete(trips)
     db.session.commit()
     result = Trips.query.order_by(Trips.tripID).paginate(1, TRIPS_PER_PAGE, False)
@@ -561,9 +566,11 @@ def addcities(countryName):
                           cityCode=form.citycode.data)
             db.session.add(cities)
             db.session.commit()
-            countries = Country.query.filter_by(countryName = countryName)
-            city = City.query.filter_by(countryName=countryName)
-            return render_template('/admin/cities.html', city=city, country=countries)
+
+            city = City.query.filter_by(countryName=countryName).paginate(1, 10, False)
+            clenght = len(City.query.filter_by(countryName=countryName).all())
+            countries = Country.query.filter_by(countryName=countryName).first()
+            return render_template('/admin/cities.html', city=city, country=countries, stry=pageFormula(clenght, 10))
     else:
         return render_template('/admin/editcities.html', form=form, countryName=countryName)
 
@@ -579,9 +586,10 @@ def editcities(cityID, countryName):
             city.cityCode = form.citycode.data
             db.session.add(city)
             db.session.commit()
-            cities = City.query.filter_by(countryName=countryName)
-            countries = Country.query.filter_by(countryName = countryName)
-            return render_template('/admin/cities.html', city=cities, country=countries)
+            city = City.query.filter_by(countryName=countryName).paginate(1, 10, False)
+            clenght = len(City.query.filter_by(countryName=countryName).all())
+            countries = Country.query.filter_by(countryName=countryName).first()
+            return render_template('/admin/cities.html', city=city, country=countries, stry=pageFormula(clenght, 10))
         else:
             form.cityname.data = city.cityName
             form.citycode.data = city.cityCode
