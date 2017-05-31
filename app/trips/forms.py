@@ -1,5 +1,6 @@
 from flask_wtf import Form
 from wtforms import StringField, DateField, FileField, SelectField, TextAreaField, ValidationError
+from wtforms_components import TimeField
 from wtforms.validators import DataRequired
 from model import Country, City, Trips
 
@@ -18,7 +19,7 @@ class ItineraryForm(Form):
     itinerary_desc = TextAreaField('Description', validators=[DataRequired()])
     itinerary_location = StringField('Location', validators=[DataRequired()])
     itinerary_location_type = SelectField('Type', choices=[], coerce=int)
-    itinerary_time = StringField('Time(hh:mm)', validators=[DataRequired()])
+    itinerary_time = TimeField('Time(hh:mm)', validators=[DataRequired()])
 
 class EditTripForm(Form):
     trip_name = StringField('Trip Name', validators=[DataRequired()])
@@ -49,7 +50,7 @@ class EditItineraryForm(Form):
     itinerary_desc = TextAreaField('Description', validators=[DataRequired()])
     itinerary_location = StringField('Location', validators=[DataRequired()])
     itinerary_location_type = SelectField('Type', choices=[], coerce=int)
-    itinerary_time = StringField('Time(hh:mm)', validators=[DataRequired()])
+    itinerary_time = TimeField('Time(hh:mm)', validators=[DataRequired()])
 
 class CountryForm(Form):
     countryname= StringField('Country', validators=[DataRequired()])

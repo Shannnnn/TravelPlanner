@@ -2,7 +2,7 @@ import os
 from functools import wraps
 from flask import abort, flash
 from flask_login import current_user
-from model import Role, Connection, User, db, Photos
+from model import Role, Connection, User, db, Photos, Request
 from app.trips.model import Trips
 from sqlalchemy import func
 
@@ -91,6 +91,28 @@ def get_friends(id):
                                                                                   Connection.user_b_id == User.id)
 
     return friends
+
+
+def is_permitted_or_pending(user_x_id, user_y_id):
+
+    is_permitted = db.session.query(Request).filter(Request.user_x_id == user_x_id,
+                                                       Request.user_y_id == user_y_id,
+                                                       Request.status == "Accepted").first()
+
+    is_pending = db.session.query(Request).filter(Request.user_x_id == user_x_id,
+                                                     Request.user_y_id == user_y_id,
+                                                     Request.status == "Requested").first()
+
+    return is_permitted, is_pending
+
+def get_edit_requests(id):
+
+    edit_requests = db.session.query(User).filter(Request.user_y_id == id,
+                                                 Request.status == "Requested").join(Request,
+                                                                                     Request.user_x_id == User.id).all()
+
+
+    return edit_requests
 
 
 # the current directory for user profile pic

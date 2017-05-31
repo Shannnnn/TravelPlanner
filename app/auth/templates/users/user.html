@@ -29,7 +29,7 @@
         </div><!-- /.col -->
         <div class="col-xs-12 col-md-4" id="action-box" >
           {% if session.current_user.id != user.id %}
-            {% if friends %}
+            {% if check_friends  or check_friends2%}
               <form id="unfriend-friend-form" action="/unfriend/{{user.id}}" method="POST">
                 <button type="submit" class="btn btn-primary" id="unfriend-btn"><span class="fa fa-users" aria-hidden="true"></span> Unfriend</button>
               </form>
@@ -40,7 +40,7 @@
                 <button type="submit" class="btn btn-success" id="accepted-btn">Accept</button>
               </form>
               <form id="reject-friend-form" action="/reject-friend/{{user.id}}" method="POST">
-                <button type="submit" class="btn btn-danger" id="deleted-btn">Reject</button>
+                <br><button type="submit" class="btn btn-danger" id="deleted-btn">Reject</button>
               </form>
             {% else %}
               <form id="add-friend-form" action="/add-friend/{{user.id}}" method="POST">
@@ -54,6 +54,30 @@
   </div><!-- /.jumbotron -->
 
   <div class="container" id="main-section">
+    <!-- {% if user.id==current_user.id %}
+    <div class="row">
+        <div class="sidenav" id="mySidenav">
+            <div class="notes_head">
+                <p class="notes_header">
+                    <span class="notes_type label label-info notes_tag"><i class="icon-beer"></i>  Upcoming Trips</span>
+                </p>
+            </div>
+            {% if trips %}
+                {% for trip in trips %}
+                    <div class="notes_content">
+                        <div class="notes_short notes_partition">
+                            <p class="notes_title text-info"><i class="icon-beer"></i>{{ trip.tripName }}</p>
+                        </div>
+                        <div class="notes_action ">
+                            <p><a href="/trips/{{ trip.tripName }}/itineraries"><span class="btn btn-default task_btn">View</span></a> <span class="btn btn-success task_btn">Mark as done</span></p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+    {% endif %} -->
+
     <div class="row">
       <h3>{{user.username}}'s Profile</h3>
       <ul class="nav nav-tabs">
@@ -153,42 +177,71 @@
                 </div>
             </div>
 
+            <!-- Modal -->
+                <div id="myModal" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">Edit Permission</h4>
+                            </div>
+                            <div class="modal-body">
+                                <p>Request permission to edit trip/itinerary.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <form id="send-form" action="/send-request/{{user.id}}" method="POST">
+                                    <button type="submit" class="btn btn-default" id="send-btn">Send request</button>
+                                </form>
+                            </div>
+                        </div>
+                     </div>
+                </div>
+
+
             <div id="trips" class="tab-pane fade">
                 <div class="content">
                     <div class="row">
                         {% if trips %}
-
-                        {% if user.id==current_user.id %}
-                        {% for trip in trips %}
-                        <div class="col-sm-3 text-center">
-                            <div class="container" style="display:inline; width:100%;">
-                                <div class="panel panel-default bootcards-media" style="width:100%;">
-                                    <div class="panel-heading" align="center" style="width: 100%;">
-                                        {{ trip.tripName }}
-                                        <a href="/trips/{{ trip.tripName }}/edit" class="btn btn-primary" style="display: block; margin: 0 auto;">Edit</a>
-                                    </div>
-                                    <div class="panel-body" style="width: 100%; height: 100%;" align="center">
-                                        <img style="height: 100%; width: 100%; object-fit:contain;" src=""/>
-                                    </div>
-                                    <div class="panel-footer" align="left" style="display: inline-block; width: 100%;">
-                                        <div class="row">
-                                            &nbsp; From: {{ trip.tripDateFrom }}
-                                        </div>
-                                        <div class="row">
-                                            &nbsp; To: {{ trip.tripDateTo }}
-                                            <br>&nbsp; {{ trip.viewsNum }} views
-                                        </div>
-                                        <div class="panel-footer">
-                                            <div class="row" align="left" style="display: inline-block; width: 120%;">
-                                                <a href="/trips/{{ trip.tripName }}/additineraries" class="btn btn-primary" style="display: block; margin: 0 auto;">Add Itineraries</a>
+                            {% if user.id!=current_user.id %}
+                               {% if check_friends or check_friends2 %}
+                                {% for trip in trips if trip.visibility == 0%}
+                                <div class="col-sm-3 text-center">
+                                    <div class="container" style="display:inline; width:100%;">
+                                        <div class="panel panel-default bootcards-media" style="width:100%;">
+                                            <div class="panel-heading" align="center" style="width: 100%;">
+                                                {{ trip.tripName }}
+                                                {% if check_request or check_request2 %}
+                                                   <a href="/trips/{{ trip.tripName }}/edit" class="btn btn-primary">Edit</a>
+                                                {% else %}
+                                                   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Edit</button>
+                                                {% endif %}
+                                            </div>
+                                            <div class="panel-footer" align="left" style="display: inline-block; width: 100%;">
+                                                <div class="row">
+                                                    &nbsp; From: {{ trip.tripDateFrom }}
+                                                </div>
+                                                <div class="row">
+                                                    &nbsp; To: {{ trip.tripDateTo }}
+                                                    <br>&nbsp; {{ trip.viewsNum }} views
+                                                </div>
+                                                <div class="panel-footer">
+                                                    <div class="row" align="left" style="display: inline-block; width: 120%;">
+                                                        <a href="/trips/{{ trip.tripName }}/itineraries" class="btn btn-primary" style="display: block; margin: 0 auto;">View</a>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                        {% else %}
+                                {% endfor %}
+                                {% else %}
+                                <div class="col-xs-12">
+                                    <p>You are not friends with {{user.first_name}}. You are not allowed to view {{user.first_name}}'s trips.</p>
+                                </div>
+                                {% endif %}
+                            {% else %}
                         {% for trip in trips %}
                         <div class="col-sm-3 text-center">
                             <div class="container" style="display:inline; width:100%;">
@@ -196,10 +249,7 @@
                                     <div class="panel-heading" align="center" style="width: 100%;">
                                         {{ trip.tripName }}
                                         <a href="/trips/{{ trip.tripName }}/edit" class="btn btn-primary" style="display: block; margin: 0 auto;" disabled>Edit</a>
-                                    </div>
-                                    <div class="panel-body" style="width: 100%; height: 100%;" align="center">
-                                        <img style="height: 100%; width: 100%; object-fit:contain;" src=""/>
-                                    </div>
+                                        </div>
                                     <div class="panel-footer" align="left" style="display: inline-block; width: 100%;">
                                         <div class="row">
                                             &nbsp; From: {{ trip.tripDateFrom }}
@@ -210,15 +260,15 @@
                                         </div>
                                         <div class="panel-footer">
                                             <div class="row" align="left" style="display: inline-block; width: 120%;">
-                                                <a href="/trips/{{ trip.tripName }}/additineraries" class="btn btn-primary" style="display: block; margin: 0 auto; " disabled>Add Itineraries</a>
+                                                <a href="/trips/{{ trip.tripName }}/itineraries" class="btn btn-primary" style="display: block; margin: 0 auto;">View</a>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        {% endfor %}
-                        {% endif %}
+                            {% endfor %}
+                            {% endif %}
                         {% else %}
                         <ul class="list-group">
                             <li class="list-group-item">No trips yet.</li>
@@ -242,6 +292,7 @@
   <script type="text/javascript" src="{{ url_for('.static', filename='js/unfriend-friend.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('.static', filename='js/accept-friend.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('.static', filename='js/reject-friend.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/send.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('.static', filename='js/sweetalert.min.js') }}"></script>
   <script type="text/javascript">
 

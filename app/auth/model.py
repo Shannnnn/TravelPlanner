@@ -159,6 +159,26 @@ class Connection(db.Model):
                                                                                       self.user_b_id,
                                                                                       self.status)
 
+class Request(db.Model):
+
+    __tablename__ = "request"
+
+    request_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_x_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_y_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    status = db.Column(db.String(100), nullable=False)
+    #trip_id = db.Column(db.Integer, db.ForeignKey('trips.tripID'))
+
+    def __init__(self, user_x_id, user_y_id, status):
+        self.user_x_id = user_x_id
+        self.user_y_id = user_y_id
+        self.status = status
+
+    def __repr__(self):
+        return "<Connection connection_id=%s user_x_id=%s user_y_id=%s status=%s >" % (self.connection_id,
+                                                                                       self.user_x_id,
+                                                                                       self.user_y_id,
+                                                                                       self.status)
 
 class Photos(db.Model):
     __tablename__ = "User_Photos"
