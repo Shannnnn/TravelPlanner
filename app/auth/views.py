@@ -6,7 +6,7 @@ from model import User, Role, Anonymous, Photos, Connection, Photos, Request
 from forms import LoginForm, RegisterForm, EditForm, SearchForm, PasswordSettingsForm, EmailResetForm, PasswordResetForm
 from app import db, app
 from decorators import required_roles, get_friends, get_friend_requests, allowed_file, deleteTrip_user, img_folder
-from decorators import is_permitted_or_pending, is_friends_or_pending, is_friends_or_pending2, user_query, get_edit_requests
+from decorators import is_permitted_or_pending, is_permitted_or_pending2, is_friends_or_pending, is_friends_or_pending2, user_query, get_edit_requests
 from app.landing.views import landing_blueprint
 from werkzeug import secure_filename
 from PIL import Image
@@ -679,8 +679,8 @@ def users(id):
     # Check connection status between user_a and user_b
     check_friends, pending_request = is_friends_or_pending(user_a_id, user_b_id)
     check_friends2, pending_request2 = is_friends_or_pending2(user_a_id, user_b_id)
-    check_request = is_permitted_or_pending(user_a_id, user_b_id)
-    check_request2 = is_permitted_or_pending(user_b_id, user_a_id)
+    check_request, pending = is_permitted_or_pending(user_a_id, user_b_id)
+    check_request2, pending2 = is_permitted_or_pending2(user_a_id, user_b_id)
 
     friends = get_friends(user.id).all()
     photos = Photos.query.filter_by(userID=user.id).all()
@@ -690,7 +690,7 @@ def users(id):
                            total_friends=total_friends,
                            check_friends=check_friends,
                            friends=friends, check_request=check_request,
-                           check_request2=check_request2,
+                           check_request2=check_request2, pending=pending,
                            pending_request=pending_request,
                            pending_request2=pending_request2,
                            csID=str(user.id), csPic=str(get_profile(user.profile_pic)),

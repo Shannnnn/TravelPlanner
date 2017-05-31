@@ -191,9 +191,13 @@
                                 <p>Request permission to edit trip/itinerary.</p>
                             </div>
                             <div class="modal-footer">
+                                {% if pending %}
+                                <button class="btn btn-default disabled" id="requested-btn"><span class="fa fa-clock-o" aria-hidden="true"></span> Request Pending</button>
+                                {% else %}
                                 <form id="send-form" action="/send-request/{{user.id}}" method="POST">
                                     <button type="submit" class="btn btn-default" id="send-btn">Send request</button>
                                 </form>
+                                {% endif %}
                             </div>
                         </div>
                      </div>
@@ -212,7 +216,7 @@
                                         <div class="panel panel-default bootcards-media" style="width:100%;">
                                             <div class="panel-heading" align="center" style="width: 100%;">
                                                 {{ trip.tripName }}
-                                                {% if check_request or check_request2 %}
+                                                {% if check_request and check_request2 %}
                                                    <a href="/trips/{{ trip.tripName }}/edit" class="btn btn-primary">Edit</a>
                                                 {% else %}
                                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Edit</button>

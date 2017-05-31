@@ -105,6 +105,19 @@ def is_permitted_or_pending(user_x_id, user_y_id):
 
     return is_permitted, is_pending
 
+def is_permitted_or_pending2(user_x_id, user_y_id):
+
+    is_permitted = db.session.query(Request).filter(Request.user_x_id == user_y_id,
+                                                       Request.user_y_id == user_x_id,
+                                                       Request.status == "Accepted").first()
+
+    is_pending = db.session.query(Request).filter(Request.user_x_id == user_y_id,
+                                                     Request.user_y_id == user_x_id,
+                                                     Request.status == "Requested").first()
+
+    return is_permitted, is_pending
+
+
 def get_edit_requests(id):
 
     edit_requests = db.session.query(User).filter(Request.user_y_id == id,
