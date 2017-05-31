@@ -128,6 +128,14 @@ def get_edit_requests(id):
     return edit_requests
 
 
+def get_edit_friends(id):
+
+    edit = db.session.query(User).filter(Request.user_x_id == id,
+                                         Request.status == "Accepted").join(Request,
+                                                                            Request.user_y_id == User.id)
+
+    return edit
+
 # the current directory for user profile pic
 img_folder = 'app/auth/static/images/users/'
 #img_folder = 'app/uploads/static/images/users/'

@@ -84,23 +84,21 @@ class FlaskTestsLoggedIn(unittest.TestCase):
     def setUp(self):
         """Stuff to do before every test."""
 
+        self.db_fd, app.config['DATABASE'] = tempfile.mkstemp()
         app.config['TESTING'] = True
-        app.config['DEBUG'] = False
-        app.config['WTF_CSRF_ENABLED'] = False
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:databaseadin@127.0.0.1:5432/testdb'
-        self.client = app.test_client()
+        self.app = app.test_client()
 
         db.create_all()
-        example_data()
 
-        with self.client as c:
+        with self.app as c:
             with c.session_transaction() as sess:
                 sess["current_user"] = {
                     "first_name": "John",
-                    "user_id": 1,
+                    "id": 1,
                     "num_received_requests": 2,
                     "num_sent_requests": 1,
-                    "num_total_requests": 3
+                    "num_total_requests": 3,
+                    "num_edit_requests": 1
                 }
 
     def tearDown(self):
@@ -109,26 +107,76 @@ class FlaskTestsLoggedIn(unittest.TestCase):
         db.session.close()
         db.drop_all()
 
+    def editProfile(self, first_name, last_name, address, city, country, birth_date, contact_num, description, gender):
+        return self.app.post('/userprofile/<username>/edit',
+                            data=dict(first_name=first_name, last_name=last_name, address=address, city=city, country=country,
+                            birth_date=birth_date, contact_num=contact_num, description=description, gender=gender),
+                            follow_redirects=True)
+
     def test_user_profile(self):
         """Test user profile page."""
 
-        result = self.client.get("/users/1")
+        result = self.app.get("/users/1", follow_redirects=True)
         self.assertEqual(result.status_code, 200)
-        self.assertIn("John", result.data)
+
+    def test_edit_profile(self):
+        result = self.editProfile('John', 'Doe', '123 Baker Street', 'Seoul', 'South Korea',
+                                 '12/25/1990', '09123456789', 'Test', 'Male')
+        self.assertEqual(result.status_code, 200)
+
+    def test_notification_page(self):
+        result = self.app.get('/notifications', follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
+
+    def test_account_settings(self):
+        result = self.app.post('/settings/<username>', data=dict(password="newpassword"), follow_redirects=True)
+        self.assertEquals(result.status_code, 200)
 
     def test_friends(self):
         """Test friends page."""
 
-        result = self.client.get("/friends")
-        self.assertIn("My Friends", result.data)
+        result = self.app.get("/friends", follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
 
     def test_friends_search(self):
         """Test friends search results page."""
 
-        result = self.client.get("/friends/search",
-                                 data={"user_input": "John"})
-        self.assertIn("John Test", result.data)
-        
+        result = self.app.get("/friends/search",
+                              data={"user_input": "John"}, follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
+
+    def test_add_friend(self):
+        result = self.app.post("/add-friend/2", follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
+
+    def test_reject_friend(self):
+        result = self.app.post("/reject-friend/2", follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
+
+    def test_accept_friend(self):
+        result = self.app.post("/accept-friend/2", follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
+
+    def test_unfriend_friend(self):
+        result = self.app.post("/unfriend/2", follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
+
+    def test_send_edit_request(self):
+        result = self.app.post("/send-request/2", follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
+
+    def test_accept_edit_request(self):
+        result = self.app.post("/accept-request/2", follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
+
+    def test_reject_edit_request(self):
+        result = self.app.post("/reject-request/2", follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
+
+    def test_disallow_friend(self):
+        result = self.app.post("/disallow/2", follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
+
 class TestAdmin(unittest.TestCase):
 
     def setUp(self):
@@ -146,6 +194,19 @@ class TestAdmin(unittest.TestCase):
     def testAddUser(self):
         response = self.addusers('user', 'user@gmail.com', 'user123', '3')
         self.assertEqual(response.status_code, 200)
+
+    def edituser(self, firstname, lastname, address, city, country, birth_date, contact_num, description, gender):
+        return self.app.post(
+            '/admin/users/edit/<username>',
+            data=dict(firstname=firstname, lastname=lastname, address=address, city=city, country=country,
+                      birth_date=birth_date, contact_num=contact_num, description=description, gender=gender),
+            follow_redirects=True
+        )
+
+    def testEditUser(self):
+        response = self.edituser('Firstuser', 'Lastuser', 'Tibanga', 'Iligan', 'Philippines',
+                                 '01/01/2000', '090909999', 'Hello World', 'Female')
+        self.assertEqual(response.status_code, 200)
         
     def addlocations(self, countryName, countryCode):
         return self.app.post(
@@ -157,6 +218,17 @@ class TestAdmin(unittest.TestCase):
     def testAddLocations(self):
         response = self.addlocations('Baker Street', '221')
         self.assertEqual(response.status_code, 200)
+
+    def editlocations(self, countryName, countryCode):
+        return self.app.post(
+            '/admin/trips/location/edit/<countryID>',
+            data=dict(countryName=countryName, countryCode=countryCode),
+            follow_redirects=True
+        )
+
+    def testEditLocations(self):
+        response = self.editlocations('South Korea', '9200')
+        self.assertEqual(response.status_code, 200)
         
     def addcities(self, cityName, cityCode):
         return self.app.post(
@@ -167,6 +239,17 @@ class TestAdmin(unittest.TestCase):
     
     def testAddCities(self):
         response = self.addcities('Baker Street', '221')
+        self.assertEqual(response.status_code, 200)
+
+    def editcities(self, cityName, cityCode):
+        return self.app.post(
+            '/admin/trips/<countryName>/city/<cityID>/edit',
+            data=dict(cityName=cityName, cityCode=cityCode),
+            follow_redirects=True
+        )
+
+    def testEditCities(self):
+        response = self.editcities('Cagayan de Oro', '1234')
         self.assertEqual(response.status_code, 200)
 
     def testViewAdmin(self):
@@ -192,6 +275,11 @@ class TestAdmin(unittest.TestCase):
                                                                        cityCode="9700"))
         response = self.app.get('/admin/trips/<countryName>/city', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
+
+    def testViewSettings(self):
+        self.app.post('/admin/settings/<username>', data=dict(password="user123"))
+        response = self.app.get('/admin', follow_redirects=True)
+        self.assertEquals(response.status_code, 200)
 
 if __name__ == '__main__':
     unittest.main()

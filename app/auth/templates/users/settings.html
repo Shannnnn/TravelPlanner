@@ -3,6 +3,10 @@
 
 {% block title %}Settings{% endblock %}
 
+{% block javascript %}
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/disallow.js') }}"></script>
+{% endblock %}
+
 {% block content %}
     <div class="container">
       <div class="row">
@@ -11,6 +15,7 @@
             <ul class="nav nav-pills nav-stacked">
             <li class="active"><a data-toggle="tab" href="#profile">Profile</a></li>
             <li><a data-toggle="tab" href="#account">Account</a></li>
+            <li><a data-toggle="tab" href="#trips">Trips</a></li>
             </ul>
         </div>
 
@@ -138,6 +143,32 @@
                                     <button class="btn btn-lg btn-primary btn-block" type="submit">Update Password</button>
                                     <h5><a href="{{ url_for('auth_blueprint.reset') }}">I forgot my password</a></h5>
                                 </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="trips" class="tab-pane fade">
+                    <div class="content">
+                        <div class="row">
+                            <div class="col-md-10">
+                                <h4>Friends who can edit your public trips/itineraries.</h4><br><br>
+                                {% if edit %}
+                                  {% for friend in edit %}
+                                      <div class="media">
+                                        <div class="media-body">
+                                          <h3 class="media-heading">{{ friend.first_name }} {{ friend.last_name }}</h3>
+                                          <form id="disallow-form" action="/disallow/{{friend.id}}" method="POST">
+                                            <button type="submit" class="btn btn-primary" id="disallow-btn"><span class="fa fa-users" aria-hidden="true"></span> Disallow</button>
+                                          </form>
+                                        </div><!-- /.media-body -->
+                                      </div><!-- /.media -->
+                                  {% endfor %}
+                                {% else %}
+                                  <div class="col-xs-12">
+                                    <p>No one has requested to edit your public trips/itineraries.</p>
+                                  </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
