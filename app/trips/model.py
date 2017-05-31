@@ -84,9 +84,9 @@ class City(db.Model):
 
 class Country(db.Model):
     __tablename__ = "countries"
-    countryName = db.Column(db.String(80), primary_key=True)
+    countryName = db.Column(db.String(80))
     countryCode = db.Column(db.String(80))
-    countryID = db.Column(db.Integer)
+    countryID = db.Column(db.Integer, primary_key=True)
 
     def __init__(self, countryName, countryCode):
         self.countryName = countryName
