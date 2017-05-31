@@ -46,7 +46,7 @@
 		(view public trips)          		:   passed
 		(unable to view non public trips)  :   passed
 		(search trip from header searchbar) :   passed
-		(filter search)				        :   failed(still working on it)
+		(filter search)				        :   passed
 
 		_____________tripTest.py_______________________
 
