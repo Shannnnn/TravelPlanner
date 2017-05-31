@@ -124,6 +124,14 @@ class FlaskTestsLoggedIn(unittest.TestCase):
                                  '12/25/1990', '09123456789', 'Test', 'Male')
         self.assertEqual(result.status_code, 200)
 
+    def test_notification_page(self):
+        result = self.app.get('/notifications', follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
+
+    def test_account_settings(self):
+        result = self.app.post('/settings/<username>', data=dict(password="newpassword"), follow_redirects=True)
+        self.assertEquals(result.status_code, 200)
+
     def test_friends(self):
         """Test friends page."""
 
@@ -153,19 +161,19 @@ class FlaskTestsLoggedIn(unittest.TestCase):
         result = self.app.post("/unfriend/2", follow_redirects=True)
         self.assertEqual(result.status_code, 200)
 
-    def test_send_request(self):
+    def test_send_edit_request(self):
         result = self.app.post("/send-request/2", follow_redirects=True)
         self.assertEqual(result.status_code, 200)
 
-    def test_accept_request(self):
+    def test_accept_edit_request(self):
         result = self.app.post("/accept-request/2", follow_redirects=True)
         self.assertEqual(result.status_code, 200)
 
-    def test_reject_request(self):
+    def test_reject_edit_request(self):
         result = self.app.post("/reject-request/2", follow_redirects=True)
         self.assertEqual(result.status_code, 200)
 
-    def test_disallow(self):
+    def test_disallow_friend(self):
         result = self.app.post("/disallow/2", follow_redirects=True)
         self.assertEqual(result.status_code, 200)
 
