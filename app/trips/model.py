@@ -38,7 +38,7 @@ class Itineraries(db.Model):
     itineraryDesc = db.Column(db.String(1000))
     itineraryLocation = db.Column(db.String(80))
     itineraryDate = db.Column(db.Date)
-    itineraryTime = db.Column(db.String(10))
+    itineraryTime = db.Column(db.Time)
     tripID = db.Column(db.Integer, db.ForeignKey("trips.tripID"), nullable=False)
     locationTypeID = db.Column(db.Integer, db.ForeignKey("itinerarylocationtype.locationTypeID"), nullable=True)
 
