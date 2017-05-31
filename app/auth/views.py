@@ -561,9 +561,11 @@ def addcities(countryName):
                           cityCode=form.citycode.data)
             db.session.add(cities)
             db.session.commit()
-            countries = Country.query.filter_by(countryName = countryName)
-            city = City.query.filter_by(countryName=countryName)
-            return render_template('/admin/cities.html', city=city, country=countries)
+
+            city = City.query.filter_by(countryName=countryName).paginate(1, 10, False)
+            clenght = len(City.query.filter_by(countryName=countryName).all())
+            countries = Country.query.filter_by(countryName=countryName).first()
+            return render_template('/admin/cities.html', city=city, country=countries, stry=pageFormula(clenght, 10))
     else:
         return render_template('/admin/editcities.html', form=form, countryName=countryName)
 
@@ -579,9 +581,10 @@ def editcities(cityID, countryName):
             city.cityCode = form.citycode.data
             db.session.add(city)
             db.session.commit()
-            cities = City.query.filter_by(countryName=countryName)
-            countries = Country.query.filter_by(countryName = countryName)
-            return render_template('/admin/cities.html', city=cities, country=countries)
+            city = City.query.filter_by(countryName=countryName).paginate(1, 10, False)
+            clenght = len(City.query.filter_by(countryName=countryName).all())
+            countries = Country.query.filter_by(countryName=countryName).first()
+            return render_template('/admin/cities.html', city=city, country=countries, stry=pageFormula(clenght, 10))
         else:
             form.cityname.data = city.cityName
             form.citycode.data = city.cityCode
