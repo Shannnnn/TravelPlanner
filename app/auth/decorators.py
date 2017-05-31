@@ -128,6 +128,14 @@ def get_edit_requests(id):
     return edit_requests
 
 
+def get_edit_friends(id):
+
+    edit = db.session.query(User).filter(Request.user_x_id == id,
+                                         Request.status == "Accepted").join(Request,
+                                                                            Request.user_y_id == User.id)
+
+    return edit
+
 # the current directory for user profile pic
 img_folder = 'app/auth/static/images/users/'
 #img_folder = 'app/uploads/static/images/users/'
@@ -141,7 +149,7 @@ def allowed_file(filename):
 def deleteTrip_user(userID):
     trips = Trips.query.filter_by(userID=userID).all()
     for trip in trips:
-        os.remove('app/trips/static/images/trips/' + trip.img_thumbnail)
+        os.remove('app/trips/static/images/trips/'+str(userID) +'/' + trip.img_thumbnail)
         db.session.delete(trip)
     db.session.commit()
 

@@ -5,7 +5,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from model import User, Role, Anonymous, Photos, Connection, Photos, Request
 from forms import LoginForm, RegisterForm, EditForm, SearchForm, PasswordSettingsForm, EmailResetForm, PasswordResetForm
 from app import db, app
-from decorators import required_roles, get_friends, get_friend_requests, allowed_file, deleteTrip_user, img_folder
+from decorators import required_roles, get_friends, get_friend_requests, allowed_file, deleteTrip_user, img_folder, get_edit_friends
 from decorators import is_permitted_or_pending, is_permitted_or_pending2, is_friends_or_pending, is_friends_or_pending2, user_query, get_edit_requests
 from app.landing.views import landing_blueprint
 from werkzeug import secure_filename
@@ -81,7 +81,7 @@ def settings(username):
                 db.session.commit()
                 flash('Changes saved!')
                 result = User.query.all()
-                return render_template('admin/users.html', form=form, result=result)
+                return render_template('admin/users.html', form=form, result=result, numm=len(result))
             else:
                 flash('Incorrect Password!')
                 return render_template('admin/settings.html', form=form, user=user)
@@ -492,7 +492,7 @@ def addlocations():
             db.session.commit()
             countries = Country.query.all()
             city = City.query.all()
-            return render_template('/admin/locations.html', country=countries, city=city)
+            return render_template('/admin/locations.html', country=countries, city=city, stry=pageFormula(len(countries), 11))
     return render_template('/admin/editlocations.html', form=form)
 
 @auth_blueprint.route('/admin/trips/location/remove/<countryID>', methods=['GET','POST'])
@@ -645,8 +645,11 @@ def user_settings(username):
         else:
             form.newpassword.data = current_user.password
             return render_template('users/settings.html', form=form, user=user)
+
+    edit = get_edit_friends(user.id).all()
+
     return render_template('users/settings.html', form=form, user=user, csID=str(current_user.id),
-                           csPic=str(get_profile(current_user.profile_pic)))
+                           csPic=str(get_profile(current_user.profile_pic)), edit=edit)
 
 
 @auth_blueprint.route("/users/<int:id>")
@@ -854,6 +857,33 @@ def unfriend(id):
         return redirect(url_for('auth_blueprint.users', id=user.id))
 
 
+@auth_blueprint.route('/disallow/<int:id>', methods=["POST"])
+@login_required
+@required_roles('User')
+def disallow(id):
+
+    user = db.session.query(User).filter(User.id == id).one()
+
+    user_x_id = session["current_user"]["id"]
+    user_y_id = user.id
+
+    if user_x_id == user_y_id:
+        flash("Cannot disallow yourself.")
+        return redirect(url_for('auth_blueprint.user_settings', username=current_user.username))
+    else:
+        Request.query.filter_by(user_x_id=user_x_id,
+                                   user_y_id=user_y_id,
+                                   status="Accepted").delete()
+
+        Request.query.filter_by(user_x_id=user_y_id,
+                                user_y_id=user_x_id,
+                                status="Accepted").delete()
+
+        db.session.commit()
+        print "User ID %s disallowed User ID %s to edit trips/itineraries." % (user_x_id, user_y_id)
+        return redirect(url_for('auth_blueprint.user_settings', username=current_user.username))
+
+
 @auth_blueprint.route('/paginateUserFriends')
 def paginateUserFriends():
     firstname, lastname, address, city, cas, usID = ([] for i in range(6))
@@ -934,8 +964,8 @@ def accept_request(id):
                              status="Accepted")
 
         Request.query.filter_by(user_x_id=user_y_id,
-                                   user_y_id=user_x_id,
-                                   status="Requested").delete()
+                                user_y_id=user_x_id,
+                                status="Requested").delete()
 
         db.session.add(requested)
         db.session.add(requested2)

@@ -30,11 +30,11 @@
         <!-- Friends tab content -->
         <div role="tabpanel" class="tab-pane fade active in" id="friends" aria-labelledby="friends-tab">
           <h2>My Friends</h2>
-          <div class="row">
+            <div class="row">
             {% if friends %}
               {% for friend in friends %}
-              <div class="list-group" >
-                <a href="/users/{{ friend.id }}" class="list-group-item" style="width:250px;height:150px;">
+              <div class="list-group list-group-horizontal">
+                <a href="/users/{{ friend.id }}" class="list-group-item" style="width:230px;height:120px;">
                 <div class="media">
                     <div class="media-left">
                       {% if csPic=='default' %}
@@ -48,9 +48,6 @@
                       <p>
                         <span class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> Location: {{friend.address}}, {{ friend.city }}
                       </p>
-                      <form id="unfriend-friend-form" action="/unfriend/{{friend.id}}" method="POST">
-                        <button type="submit" class="btn btn-primary" id="unfriend-btn"><span class="fa fa-users" aria-hidden="true"></span> Unfriend</button>
-                      </form>
                     </div><!-- /.media-body -->
                   </div><!-- /.media -->
               </a>
@@ -89,15 +86,6 @@
                 <div class="col-lg-12">
                     <h3>Suggested Friends</h3>
                 </div>
-                <div class="text-center">
-                  <ul class="pagination pagination-lg">
-                      <li><a href="javascript:void(0)" onclick="getUserFriends(1)">&laquo;</a></li>
-                      {% for i in range(0,numm) %}
-                      <li><a href="javascript:void(0)" onclick="getUserFriends({{ loop.index }})">{{ loop.index }}</a></li>
-                      {% endfor %}
-                      <li><a href="javascript:void(0)" onclick="getUserFriends({{ numm }})">&raquo;</a></li>
-                  </ul>
-                </div>
                 <div class="content" style="width:100%;">
                     <!--<table cellspacing="4" style="width:80%; height:80%; border-collapse: collapse;"><tr style="border-spacing: 0;" id="frList">-->
                       <div class="row">
@@ -134,6 +122,15 @@
                           </div>
                         </div>
                     <!--</table>-->
+                </div>
+                <div class="text-center">
+                  <ul class="pagination pagination-lg">
+                      <li><a href="javascript:void(0)" onclick="getUserFriends(1)">&laquo;</a></li>
+                      {% for i in range(0,numm) %}
+                      <li><a href="javascript:void(0)" onclick="getUserFriends({{ loop.index }})">{{ loop.index }}</a></li>
+                      {% endfor %}
+                      <li><a href="javascript:void(0)" onclick="getUserFriends({{ numm }})">&raquo;</a></li>
+                  </ul>
                 </div>
             </div>
         </div><!-- /#find-friends -->

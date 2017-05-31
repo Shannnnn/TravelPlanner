@@ -10,6 +10,21 @@
 		(register->login->logout )   		:   passed
 		(request token for new pwd)  		:   passed
 
+        (user profile display)              :   passed
+        (edit profile)                      :   passed
+        (notification page display)         :   passed
+        (user account settings)             :   passed
+        (friends page display)              :   passed
+        (friends search)                    :   passed
+        (add friend)                        :   passed
+        (reject friend)                     :   passed
+        (accept friend)                     :   passed
+        (reject friend)                     :   passed
+        (send edit request)                 :   passed
+        (accept edit request)               :   passed
+        (reject edit request)               :   passed
+        (disallow user edit)                :   passed
+
 		(view admin)                        :   passed
 		(view users)                        :   passed
 		(add users)                         :   passed
@@ -37,7 +52,7 @@
 		(view public trips)          		:   passed
 		(unable to view non public trips)  :   passed
 		(search trip from header searchbar) :   passed
-		(filter search)				        :   failed(still working on it)
+		(filter search)				        :   passed
 
 		_____________tripTest.py_______________________
 
@@ -47,3 +62,4 @@
         (view itineraries)                  :   passed
         (add trip form display)             :   passed
         (add itinerary form display)        :   passed
+

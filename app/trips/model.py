@@ -94,3 +94,11 @@ class Country(db.Model):
 
     def __repr__(self):
         return '<countryName {}>'.format(self.countryName)
+
+class PackingList(db.Model):
+    __tablename__ = "packingList"
+    packingListID = db.Column(db.Integer, primary_key=True)
+    packingListName = db.Column(db.String(50))
+    packingListDetails = db.Column(db.String(10000))
+    tripID = db.Column(db.Integer, db.ForeignKey('trips.tripID'), nullable=True)
+
