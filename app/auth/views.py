@@ -81,7 +81,7 @@ def settings(username):
                 db.session.commit()
                 flash('Changes saved!')
                 result = User.query.all()
-                return render_template('admin/users.html', form=form, result=result)
+                return render_template('admin/users.html', form=form, result=result, numm=len(result))
             else:
                 flash('Incorrect Password!')
                 return render_template('admin/settings.html', form=form, user=user)
@@ -492,7 +492,7 @@ def addlocations():
             db.session.commit()
             countries = Country.query.all()
             city = City.query.all()
-            return render_template('/admin/locations.html', country=countries, city=city)
+            return render_template('/admin/locations.html', country=countries, city=city, stry=pageFormula(len(countries), 11))
     return render_template('/admin/editlocations.html', form=form)
 
 @auth_blueprint.route('/admin/trips/location/remove/<countryID>', methods=['GET','POST'])

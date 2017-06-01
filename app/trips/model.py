@@ -38,7 +38,7 @@ class Itineraries(db.Model):
     itineraryDesc = db.Column(db.String(1000))
     itineraryLocation = db.Column(db.String(80))
     itineraryDate = db.Column(db.Date)
-    itineraryTime = db.Column(db.String(10))
+    itineraryTime = db.Column(db.Time)
     tripID = db.Column(db.Integer, db.ForeignKey("trips.tripID"), nullable=False)
     locationTypeID = db.Column(db.Integer, db.ForeignKey("itinerarylocationtype.locationTypeID"), nullable=True)
 
@@ -94,3 +94,11 @@ class Country(db.Model):
 
     def __repr__(self):
         return '<countryName {}>'.format(self.countryName)
+
+class PackingList(db.Model):
+    __tablename__ = "packingList"
+    packingListID = db.Column(db.Integer, primary_key=True)
+    packingListName = db.Column(db.String(50))
+    packingListDetails = db.Column(db.String(10000))
+    tripID = db.Column(db.Integer, db.ForeignKey('trips.tripID'), nullable=True)
+

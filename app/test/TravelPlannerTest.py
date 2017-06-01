@@ -86,15 +86,15 @@ class FlaskTestsLoggedIn(unittest.TestCase):
 
         self.db_fd, app.config['DATABASE'] = tempfile.mkstemp()
         app.config['TESTING'] = True
-        self.client = app.test_client()
+        self.app = app.test_client()
 
         db.create_all()
 
-        with self.client as c:
+        with self.app as c:
             with c.session_transaction() as sess:
                 sess["current_user"] = {
                     "first_name": "John",
-                    "user_id": 1,
+                    "id": 1,
                     "num_received_requests": 2,
                     "num_sent_requests": 1,
                     "num_total_requests": 3,
@@ -107,26 +107,76 @@ class FlaskTestsLoggedIn(unittest.TestCase):
         db.session.close()
         db.drop_all()
 
+    def editProfile(self, first_name, last_name, address, city, country, birth_date, contact_num, description, gender):
+        return self.app.post('/userprofile/<username>/edit',
+                            data=dict(first_name=first_name, last_name=last_name, address=address, city=city, country=country,
+                            birth_date=birth_date, contact_num=contact_num, description=description, gender=gender),
+                            follow_redirects=True)
+
     def test_user_profile(self):
         """Test user profile page."""
 
-        result = self.client.get("/users/1")
+        result = self.app.get("/users/1", follow_redirects=True)
         self.assertEqual(result.status_code, 200)
-        #self.assertIn("John", result.data)
+
+    def test_edit_profile(self):
+        result = self.editProfile('John', 'Doe', '123 Baker Street', 'Seoul', 'South Korea',
+                                 '12/25/1990', '09123456789', 'Test', 'Male')
+        self.assertEqual(result.status_code, 200)
+
+    def test_notification_page(self):
+        result = self.app.get('/notifications', follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
+
+    def test_account_settings(self):
+        result = self.app.post('/settings/<username>', data=dict(password="newpassword"), follow_redirects=True)
+        self.assertEquals(result.status_code, 200)
 
     def test_friends(self):
         """Test friends page."""
 
-        result = self.client.get("/friends")
-        #self.assertIn("My Friends", result.data)
+        result = self.app.get("/friends", follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
 
     def test_friends_search(self):
         """Test friends search results page."""
 
-        result = self.client.get("/friends/search",
-                                 data={"user_input": "John"})
-        #self.assertIn("John Test", result.data)
-        
+        result = self.app.get("/friends/search",
+                              data={"user_input": "John"}, follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
+
+    def test_add_friend(self):
+        result = self.app.post("/add-friend/2", follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
+
+    def test_reject_friend(self):
+        result = self.app.post("/reject-friend/2", follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
+
+    def test_accept_friend(self):
+        result = self.app.post("/accept-friend/2", follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
+
+    def test_unfriend_friend(self):
+        result = self.app.post("/unfriend/2", follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
+
+    def test_send_edit_request(self):
+        result = self.app.post("/send-request/2", follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
+
+    def test_accept_edit_request(self):
+        result = self.app.post("/accept-request/2", follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
+
+    def test_reject_edit_request(self):
+        result = self.app.post("/reject-request/2", follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
+
+    def test_disallow_friend(self):
+        result = self.app.post("/disallow/2", follow_redirects=True)
+        self.assertEqual(result.status_code, 200)
+
 class TestAdmin(unittest.TestCase):
 
     def setUp(self):
