@@ -351,6 +351,8 @@ def addtrip():
 @required_roles('Admin')
 def removetrips(tripName):
     trips = Trips.query.filter_by(tripName=tripName).first()
+    itineraries = Itineraries.query.filter_by(tripID = trips.tripID).delete()
+    os.remove('app/trips/static/images/trips/'+str(trips.userID)+'/'+trips.img_thumbnail)
     Itineraries.query.filter_by(tripID = trips.tripID).delete()
     #os.remove('app/trips/static/images/trips/'+trips.img_thumbnail)
     db.session.delete(trips)
@@ -448,8 +450,8 @@ def editItineraries(tripName, itineraryName):
             itineraryname.itineraryTime = form.itinerary_time.data
             db.session.add(itineraryname)
             db.session.commit()
-            return redirect(url_for("trip_blueprint.itineraries", tripName=tripName))
-        return render_template('itineraries.html', trip=tripname, itineraries=itineraries)
+            return redirect(url_for("auth_blueprint.itineraries", tripName=tripName))
+        return render_template('admin/itineraries.html', trip=tripname, itineraries=itineraries)
     else:
         form.itinerary_name.data = itineraryname.itineraryName
         form.itinerary_date.data = itineraryname.itineraryDate
@@ -457,7 +459,7 @@ def editItineraries(tripName, itineraryName):
         form.itinerary_location_type.data = itineraryname.locationTypeID
         form.itinerary_location.data = itineraryname.itineraryLocation
         form.itinerary_time.data = itineraryname.itineraryTime
-    return render_template('edititineraries.html', form=form, tripname=tripname)
+    return render_template('admin/edititinerary.html', form=form, trip=tripname)
 
 @auth_blueprint.route('/paginate/trips/location')
 @login_required
