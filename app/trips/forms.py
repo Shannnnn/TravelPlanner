@@ -12,6 +12,8 @@ class TripForm(Form):
     trip_date_to = DateField('To(mm/dd/yyyy)', format='%m/%d/%Y', validators=[DataRequired()])
     trip_visibility = SelectField('Visibility', choices=[(0,'Public'),(1,'Private')], coerce=int)
     file = FileField('Choose Thumbnail', validators=[DataRequired()])
+    packinglistname = StringField('Name', validators=[DataRequired()])
+    packinglistdetails = TextAreaField('List', validators=[DataRequired()])
 
 class ItineraryForm(Form):
     itinerary_name = StringField('Itinerary Name', validators=[DataRequired()])
@@ -67,3 +69,4 @@ class CityForm(Form):
     def check(self, field):
         if City.query.filter_by(cityName=field.data).first():
             raise ValidationError('City already saved.')
+

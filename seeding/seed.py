@@ -10,13 +10,13 @@ from config import seedcountrystring, seedcitystring, adminstring, itnloctypestr
 # odo("world-cities.csv", pd.DataFrame, dshape=ds)
 # odo("world-cities.csv", seedcitystring)
 
-ds = dshape("var * {id: int64, username: string, email: string, password: string, role_id: int64, first_name: string, last_name: string, address: string, city: string, country: string, birth_date: string, contact_number: int64, description: string, profile_pic: int64, gender: string, first_login: string}")
-odo("adminuser.csv", pd.DataFrame, dshape=ds)
-odo("adminuser.csv", adminstring)
-
-ds = dshape("var * {locationTypeID: int64, locationType: string, locationTypeIcon: string}")
-odo("itnloctype.csv", pd.DataFrame, dshape=ds)
-odo("itnloctype.csv", itnloctypestring)
+# ds = dshape("var * {id: int64, username: string, email: string, password: string, role_id: int64, first_name: string, last_name: string, address: string, city: string, country: string, birth_date: string, contact_number: int64, description: string, profile_pic: int64, gender: string, first_login: string}")
+# odo("adminuser.csv", pd.DataFrame, dshape=ds)
+# odo("adminuser.csv", adminstring)
+#
+# ds = dshape("var * {locationTypeID: int64, locationType: string, locationTypeIcon: string}")
+# odo("itnloctype.csv", pd.DataFrame, dshape=ds)
+# odo("itnloctype.csv", itnloctypestring)
 
 
 

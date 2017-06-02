@@ -62,11 +62,12 @@ def addtrip():
                              status=0,
                              visibility=tripForm.trip_visibility.data,
                              img_thumbnail=nameNow,
-                             featuredTrip=0)
+                             featuredTrip=0
+                             )
+
             db.session.add(tripform)
             db.session.commit()
             return redirect(url_for('trip_blueprint.trips'))
-
 
     ph = Photos.query.filter_by(id=current_user.profile_pic).first()
     if ph is None:
