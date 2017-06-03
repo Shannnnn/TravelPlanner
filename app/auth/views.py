@@ -351,10 +351,8 @@ def addtrip():
 @required_roles('Admin')
 def removetrips(tripName):
     trips = Trips.query.filter_by(tripName=tripName).first()
-    itineraries = Itineraries.query.filter_by(tripID = trips.tripID).delete()
-    os.remove('app/trips/static/images/trips/'+str(trips.userID)+'/'+trips.img_thumbnail)
     Itineraries.query.filter_by(tripID = trips.tripID).delete()
-    #os.remove('app/trips/static/images/trips/'+trips.img_thumbnail)
+    os.remove('app/trips/static/images/trips/'+str(trips.userID)+'/'+trips.img_thumbnail)
     db.session.delete(trips)
     db.session.commit()
     result = Trips.query.order_by(Trips.tripID).paginate(1, TRIPS_PER_PAGE, False)
@@ -479,7 +477,6 @@ def paginate_location_for_admin():
 def locations():
     country = Country.query.order_by(Country.countryName).paginate(1, 11, False)
     cc = len(Country.query.order_by(Country.countryName).all())
-
     return render_template('/admin/locations.html', country=country, stry=pageFormula(cc, 11))
 
 @auth_blueprint.route('/admin/trips/location/new', methods=['GET', 'POST'])
@@ -492,9 +489,7 @@ def addlocations():
             country = Country(countryName=form.countryname.data, countryCode=form.countrycode.data)
             db.session.add(country)
             db.session.commit()
-            countries = Country.query.all()
-            city = City.query.all()
-            return render_template('/admin/locations.html', country=countries, city=city, stry=pageFormula(len(countries), 11))
+            return redirect(url_for("auth_blueprint.locations"))
     return render_template('/admin/editlocations.html', form=form)
 
 @auth_blueprint.route('/admin/trips/location/remove/<countryID>', methods=['GET','POST'])
@@ -502,12 +497,10 @@ def addlocations():
 @required_roles('Admin')
 def removelocations(countryID):
     country = Country.query.filter_by(countryID=countryID).first()
-    city = City.query.filter_by(countryName= country.countryName).delete()
+    City.query.filter_by(countryName= country.countryName).delete()
     db.session.delete(country)
     db.session.commit()
-    countries = Country.query.all()
-    cities = City.query.all()
-    return render_template('/admin/locations.html', country=countries, city=cities)
+    return redirect(url_for("auth_blueprint.locations"))
 
 @auth_blueprint.route('/admin/trips/location/edit/<countryID>', methods=['GET', 'POST'])
 @login_required
@@ -521,15 +514,13 @@ def editlocations(countryID):
             country.countryCode = form.countrycode.data
             db.session.add(country)
             db.session.commit()
-            countries = Country.query.all()
-            city = City.query.all()
-            return render_template('/admin/locations.html', country=countries, city=city)
+            return redirect(url_for("auth_blueprint.locations"))
     else:
         form.countryname.data = country.countryName
         form.countrycode.data = country.countryCode
     return render_template('/admin/editlocations.html', form=form, countries=country)
 
-@auth_blueprint.route('/paginate/trips/location/cities/<country>')
+@auth_blueprint.route('/paginate/trips/location/cities/<countryName>')
 @login_required
 @required_roles('Admin')
 def paginate_location_cities_for_admin(country):
@@ -539,69 +530,64 @@ def paginate_location_cities_for_admin(country):
         ctName.append(c.cityName)
         ctID.append(c.cityID)
         ctCode.append(c.cityCode)
-        
     return jsonify(ctName=ctName, ctID=ctID, ctCode=ctCode, cnName_=country, size=len(ctName))
 
-@auth_blueprint.route('/admin/trips/<countryName>/city')
+@auth_blueprint.route('/admin/trips/<countryID>/city')
 @login_required
 @required_roles('Admin')
-def cities(countryName):
-    city = City.query.filter_by(countryName=countryName).paginate(1, 10, False)
-    clenght = len(City.query.filter_by(countryName=countryName).all())
+def cities(countryID):
+    city = City.query.filter_by(countryID=countryID).paginate(1, 10, False)
+    clenght = len(City.query.filter_by(countryID=countryID).all())
+    country = Country.query.filter_by(countryID = countryID).first()
+    return render_template('/admin/cities.html', city=city, country=country, stry=pageFormula(clenght, 10))
 
-    countries = Country.query.filter_by(countryName = countryName).first()
-    return render_template('/admin/cities.html', city=city, country=countries, stry=pageFormula(clenght, 10))
-
-@auth_blueprint.route('/admin/trips/<countryName>/city/add', methods=['POST', 'GET'])
+@auth_blueprint.route('/admin/trips/<countryID>/city/add', methods=['POST', 'GET'])
 @login_required
 @required_roles('Admin')
-def addcities(countryName):
+def addcities(countryID):
+    country = Country.query.filter_by(countryID=countryID).first()
     form = CityForm()
     if request.method == 'POST':
         if form.validate_on_submit():
             cities = City(cityName=form.cityname.data,
-                          cityCode=form.citycode.data)
+                          cityCode=form.citycode.data,
+                          countryID=countryID)
             db.session.add(cities)
             db.session.commit()
-
-            city = City.query.filter_by(countryName=countryName).paginate(1, 10, False)
-            clenght = len(City.query.filter_by(countryName=countryName).all())
-            countries = Country.query.filter_by(countryName=countryName).first()
-            return render_template('/admin/cities.html', city=city, country=countries, stry=pageFormula(clenght, 10))
+            return redirect(url_for("auth_blueprint.cities", countryID=countryID))
     else:
-        return render_template('/admin/editcities.html', form=form, countryName=countryName)
+        return render_template('/admin/editcities.html', form=form, country=country)
 
-@auth_blueprint.route('/admin/trips/<countryName>/city/<cityID>/edit', methods=['POST', 'GET'])
+@auth_blueprint.route('/admin/trips/<countryID>/city/<cityID>/edit', methods=['POST', 'GET'])
 @login_required
 @required_roles('Admin')
-def editcities(cityID, countryName):
+def editcities(cityID, countryID):
+    country = Country.query.filter_by(countryID=countryID).first()
     form = CityForm()
     city = City.query.filter_by(cityID=cityID).first()
     if request.method == 'POST':
         if form.validate_on_submit():
             city.cityName = form.cityname.data
             city.cityCode = form.citycode.data
+            city.countryID = countryID
             db.session.add(city)
             db.session.commit()
-            city = City.query.filter_by(countryName=countryName).paginate(1, 10, False)
-            clenght = len(City.query.filter_by(countryName=countryName).all())
-            countries = Country.query.filter_by(countryName=countryName).first()
-            return render_template('/admin/cities.html', city=city, country=countries, stry=pageFormula(clenght, 10))
+            return redirect(url_for("auth_blueprint.cities", countryID=countryID))
         else:
             form.cityname.data = city.cityName
             form.citycode.data = city.cityCode
-            return render_template('/admin/editcities.html', form=form, city=city)
-    return render_template('/admin/editcities.html', form=form, cityID=cityID, countryName=countryName)
+            countryID = city.countryID
+            return render_template('/admin/editcities.html', form=form, city=city, country=country)
+    return render_template('/admin/editcities.html', form=form, cityID=cityID, country=country)
 
-@auth_blueprint.route('/admin/trips/<countryName>/city/<cityID>/remove', methods=['POST', 'GET'])
+@auth_blueprint.route('/admin/trips/<countryID>/city/<cityID>/remove', methods=['POST', 'GET'])
 @login_required
 @required_roles('Admin')
-def removecity(countryName,cityID):
+def removecity(countryID,cityID):
     city= City.query.filter_by(cityID = cityID).first()
     db.session.delete(city)
     db.session.commit()
-    cities = City.query.filter_by(countryName=countryName)
-    return render_template('/admin/locations.html', city=cities)
+    return redirect(url_for("auth_blueprint.cities", countryID=countryID))
 # END ADMIN <----------
 
 @auth_blueprint.route('/home')
