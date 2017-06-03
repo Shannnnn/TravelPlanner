@@ -23,3 +23,4 @@ odo("itnloctype.csv", itnloctypestring)
 #manual insertion
 #COPY countries FROM '/anothersample.csv' DELIMITER ',' CSV HEADER;
 #COPY cities FROM '/world-cities.csv' DELIMITER ',' CSV HEADER;
+#COPY itineraryLocationType FROM '/itnloctype.csv' DELIMETER ',' CSV HEADER;

@@ -3,7 +3,7 @@ from app import app, db
 import unittest
 import tempfile
 
-class TestTravelPlanner(unittest.TestCase):
+class AuthTestTravelPlanner(unittest.TestCase):
     def setUp(self):
         self.db_fd, app.config['DATABASE'] = tempfile.mkstemp()
         app.config['TESTING'] = True
@@ -26,8 +26,8 @@ class TestTravelPlanner(unittest.TestCase):
             follow_redirects=True
         )
 
-    def test_main_page(self):
-        response = self.app.get('/main', follow_redirects=True)
+    def test_initial_page(self):
+        response = self.app.get('/', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
 
     def test_user_registration_form_displays(self):
@@ -59,7 +59,7 @@ class TestTravelPlanner(unittest.TestCase):
     def test_login_without_registration(self):
         self.app.get('/login', follow_redirects=True)
         response = self.login('userexpress', 'itsawesome')
-        self.assertIn(b'user not found', response.data)
+        self.assertIn(b'ERROR! Incorrect login credentials', response.data)
 
     def test_login_logout_with_registration(self):
         self.app.get('/register', follow_redirects=True)
@@ -77,7 +77,6 @@ class TestTravelPlanner(unittest.TestCase):
         response = self.app.post('/reset_request', data=dict(email='kimi@gmail.com'), follow_redirects=True)
         self.assertEqual(response.status_code, 200)
 
-        
 class FlaskTestsLoggedIn(unittest.TestCase):
     """Flask tests with user logged into session."""
 

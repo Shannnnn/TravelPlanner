@@ -326,7 +326,7 @@ def addtrip():
                              userID=current_user.id,
                              tripCountry=tripForm.trip_country.data,
                              tripCity=tripForm.trip_city.data,
-                             status=0,
+                             status=1,
                              visibility=tripForm.trip_visibility.data,
                              img_thumbnail=nameNow,
                              featuredTrip=0)
@@ -1300,4 +1300,5 @@ def logout():
 
 @auth_blueprint.route('/')
 def initial():
+    Role.insert_roles()
     return render_template('users/initial.html')
