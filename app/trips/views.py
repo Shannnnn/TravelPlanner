@@ -59,7 +59,7 @@ def addtrip():
                              userID=current_user.id,
                              tripCountry=tripForm.trip_country.data,
                              tripCity=tripForm.trip_city.data,
-                             status=0,
+                             status=1,
                              visibility=tripForm.trip_visibility.data,
                              img_thumbnail=nameNow,
                              featuredTrip=0)

@@ -387,7 +387,6 @@ def exp_(linklabel='all trips made in this site'):
 @landing_blueprint.route('/mockk/<int:num>')
 def mokkThis(num):
     trip = Trips.query.filter_by(tripID=num).first()
-    trip.status = 1
     trip.visibility = 0
     db.session.add(trip)
     db.session.commit()

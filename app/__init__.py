@@ -5,10 +5,12 @@ from flask_mail import Mail
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from config import dbstring
+from flask_compress import Compress
 
 app = Flask(__name__)
 db = SQLAlchemy(app)
 mail = Mail(app)
+Compress(app)
 
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 587

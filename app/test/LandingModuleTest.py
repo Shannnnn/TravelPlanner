@@ -4,7 +4,7 @@ from app import app, mail
 import unittest
 import tempfile
 
-class TestTravePlanner(unittest.TestCase):
+class LandingTestTravePlanner(unittest.TestCase):
     def setUp(self):
         self.db_fd, app.config['DATABASE'] = tempfile.mkstemp()
         app.config['TESTING'] = True

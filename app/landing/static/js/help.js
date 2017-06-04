@@ -12,7 +12,7 @@ function state(tripname, from, to, views, image, userid){
                                 '<div class="panel panel-default bootcards-media" style="width:100%;">'+ 
                                     '<div class="panel-heading" align="left" style="width: 100%;">'+tripname+'</div>'+
                                     '<div class="panel-body" style="width: 270px; height: 125px;" align="center">'+
-                                    '<img style="height: 110%; width: 110%; object-fit:contain;" src="/trips/static//images/users/'+userid+'/'+image+'"/></div>'+
+                                    '<img style="height: 110%; width: 110%; object-fit:contain;" src="/trips/static//images/trips/'+userid+'/'+image+'"/></div>'+
                                     '<div class="panel-footer" align="left" style="display: inline-block; width: 100%;">'+
                                       '<div class="row">'+
                                             '&nbsp; From:'+from+
