@@ -6,6 +6,7 @@ from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from config import dbstring
 
+
 app = Flask(__name__)
 db = SQLAlchemy(app)
 mail = Mail(app)
