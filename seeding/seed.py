@@ -23,3 +23,4 @@ from config import seedcountrystring, seedcitystring, adminstring, itnloctypestr
 #manual insertion
 #COPY countries FROM '/anothersample.csv' DELIMITER ',' CSV HEADER;
 #COPY cities FROM '/world-cities.csv' DELIMITER ',' CSV HEADER;
+#COPY itineraryLocationType FROM '/itnloctype.csv' DELIMETER ',' CSV HEADER;

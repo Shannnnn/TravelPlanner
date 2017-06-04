@@ -16,3 +16,4 @@ Flask_WTF==0.14.2
 WTForms==2.1
 Werkzeug==0.11.11
 Pillow==4.1.1
+Flask_Compress==1.4.0

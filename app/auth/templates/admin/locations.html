@@ -96,7 +96,7 @@
                                             <td><a href="/admin/trips/location/remove/{{ country.countryID }}" class="btn btn-danger btn-xs confirmation" style="text-align: center"><span class="glyphicon glyphicon-trash"></span></a></td>
                                             <td>{{country.countryName}}</td>
                                             <td>{{country.countryCode}}</td>
-                                            <td style="text-align: center"><a href="/admin/trips/{{ country.countryName }}/city" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus"></span></a></td>
+                                            <td style="text-align: center"><a href="/admin/trips/{{ country.countryID }}/city" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus"></span></a></td>
                                         </tr>
                                     
                                     {% endfor %}
@@ -124,11 +124,6 @@
             <nav class="navbar navbar-default navbar-fixed-bottom">
                 <ul class="pagination" style="alignment: center">
                     <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
-                    <!--<li class="active"><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">5</a></li>-->
                     {% for i in range(0,stry) %}
                     <li><a href="javascript:void(0)" onclick="paginator_ic({{ loop.index }});">{{ loop.index }}</a></li>
                     {% endfor %}
