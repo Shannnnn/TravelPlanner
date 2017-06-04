@@ -75,6 +75,7 @@ class City(db.Model):
     cityCode = db.Column(db.String(80))
     countryID = db.Column(db.Integer, db.ForeignKey('countries.countryID'), nullable=True)
 
+
     def __init__(self, cityName, cityCode, countryID):
         self.cityName = cityName
         self.cityCode = cityCode
