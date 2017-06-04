@@ -3,10 +3,10 @@
 {% block title %}Friends{% endblock %}
 
 {% block javascript %}
-  <script type="text/javascript" src="{{ url_for('.static', filename='js/accept-friend.js') }}"></script>
+  <!--<script type="text/javascript" src="{{ url_for('.static', filename='js/accept-friend.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('.static', filename='js/reject-friend.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('.static', filename='js/accept-request.js') }}"></script>
-  <script type="text/javascript" src="{{ url_for('.static', filename='js/reject-request.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('.static', filename='js/reject-request.js') }}"></script>-->
 {% endblock %}
 
 {% block content %}
@@ -131,7 +131,9 @@
                    {% endif %}
                     <br>{{ sent_friend_request.first_name }} {{ sent_friend_request.last_name }}
                   </a>
-                  <button type="button" class="btn btn-danger" id="cancel-btn">Cancel</button>
+                  <form id="reject-friend-form" action="/reject-friend/{{sent_friend_request.id}}" method="POST">
+                    <button type="submit" class="btn btn-danger" id="deleted-btn">Cancel</button>
+                  </form>
                 </div><!-- /.col -->
               {% endfor %}
             {% else %}
