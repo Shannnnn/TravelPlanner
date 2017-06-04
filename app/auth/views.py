@@ -812,6 +812,10 @@ def reject_friend(id):
         Connection.query.filter_by(user_a_id=user_b_id,
                                    user_b_id=user_a_id,
                                    status="Requested").delete()
+        
+        Connection.query.filter_by(user_a_id=user_a_id,
+                                   user_b_id=user_b_id,
+                                   status="Requested").delete()
         db.session.commit()
         print "User ID %s and User ID %s are not friends." % (user_a_id, user_b_id)
         return redirect(url_for('auth_blueprint.users', id=user.id))
