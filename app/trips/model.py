@@ -74,12 +74,14 @@ class City(db.Model):
     cityName = db.Column(db.String(80))
     cityCode = db.Column(db.String(80))
     countryID = db.Column(db.Integer, db.ForeignKey('countries.countryID'), nullable=True)
+    countryName = db.Column(db.String(80))
 
 
-    def __init__(self, cityName, cityCode, countryID):
+    def __init__(self, cityName, cityCode, countryID, countryName):
         self.cityName = cityName
         self.cityCode = cityCode
         self.countryID = countryID
+        self.countryName = countryName
 
     def __repr__(self):
         return '<cityName {}>'.format(self.cityName)

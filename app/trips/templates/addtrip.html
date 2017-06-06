@@ -11,6 +11,7 @@
 {% block scripts %}
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script type="text/javascript" src="{{ url_for('.static', filename='js/dynamicLocation.js') }}"></script>
     <script>
     $( function() {
         $( "#datepicker1" ).datepicker();
@@ -20,35 +21,7 @@
     });
     </script>
 
-    <script charset="utf-8" type="text/javascript">
-    $(function(){
-        var dropdown = {
-            country: $('#trip_country'),
-            city: $('#trip_city')
-        };
-        updateCities();
-        function updateCities() {
 
-            dropdown.city.attr('disabled', 'disabled');
-            dropdown.city.empty();
-
-            $.getJSON("/trips/get_cities/", {country: dropdown.country.val()}, function(data) {
-                data.forEach(function(item){
-                   dropdown.city.append(
-                       $('<option>', {
-                           value: item[0],
-                           text: item[1]
-                       })
-                   );
-                });
-                dropdown.city.removeAttr('disabled');
-            });
-        }
-        dropdown.country.on('change', function(){
-            updateCities();
-        });
-    });
-    </script>
 
 {% endblock %}
 

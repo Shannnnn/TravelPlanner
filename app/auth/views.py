@@ -1261,7 +1261,7 @@ def login():
                 return render_template('users/signin.html', form=form, error=error)
         else:
             error = 'Invalid username or password'
-        flash('Please log in!', 'error')
+        flash('ERROR! Incorrect login credentials-1', 'error')
         return render_template('users/signin.html', form=form, error=error)
 
 
