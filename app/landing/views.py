@@ -388,6 +388,7 @@ def exp_(linklabel='all trips made in this site'):
 def mokkThis(num):
     trip = Trips.query.filter_by(tripID=num).first()
     trip.visibility = 0
+    trip.featuredTrip = 1
     db.session.add(trip)
     db.session.commit()
     return 'ok'
